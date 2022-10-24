@@ -1,4 +1,4 @@
-package com.ssafy.back_footp.db.entity;
+package com.ssafy.back_footp.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
