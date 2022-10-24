@@ -1,4 +1,4 @@
-package com.ssafy.back_footp.db.entity;
+package com.ssafy.back_footp.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,11 +12,11 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="MessageLike")
-public class MessageLike {
+@Table(name="EventSpam")
+public class EventSpam {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="messagelike_id")
-    private Long messagelikeId;
+    @Column(name="eventspam_id")
+    private Long eventspamId;
 
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,6 +25,6 @@ public class MessageLike {
 
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="message_id")
-    private Message messageId;
+    @JoinColumn(name="event_id")
+    private Message eventId;
 }
