@@ -27,6 +27,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.6.12.Final'
+	
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	// https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
+	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.3'
+	
 }
 
 tasks.named('test') {
