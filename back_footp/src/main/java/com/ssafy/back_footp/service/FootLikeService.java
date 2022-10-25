@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MessageLikeService {
+public class FootLikeService {
 	
 	@Autowired
 	private MessageLikeRepository messageLikeRepository;

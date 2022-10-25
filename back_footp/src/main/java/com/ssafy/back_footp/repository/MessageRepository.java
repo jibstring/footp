@@ -9,9 +9,7 @@ import com.ssafy.back_footp.entity.Message;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long>{
-	
 	List<Message> findByUserIdOrderByMessageWritedate(long id);
-	
 	List<Message> findAllByOrderByMessageWritedate();
 	List<Message> findAllByMessageLikenum();
 
