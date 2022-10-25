@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/mainMap.dart';
+import 'package:app_footp/mainMap.dart';
 
 void main()=>runApp(MyApp());
 
