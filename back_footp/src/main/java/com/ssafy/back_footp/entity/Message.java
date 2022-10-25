@@ -25,9 +25,6 @@ public class Message {
     @JoinColumn(name="user_id")
     private User userId;
 
-    @Column(name="message_type", length = 255, nullable = false)
-    private String messageType;
-
     @Column(name="message_text", length = 255, nullable = false)
     private String messageText;
 
