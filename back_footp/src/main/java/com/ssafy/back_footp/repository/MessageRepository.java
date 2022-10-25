@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.back_footp.entity.Message;
 
 @Repository
-public interface MassageRepository extends JpaRepository<Message, Long>{
+public interface MessageRepository extends JpaRepository<Message, Long>{
 	
 	List<Message> findByUserIdOrderByMessageWritedate(long id);
 	
