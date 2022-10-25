@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/createFoot.dart';
+import 'package:app_footp/createFoot.dart';
 
 class mainMap extends StatelessWidget{
   const mainMap({Key? key}):super(key:key);
