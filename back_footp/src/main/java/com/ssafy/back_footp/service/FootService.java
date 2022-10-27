@@ -1,5 +1,6 @@
 package com.ssafy.back_footp.service;
 
+import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.repository.EventRepository;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,4 +41,18 @@ public class FootService {
 
 		return jsonObject;
 	}
+/*
+	@Transactional
+	public String createMessage(MessagePostReq messageInfo) {
+		Message message = new Message();
+
+		message.setUserId();
+
+
+		messageRepository.save(message);
+
+		return "success";
+	}
+
+ */
 }

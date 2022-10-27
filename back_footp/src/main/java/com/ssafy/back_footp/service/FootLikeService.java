@@ -22,7 +22,7 @@ public class FootLikeService {
 	
 	// 발자국의 id를 받아와 해당 발자국이 받은 좋아요 수를 반환한다.
 	public int likeNum(long mid) {
-		int result = messageLikeRepository.CountByMessageId(mid);
+		int result = messageLikeRepository.countByMessageId(mid);
 		return result;
 	}
 	

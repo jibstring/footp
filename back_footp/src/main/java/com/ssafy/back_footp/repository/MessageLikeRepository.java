@@ -19,7 +19,7 @@ public interface MessageLikeRepository extends JpaRepository<MessageLike, Long>{
 	public MessageLike findByMessageIdAndUserId(long messageId, long userId);
 	
 	// 발자국이 받은 좋아요 수 반환
-	public int CountByMessageId(long messageId);
+	public int countByMessageId(long messageId);
 	
 	// 이미 좋아요를 누른 상태에서 취소하기 위한 쿼리
 	@Transactional

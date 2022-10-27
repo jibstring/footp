@@ -7,8 +7,8 @@ import com.ssafy.back_footp.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
-	public boolean existByUserEmail(String email);
-	public boolean existByUserNickName(String nickname);
-	public User findByEmailAndUserPassword(String email, String password);
+	public boolean existsByUserEmail(String email);
+	public boolean existsByUserNickName(String nickname);
+	public User findByUserEmailAndUserPassword(String email, String password);
 	
 }
