@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const mainMap());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class mainMap extends StatelessWidget {
+  const mainMap({super.key});
 
   // This widget is the root of your application.
   @override
