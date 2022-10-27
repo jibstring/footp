@@ -17,7 +17,7 @@ public class SwaggerConfig {
 
 	@Bean
 	public Docket restAPI() {
-		return new Docket(DocumentationType.OAS_30)
+		return new Docket(DocumentationType.SWAGGER_2)
 				.useDefaultResponseMessages(false)
 				.select()
 				.apis(RequestHandlerSelectors.basePackage("com.ssafy.back_footp.controller"))
