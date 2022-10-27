@@ -26,7 +26,7 @@ public class MessageSpamService {
 			return result;
 		}
 		
-		//좋아요를 누르지 않은 상태에서 누른경우, Table에 추가하기 위해 Create한다.
+		//신고를 누르지 않은 상태에서 누른경우, Table에 추가하기 위해 Create한다.
 		@Transactional
 		public MessageSpam createSpam(MessageSpam messageSpam) {
 			MessageSpam savedSpam = messageSpamRepository.save(messageSpam);
