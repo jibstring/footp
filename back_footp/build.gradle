@@ -34,6 +34,8 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	// mysql
 	implementation 'mysql:mysql-connector-java'
+	// jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.1'
 }
 
 tasks.named('test') {
@@ -43,4 +45,4 @@ tasks.named('test') {
 bootRun {
 	String activeProfile = System.properties['spring.profiles.active']
 	systemProperty "spring.profiles.active", activeProfile
-
+}
