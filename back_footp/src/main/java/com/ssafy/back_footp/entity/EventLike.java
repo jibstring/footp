@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="EventLike")
@@ -26,5 +27,5 @@ public class EventLike {
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="event_id")
-    private Message eventId;
+    private Event eventId;
 }

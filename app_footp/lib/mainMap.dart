@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_footp/createFoot.dart';
+import 'package:app_footp/chatTest.dart';
 
 class mainMap extends StatelessWidget {
   const mainMap({Key? key}) : super(key: key);
@@ -26,6 +27,15 @@ class mainMap extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CreateFoot()),
+                );
+              },
+              style: ElevatedButton.styleFrom(primary: Colors.red)),
+          ElevatedButton(
+              child: Text("채팅이여"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChatTest()),
                 );
               },
               style: ElevatedButton.styleFrom(primary: Colors.red)),

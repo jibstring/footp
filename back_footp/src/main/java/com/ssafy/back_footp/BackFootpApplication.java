@@ -9,7 +9,7 @@ public class BackFootpApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(BackFootpApplication.class, args);
-		System.out.println(org.hibernate.Version.getVersionString());
+		System.out.println("Hibernate Version: "+org.hibernate.Version.getVersionString());
 	}
 
 }
