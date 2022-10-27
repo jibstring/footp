@@ -13,7 +13,9 @@ import javax.persistence.*;
 @Getter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name="MessageLike")
+
 public class MessageLike {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="messagelike_id")
@@ -29,7 +31,5 @@ public class MessageLike {
     @JoinColumn(name="message_id")
     private Message messageId;
     
-    public void test(int a) {
-    	
-    }
+    
 }
