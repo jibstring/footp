@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FootService {
+public class MessageService {
 	@Autowired
 	MessageRepository messageRepository;
 	@Autowired
