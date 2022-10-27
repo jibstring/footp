@@ -19,7 +19,7 @@ public interface MessageSpamRepository extends JpaRepository<MessageSpam, Long> 
 	public MessageSpam findByMessageIdAndUserId(long messageId, long userId);
 
 	// 발자국이 받은 신고 수 반환
-	public int CountByMessageId(long messageId);
+	public int countByMessageId(long messageId);
 
 	// 글 삭제시 필요한 쿼리
 	@Transactional

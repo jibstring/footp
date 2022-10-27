@@ -28,7 +28,7 @@ public class SwaggerConfig {
 	}
 	
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("test").version("3.0").description("ShareSpot 스웨거 테스트.")
+		return new ApiInfoBuilder().title("test").version("3.0").description("Footp 스웨거 테스트.")
 				.build();
 	}
 
