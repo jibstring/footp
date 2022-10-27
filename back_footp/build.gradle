@@ -27,13 +27,20 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.6.12.Final'
-	
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-	// https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
-	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.3'
-	
+	// json
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+	// swagger
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	// mysql
+	implementation 'mysql:mysql-connector-java'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootRun {
+	String activeProfile = System.properties['spring.profiles.active']
+	systemProperty "spring.profiles.active", activeProfile
 }
