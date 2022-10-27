@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:app_footp/components/createFoot/footForm.dart';
+import 'package:app_footp/components/createFoot/normalForm.dart';
+import 'package:app_footp/components/createFoot/quizForm.dart';
 
 const List<Widget> types = <Widget>[Text('일반'), Text('이벤트')];
 
@@ -34,38 +37,59 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // ToggleButtons with a single selection.
-            const SizedBox(height: 5),
-            ToggleButtons(
-              direction: vertical ? Axis.vertical : Axis.horizontal,
-              onPressed: (int index) {
-                setState(() {
-                  // The button that is tapped is set to true, and the others to false.
-                  for (int i = 0; i < _selectedTypes.length; i++) {
-                    _selectedTypes[i] = i == index;
-                  }
-                });
-              },
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              selectedBorderColor: Colors.indigo[100],
-              selectedColor: Colors.black,
-              fillColor: Colors.indigo[100],
-              color: Colors.black45,
-              constraints: const BoxConstraints(
-                minHeight: 30.0,
-                minWidth: 80.0,
+        body: Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  const SizedBox(height: 5),
+                  ToggleButtons(
+                    direction: vertical ? Axis.vertical : Axis.horizontal,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < _selectedTypes.length; i++) {
+                          _selectedTypes[i] = i == index;
+                        }
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    selectedBorderColor: Colors.indigo[100],
+                    selectedColor: Colors.black,
+                    fillColor: Colors.indigo[100],
+                    color: Colors.black45,
+                    constraints: const BoxConstraints(
+                      minHeight: 30.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: _selectedTypes,
+                    children: types,
+                  ),
+                  // Container(
+                  //     child: TextField(
+                  //   maxLines: 10,
+                  //   decoration: InputDecoration(
+                  //     border: const OutlineInputBorder(),
+                  //     alignLabelWithHint: true,
+                  //     hintText: '메세지를 입력하세요',
+                  //   ),
+                  // )),
+                  Container(
+                    child: FootForm(),
+                  ),
+                  Container(
+                      child: _selectedTypes[0] == true
+                          ? NormalForm()
+                          : QuizForm()),
+                  Container(
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.handshake,
+                            size: 24,
+                          ))),
+                ],
               ),
-              isSelected: _selectedTypes,
-              children: types,
-            ),
-          ],
-        ),
-      ),
-    );
+            )));
   }
 }
