@@ -37,6 +37,10 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	// mysql
 	implementation 'mysql:mysql-connector-java'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
 }
 
 tasks.named('test') {
@@ -46,4 +50,5 @@ tasks.named('test') {
 bootRun {
 	String activeProfile = System.properties['spring.profiles.active']
 	systemProperty "spring.profiles.active", activeProfile
-}
+	}
+

@@ -27,7 +27,7 @@ public interface MessageLikeRepository extends JpaRepository<MessageLike, Long>{
 	
 	// 글 삭제시 필요한 쿼리
 	@Transactional
-	public void deleteAllByMessageId(long postId);
+	public void deleteAllByMessageId(long messageId);
 	
 	// 회원 탈퇴시 필요한 쿼리
 	@Transactional
