@@ -7,12 +7,14 @@ class mainMap extends StatelessWidget{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title:Text("메인페이지"),
+        title:Image.asset('imgs/logo.png',height:35),
+        backgroundColor: Colors.white,
+        centerTitle: true,
         actions:<Widget>[
           IconButton(
             icon:Icon(
-              Icons.add,
-              color:Colors.black,
+              Icons.account_circle,
+              color:Color.fromARGB(255, 134, 164, 223),
             ),
             onPressed:(){},
            ),
