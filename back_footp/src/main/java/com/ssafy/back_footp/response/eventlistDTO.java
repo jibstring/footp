@@ -31,4 +31,5 @@ public class eventlistDTO implements Serializable {
     private String eventAnswer;
     private String eventExplain;
     private String eventExplainurl;
+    private boolean isSolvedByMe;
 }

@@ -1,7 +1,6 @@
 package com.ssafy.back_footp.repository;
 
-import com.ssafy.back_footp.entity.Event;
-import com.ssafy.back_footp.entity.EventLike;
+import com.ssafy.back_footp.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
