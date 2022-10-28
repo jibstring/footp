@@ -45,7 +45,9 @@ public class MessageService {
 	@Transactional
 	public JSONObject getMessageList(double lon, double lat) {
 		List<messagelistDTO> messagelist = new ArrayList<>();
-		messageRepository.findAll().forEach(Message->messagelist.add(new messagelistDTO(
+		messageRepository.findAll().forEach(Message->
+//				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
+				messagelist.add(new messagelistDTO(
 				Message.getMessageId(),
 				Message.getUserId().getUserNickName(),
 				Message.getMessageText(),
@@ -53,11 +55,11 @@ public class MessageService {
 				Message.getMessagePoint().getX(),
 				Message.getMessagePoint().getY(),
 				Message.isOpentoall(),
-				messageLikeRepository.findByMessageIdAndUserId(Message.getMessageId(), Message.getUserId().getUserId())==null?false:true,
+				messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId())==null?false:true,
 				Message.getMessageLikenum(),
 				Message.getMessageSpamnum(),
-				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
-		)));
+				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+		);
 
 		List<eventlistDTO> eventlist = new ArrayList<>();
 		eventRepository.findAll().forEach(Event->eventlist.add(new eventlistDTO(

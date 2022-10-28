@@ -48,5 +48,4 @@ public class Message {
 
     @Column(name="message_writedate", nullable = false)
     private LocalDateTime messageWritedate;
-
 }
