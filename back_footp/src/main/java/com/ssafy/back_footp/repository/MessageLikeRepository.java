@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.ssafy.back_footp.entity.Message;
+import com.ssafy.back_footp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +18,7 @@ public interface MessageLikeRepository extends JpaRepository<MessageLike, Long>{
 	public List<MessageLike> findByUserId(long id);
 	 
 	// 유저가 해당 발자국에 좋아요를 눌렀는지 파악하기 
-	public MessageLike findByMessageIdAndUserId(long messageId, long userId);
+	public MessageLike findByMessageIdAndUserId(Message messageId, User userId);
 	
 	// 발자국이 받은 좋아요 수 반환
 	public int countByMessageId(long messageId);
