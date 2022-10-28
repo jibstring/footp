@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.repository;
 
-import com.ssafy.back_footp.entity.*;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
