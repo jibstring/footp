@@ -34,3 +34,4 @@ public interface EventLikeRepository extends JpaRepository<EventLike, Long>{
 		// 회원 탈퇴시 필요한 쿼리
 		@Transactional
 		public void deleteAllByUserId(long uid);
+}

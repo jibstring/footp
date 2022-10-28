@@ -1,11 +1,13 @@
 package com.ssafy.back_footp.controller;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,8 +17,11 @@ import com.ssafy.back_footp.entity.EventSpam;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.EventLikeRepository;
 import com.ssafy.back_footp.repository.EventSpamRepository;
+import com.ssafy.back_footp.request.EventPostReq;
 import com.ssafy.back_footp.service.EventLikeService;
+import com.ssafy.back_footp.service.EventService;
 import com.ssafy.back_footp.service.EventSpamService;
+import com.ssafy.back_footp.service.MessageService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +42,27 @@ public class EventController {
 	@Autowired
 	private EventSpamRepository eventSpamRepository;
 	
+	@Autowired
+	private EventService eventService;
+	@Autowired
+	private MessageService messageService;
+	
+	
+	@PostMapping("/event")
+	@ApiOperation(value = "이벤트 발자국 쓰기", notes = "이벤트 발자국을 작성한다")
+	public ResponseEntity<JSONObject> eventWrite(@RequestBody EventPostReq eventPostReq){
+		JSONObject result = null;
+		
+		try {
+			eventService.createEvent(eventPostReq);
+			result = messageService.getMessageList(eventPostReq.getEventLongitude(), eventPostReq.getEventLatitude());
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<JSONObject>(result,HttpStatus.OK);
+	}
 	
 	@PostMapping("/like/{eventId}/{userId}")
 	@ApiOperation(value = "이벤트 좋아요하기", notes = "이벤트 발자국일때 좋아요 누른다")
