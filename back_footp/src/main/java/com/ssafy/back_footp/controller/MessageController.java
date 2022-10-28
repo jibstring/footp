@@ -15,6 +15,7 @@ import com.ssafy.back_footp.entity.MessageLike.MessageLikeBuilder;
 import com.ssafy.back_footp.entity.MessageSpam;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.MessageLikeRepository;
+import com.ssafy.back_footp.repository.MessageRepository;
 import com.ssafy.back_footp.repository.MessageSpamRepository;
 import com.ssafy.back_footp.service.MessageLikeService;
 import com.ssafy.back_footp.service.MessageSpamService;
@@ -41,6 +42,9 @@ public class MessageController {
 	private MessageSpamService messageSpamService;
 	@Autowired
 	private MessageSpamRepository messageSpamRepository;
+	
+	@Autowired
+	private MessageRepository messageRepository;
 
 	@GetMapping("/main/{lon}/{lat}")
 	@ApiOperation(value = "메세지 발자국, 이벤트 발자국 조회", notes = "반경 500m 이내의 메세지 발자국과 이벤트 발자국을 조회한다.")
@@ -80,10 +84,10 @@ public class MessageController {
 		
 		MessageLike msg = MessageLike.builder().messageId(messageId).userId(userId).build();
 		
-		int result = 1;
+		int result = 1;		
 		
 		try {
-			messageLikeService.createLike(msg);
+			messageLikeService.createLike(msg);	
 		} catch (Exception e) {
 			// TODO: handle exception
 			result = 0;
@@ -98,17 +102,37 @@ public class MessageController {
 	public ResponseEntity<Integer> messageUnlike(@PathVariable Message messageId, @PathVariable User userId){
 		
 		int result = 0;
-		long mid = messageId.getMessageId();
-		long uid = userId.getUserId();
 		
 		if(messageLikeRepository.findByMessageIdAndUserId(messageId, userId)!=null) {
-			messageLikeService.deleteLike(mid, uid);
+			messageLikeService.deleteLike(messageId, userId);
 			result = 1;
 		}
 		
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 		
 		
+	}
+	
+	@PutMapping("/like/{messageId}")
+	@ApiOperation(value = "발자국 좋아요/취소 후 likenum 재설정")
+	public ResponseEntity<Integer> messageLikenum(@PathVariable Message messageId){
+		
+		int result = 0;
+		Message m = messageRepository.findById(messageId.getMessageId()).get();
+		try {
+			// 좋아요 후 업데이트 
+			int num = messageLikeService.likeNum(messageId);
+			m.setMessageLikenum(num);
+			messageRepository.save(m);
+			
+			result = 1;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
 	
 	@PostMapping("/spam/{messageId}/{userId}")
@@ -128,5 +152,28 @@ public class MessageController {
 		
 		//신고기능 정상 =1 아님 0
 		return new ResponseEntity<Integer>(result, HttpStatus.OK);
+	}
+	
+	@PutMapping("/spam/{messageId}")
+	@ApiOperation(value = "발자국 차단 후 개수 갱신")
+	public ResponseEntity<Integer> messageSpamnum(@PathVariable Message messageId){
+		
+		int result = 0;
+		
+		Message m = messageRepository.findById(messageId.getMessageId()).get();
+		try {
+			// 차단 후 업데이트 
+			int num = messageSpamService.spamNum(messageId);
+			m.setMessageSpamnum(num);
+			messageRepository.save(m);
+			
+			result = 1;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
 }
