@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class FootList extends StatefulWidget{
@@ -61,27 +59,7 @@ class _FootListState extends State<FootList> {
               controller: scrollController,
               itemCount: 25,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                        children: [
-                        Row(
-                          children: [
-                            Align(
-                              alignment :Alignment.centerLeft,
-                              child: Text('닉넴',style: TextStyle(fontSize: 20),),),
-                            Align(
-                              alignment :Alignment.centerRight,
-                              child: Text('날짜'),)
-                          ],
-                        ),
-                        Text('hello'),
-                      ],
-                    ),
-                  ),
-
-                  );
+                return ListTile(title: Text('Item $index'));
               },
             ),
           ),
