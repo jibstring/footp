@@ -74,7 +74,7 @@ public class MessageService {
 				Event.getEventLikenum(),
 				Event.getEventSpamnum(),
 				Event.isQuiz(),
-				eventLikeRepository.findByEventIdAndUserId(Event.getEventId(), Event.getUserId().getUserId())==null?false:true,
+				eventLikeRepository.findByEventIdAndUserId(Event, Event.getUserId())==null?false:true,
 				Event.getEventQuestion(),
 				Event.getEventAnswer(),
 				Event.getEventExplain(),

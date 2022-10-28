@@ -5,6 +5,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.back_footp.entity.Event;
 import com.ssafy.back_footp.entity.EventSpam;
 import com.ssafy.back_footp.entity.MessageSpam;
 import com.ssafy.back_footp.repository.EventSpamRepository;
@@ -21,7 +22,7 @@ public class EventSpamService {
 	private EventSpamRepository eventSpamRepository;
 
 	// 발자국의 id를 받아와 해당 발자국이 받은 신고 수를 반환한다.
-	public int spamNum(long eid) {
+	public int spamNum(Event eid) {
 		int result = eventSpamRepository.countByEventId(eid);
 		return result;
 	}

@@ -33,7 +33,7 @@ public class EventPostReq {
 	
 	int eventSpamnum;
 	
-	boolean isQuiz;
+	Boolean isQuiz;
 	
 	String eventQuestion;
 	
