@@ -39,13 +39,15 @@ public class MessageService {
 	EventLikeRepository eventLikeRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	EventRankingRepository eventRankingRepository;
 
 	GeometryFactory gf = new GeometryFactory();
 
 	@Transactional
 	public JSONObject getMessageList(double lon, double lat) {
 		List<messagelistDTO> messagelist = new ArrayList<>();
-		messageRepository.findAll().forEach(Message->
+		messageRepository.findAllInRadiusOrderByMessageWritedate(lon, lat).forEach(Message->
 //				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
 				messagelist.add(new messagelistDTO(
 				Message.getMessageId(),
@@ -62,7 +64,7 @@ public class MessageService {
 		);
 
 		List<eventlistDTO> eventlist = new ArrayList<>();
-		eventRepository.findAll().forEach(Event->eventlist.add(new eventlistDTO(
+		eventRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event->eventlist.add(new eventlistDTO(
 				Event.getEventId(),
 				Event.getUserId().getUserNickName(),
 				Event.getEventText(),
@@ -74,11 +76,12 @@ public class MessageService {
 				Event.getEventLikenum(),
 				Event.getEventSpamnum(),
 				Event.isQuiz(),
-				eventLikeRepository.findByEventIdAndUserId(Event.getEventId(), Event.getUserId().getUserId())==null?false:true,
+				eventLikeRepository.findByEventIdAndUserId(Event, Event.getUserId())==null?false:true,
 				Event.getEventQuestion(),
 				Event.getEventAnswer(),
 				Event.getEventExplain(),
-				Event.getEventExplainurl()
+				Event.getEventExplainurl(),
+				eventRankingRepository.findByEventIdAndUserId(Event, Event.getUserId())==null?false:true
 		)));
 
 		JSONObject jsonObject = new JSONObject();

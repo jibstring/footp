@@ -61,7 +61,7 @@ public class EventController {
 		long eid = eventId.getEventId();
 		long uid = userId.getUserId();
 		
-		if(eventLikeRepository.findByEventIdAndUserId(eid, uid)!=null) {
+		if(eventLikeRepository.findByEventIdAndUserId(eventId, userId)!=null) {
 			eventLikeService.deleteLike(eid, uid);
 			result = 1;
 		}
