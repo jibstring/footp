@@ -19,15 +19,6 @@ class mainMap extends StatelessWidget {
       title: 'FootP',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Footp Main Page'),
@@ -37,16 +28,6 @@ class mainMap extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -64,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
       minChildSize: 0.3,
       maxChildSize: 1,
       snap: true,
-      snapSizes: [.7],
+      snapSizes: [0.65],
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
           color: Colors.blue[100],
@@ -84,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       minChildSize: 0.3,
       maxChildSize: 1,
       snap: true,
-      snapSizes: [.7],
+      snapSizes: [0.65],
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
           color: Colors.red[100],
@@ -111,13 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-
     return Scaffold(
       appBar: AppBar(
         title: Image.asset('imgs/logo.png', height: 45),
@@ -146,7 +120,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 initLocationTrackingMode: LocationTrackingMode.Follow),
             height: (MediaQuery.of(context).size.height -
                     MediaQuery.of(context).padding.top) *
-                0.7),
+                0.65),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child:IconButton(
+                        icon: Icon(
+                          Icons.add_circle,
+                          color: Color.fromARGB(255, 153, 181, 229),
+                          size: 55,
+                        ),
+                        padding: EdgeInsets.fromLTRB(0,0,50,300),
+                        onPressed:(){
+                          Navigator.push(context,MaterialPageRoute(builder:(context)=>createFoot()),
+                        );
+                      },
+                    ),
+                ),
         widgetOptions.elementAt(_selectedIndex),
         Align(
             alignment: Alignment.bottomCenter,
@@ -163,7 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
-            ))
+            )),
+            
       ])),
     );
   }
