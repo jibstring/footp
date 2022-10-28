@@ -3,7 +3,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:app_footp/createFoot.dart';
+import 'package:app_footp/location.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 
 void main() {
@@ -73,6 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
 
+  Location location = Location();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,30 +99,49 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SizedBox.expand(
           child: Stack(children: <Widget>[
         Container(
-            child: NaverMap(
-                onMapCreated: _onMapCreated,
-                minZoom: 15.0,
-                maxZoom: 21.0,
-                locationButtonEnable: true,
-                initLocationTrackingMode: LocationTrackingMode.Follow),
             height: (MediaQuery.of(context).size.height -
                     MediaQuery.of(context).padding.top) *
-                0.65),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child:IconButton(
-                        icon: Icon(
-                          Icons.add_circle,
-                          color: Color.fromARGB(255, 153, 181, 229),
-                          size: 55,
-                        ),
-                        padding: EdgeInsets.fromLTRB(0,0,50,300),
-                        onPressed:(){
-                          Navigator.push(context,MaterialPageRoute(builder:(context)=>CreateFoot()),
-                        );
-                      },
-                    ),
-                ),
+                0.65,
+            child: NaverMap(
+              onMapCreated: _onMapCreated,
+              minZoom: 15.0,
+              maxZoom: 21.0,
+              locationButtonEnable: true,
+              initLocationTrackingMode: LocationTrackingMode.Follow,
+              circles: [
+                CircleOverlay(
+                    overlayId: "radius25",
+                    center: location.lng,
+                    radius: 25,
+                    color: Colors.transparent,
+                    outlineColor: Colors.orangeAccent,
+                    outlineWidth: 1),
+                CircleOverlay(
+                    overlayId: "radius250",
+                    center: location.lng,
+                    radius: 250,
+                    color: Colors.transparent,
+                    outlineColor: Colors.lightBlueAccent,
+                    outlineWidth: 1)
+              ],
+            )),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: IconButton(
+            icon: Icon(
+              Icons.add_circle,
+              color: Color.fromARGB(255, 153, 181, 229),
+              size: 55,
+            ),
+            padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateFoot()),
+              );
+            },
+          ),
+        ),
         widgetOptions.elementAt(_selectedIndex),
         Align(
             alignment: Alignment.bottomCenter,
@@ -136,7 +159,6 @@ class _MyHomePageState extends State<MyHomePage> {
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
             )),
-            
       ])),
     );
   }
@@ -144,5 +166,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
+  }
+
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 2), (v) {
+      setState(() {
+        location.getCurrentLocation();
+        print("wow ${location.latitude} / ${location.longitude}");
+      });
+    });
+  }
+
+  void setState(VoidCallback fn) {
+    super.setState(fn);
   }
 }
