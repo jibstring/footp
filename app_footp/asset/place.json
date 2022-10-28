@@ -38,7 +38,7 @@
         'userNickname' : '아이스크림러버',
         'messageText' : '여기 자몽 아이스크림 존맛',
         'messageFileurl' : null,
-'messageLongitude': 127.0399788,
+        'messageLongitude': 127.0399788,
 	'messageLatitude':37.5019121,
         'isOpentoall' : true,
         'isMylike': true,
