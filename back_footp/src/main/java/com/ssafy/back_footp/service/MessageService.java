@@ -101,9 +101,9 @@ public class MessageService {
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setOpentoall(messageInfo.getIsOpentoall());
-		message.setMessageLikenum(message.getMessageLikenum());
-		message.setMessageSpamnum(message.getMessageSpamnum());
-		message.setMessageWritedate(LocalDateTime.now().plusHours(9));
+		message.setMessageLikenum(messageInfo.getMessageLikenum());
+		message.setMessageSpamnum(messageInfo.getMessageSpamnum());
+		message.setMessageWritedate(LocalDateTime.now());
 
 		messageRepository.save(message);
 		System.out.println("message saved");
