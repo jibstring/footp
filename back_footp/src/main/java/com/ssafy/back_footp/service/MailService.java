@@ -16,15 +16,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class MailService {
+	
+	private static final String fromAddress = "apxjvm@gmail.com";
 
 	@Autowired
-	private MailSender MailSender;
+	private JavaMailSender MailSender;
 
 	public void mailSend(Mail mail) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(mail.getAddress());
-		message.setFrom("apxjvm@gmail.com");
+		message.setFrom(fromAddress);
 		message.setSubject(mail.getTitle());
 		message.setText(mail.getContent());
 
@@ -35,7 +37,7 @@ public class MailService {
 		try {
 			Mail mail = new Mail();
 
-			mail.setAddress(email);
+			mail.setAddress(email+"@naver.com");
 			mail.setTitle(name);
 			mail.setContent("test");
 

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	//Autowire 하는곳
+	@Autowired
 	MailService mailService;
 	
 	
@@ -36,7 +37,7 @@ public class UserController {
 		
 		mailService.mailSend(mail);
 		result = 1;
-		System.out.println(result);
+
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 
 	}
