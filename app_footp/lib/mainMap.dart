@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:app_footp/createFoot.dart';
+import 'package:app_footp/components/mainMap/footList.dart';
 
 void main() {
   runApp(const mainMap());
@@ -40,25 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // 목록
   static List<Widget> widgetOptions = <Widget>[
     // 발자국 글목록
-    DraggableScrollableSheet(
-      initialChildSize: 0.3,
-      minChildSize: 0.3,
-      maxChildSize: 1,
-      snap: true,
-      snapSizes: [0.65],
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-          color: Colors.blue[100],
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: 25,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(title: Text('Item $index'));
-            },
-          ),
-        );
-      },
-    ),
+    FootList(),
     // 채팅방
     DraggableScrollableSheet(
       initialChildSize: 0.3,
@@ -131,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         padding: EdgeInsets.fromLTRB(0,0,50,300),
                         onPressed:(){
-                          Navigator.push(context,MaterialPageRoute(builder:(context)=>createFoot()),
+                          Navigator.push(context,MaterialPageRoute(builder:(context)=>CreateFoot()),
                         );
                       },
                     ),
