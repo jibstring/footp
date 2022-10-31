@@ -42,6 +42,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   naver_map_plugin:
     git: https://github.com/LBSTECH/naver_map_plugin.git
+  get: ^4.6.5
+  fluttertoast: ^8.1.1
 
 dev_dependencies:
   flutter_test:

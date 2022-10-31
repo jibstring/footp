@@ -1,3 +1,4 @@
+import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/main.dart';
 import 'package:app_footp/myLocation.dart';
 import 'package:flutter/cupertino.dart';
@@ -201,7 +202,7 @@ class _NormalFormState extends State<NormalForm> {
                     print(formData.fields);
                     print(formData.files);
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyLocation()));
+                        MaterialPageRoute(builder: (context) => MyNaverMap()));
                   }
                 },
                 icon: Icon(

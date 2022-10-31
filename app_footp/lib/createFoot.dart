@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:app_footp/components/createFoot/footForm.dart';
 import 'package:app_footp/components/createFoot/normalForm.dart';
 import 'package:app_footp/components/createFoot/quizForm.dart';
+import 'package:get/get.dart';
+
+import 'custom_class/store_class/store.dart';
 
 const List<Widget> types = <Widget>[Text('일반'), Text('이벤트')];
 
@@ -35,6 +38,8 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    ModeController modeController1 = Get.put(ModeController());
+    MyPosition myPosition_main = Get.put(MyPosition());
 
     return Scaffold(
         body: Padding(
@@ -47,11 +52,13 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                   ToggleButtons(
                     direction: vertical ? Axis.vertical : Axis.horizontal,
                     onPressed: (int index) {
+                      myPosition_main.getCurrentLocation();
                       setState(() {
                         for (int i = 0; i < _selectedTypes.length; i++) {
                           _selectedTypes[i] = i == index;
                         }
                       });
+                      modeController1.press(index);
                     },
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                     selectedBorderColor: Colors.indigo[100],
