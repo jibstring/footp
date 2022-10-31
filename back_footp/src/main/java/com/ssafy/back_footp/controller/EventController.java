@@ -74,7 +74,7 @@ public class EventController {
 		
 		try {
 			eventService.createEvent(eventPostReq);
-			result = messageService.getMessageList(eventPostReq.getEventLongitude(), eventPostReq.getEventLatitude());
+			result = messageService.getMessageList(eventPostReq.getUserId(), eventPostReq.getEventLongitude(), eventPostReq.getEventLatitude());
 		}catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -125,9 +125,9 @@ public class EventController {
 	
 	@PostMapping("/like/{eventId}/{userId}")
 	@ApiOperation(value = "이벤트 좋아요하기", notes = "이벤트 발자국일때 좋아요 누른다")
-	public ResponseEntity<Integer> eventLike(@PathVariable Event eventId, @PathVariable User userId){
+	public ResponseEntity<Integer> eventLike(@PathVariable long eventId, @PathVariable long userId){
 		
-		EventLike msg = EventLike.builder().eventId(eventId).userId(userId).build();
+		EventLike msg = EventLike.builder().eventId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
 		
 		int result = 1;
 		try {
@@ -141,11 +141,11 @@ public class EventController {
 	
 	@DeleteMapping("/unlike/{eventId}/{userId}")
 	@ApiOperation(value = "이벤트 좋아요 취소하기", notes="좋아요 두번 누르면 취소한다")
-	public ResponseEntity<Integer> eventUnlike(@PathVariable Event eventId, @PathVariable User userId){
+	public ResponseEntity<Integer> eventUnlike(@PathVariable long eventId, @PathVariable long userId){
 		
 		int result = 0;
 		
-		if(eventLikeRepository.findByEventIdAndUserId(eventId, userId)!=null) {
+		if(eventLikeRepository.findByEventIdAndUserId(eventRepository.findById(eventId).get(), userRepository.findById(userId).get())!=null) {
 			eventLikeService.deleteLike(eventId, userId);
 			result = 1;
 		}
@@ -155,10 +155,10 @@ public class EventController {
 	
 	@PutMapping("/like/{eventId}")
 	@ApiOperation(value = "발자국 좋아요/취소 후 likenum 재설정")
-	public ResponseEntity<Integer> messageLikenum(@PathVariable Event eventId){
+	public ResponseEntity<Integer> messageLikenum(@PathVariable long eventId){
 		
 		int result = 0;
-		Event ev = eventRepository.findById(eventId.getEventId()).get();
+		Event ev = eventRepository.findById(eventId).get();
 		try {
 			// 좋아요 후 업데이트 
 			int num = eventLikeService.likeNum(eventId);
@@ -177,10 +177,10 @@ public class EventController {
 	
 	@PostMapping("/spam/{eventId}/{userId}")
 	@ApiOperation(value = "이벤트 차단하기", notes = "이벤트 발자국을 차단한다")
-	public ResponseEntity<Integer> eventSpam(@PathVariable Event eventId, @PathVariable User userId){
+	public ResponseEntity<Integer> eventSpam(@PathVariable long eventId, @PathVariable long userId){
 		
 		int result = 1;
-		EventSpam msg = EventSpam.builder().eventId(eventId).userId(userId).build();
+		EventSpam msg = EventSpam.builder().eventId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
 		
 		try {
 			eventSpamService.createSpam(msg);
@@ -194,10 +194,10 @@ public class EventController {
 	
 	@PutMapping("/spam/{eventId}")
 	@ApiOperation(value = "발자국 좋아요/취소 후 likenum 재설정")
-	public ResponseEntity<Integer> messageSpamnum(@PathVariable Event eventId){
+	public ResponseEntity<Integer> messageSpamnum(@PathVariable long eventId){
 		
 		int result = 0;
-		Event ev = eventRepository.findById(eventId.getEventId()).get();
+		Event ev = eventRepository.findById(eventId).get();
 		try {
 			// 좋아요 후 업데이트 
 			int num = eventSpamService.spamNum(eventId);
