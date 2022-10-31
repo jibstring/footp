@@ -368,6 +368,24 @@ class _QuizFormState extends State<QuizForm> {
                     Icons.handshake,
                     size: 24,
                   ))),
+          Container(
+              child: ElevatedButton(
+                  child: Text('메세지 파일 삭제'),
+                  onPressed: (() {
+                    setState(() {
+                      this.messageFilePath = null;
+                      this.showFileName = '';
+                    });
+                  }))),
+          Container(
+              child: ElevatedButton(
+                  child: Text('퀴즈 파일 삭제'),
+                  onPressed: (() {
+                    setState(() {
+                      this.eventFilePath = null;
+                      this.showEventFileName = '';
+                    });
+                  })))
         ],
       )
     ]));

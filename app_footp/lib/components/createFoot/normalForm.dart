@@ -1,3 +1,5 @@
+import 'package:app_footp/main.dart';
+import 'package:app_footp/myLocation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -39,7 +41,7 @@ class _NormalFormState extends State<NormalForm> {
   List<String> allowedFileTypes = ['jpg', 'mp4', 'txt', 'pdf'];
   final myText = TextEditingController();
   FilePickerResult? result;
-  String? filePath;
+  String? filePath = '';
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +85,7 @@ class _NormalFormState extends State<NormalForm> {
                     String fileName = result.files.first.name;
                     // Uint8List fileBytes = result.files.first.bytes!;
                     debugPrint(fileName);
-                    this.filePath = result.files.single.path;
-                    print('name: ${filePath}');
+                    this.filePath = result.files.first.path;
                     // var multipartFile = await MultipartFile.fromFile(
                     //   file.path,
                     // );
@@ -165,22 +166,57 @@ class _NormalFormState extends State<NormalForm> {
         Container(
             child: IconButton(
                 onPressed: () async {
-                  print(this.filePath.runtimeType);
-                  print('#########################');
-                  var formData = FormData.fromMap({
-                    'messageText': myText.text,
-                    'messageFileurl':
-                        await MultipartFile.fromFile(this.filePath!),
-                    'messageLongtitude': 37.60251338193296,
-                    'messageLatitude': 127.12306290392186,
-                    'isOpentoall': _openRange == OpenRange.all ? true : false,
-                  });
-                  print(formData.fields);
+                  if (this.filePath == null && myText.text.trim() == '') {
+                    final snackBar = SnackBar(
+                      content: const Text('내용을 입력하거나 파일을 첨부해주세요!'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } else if (myText.text.length > 255) {
+                    final snackBar = SnackBar(
+                      content: const Text('내용은 255자 이하로만 작성 가능합니다.!'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } else {
+                    var formData = FormData.fromMap({
+                      'messageText': myText.text,
+                      'messageFileurl': this.result != null
+                          ? await MultipartFile.fromFile(this.filePath!)
+                          : '',
+                      'messageLongtitude': 37.60251338193296,
+                      'messageLatitude': 127.12306290392186,
+                      'isOpentoall': _openRange == OpenRange.all ? true : false,
+                    });
+                    print(formData.fields);
+                    print(formData.files);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyLocation()));
+                  }
                 },
                 icon: Icon(
                   Icons.handshake,
                   size: 24,
                 ))),
+        Container(
+            child: ElevatedButton(
+                child: Text('파일 삭제'),
+                onPressed: (() {
+                  setState(() {
+                    this.filePath = '';
+                    this.showFileName = '';
+                  });
+                })))
       ],
     ));
   }
