@@ -1,3 +1,4 @@
+import 'package:app_footp/myLocation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,8 +35,8 @@ class _QuizFormState extends State<QuizForm> {
   final myText = TextEditingController();
   FilePickerResult? result;
   FilePickerResult? eventResult;
-  String? messageFilePath;
-  String? eventFilePath;
+  String? messageFilePath = '';
+  String? eventFilePath = '';
   final myQuestion = TextEditingController();
   final myAnswer = TextEditingController();
   final eventExplain = TextEditingController();
@@ -344,25 +345,108 @@ class _QuizFormState extends State<QuizForm> {
           Container(
               child: IconButton(
                   onPressed: () async {
-                    print(this.messageFilePath.runtimeType);
-                    print('#########################');
-                    var formData = FormData.fromMap({
-                      'messageText': myText.text,
-                      'messageFileurl':
-                          await MultipartFile.fromFile(this.messageFilePath!),
-                      'messageLongtitude': 37.60251338193296,
-                      'messageLatitude': 127.12306290392186,
-                      'isQuiz': _isChecked,
-                      'eventQuestion': myQuestion.text,
-                      'eventAnswer': myAnswer.text,
-                      'eventExplain': eventExplain.text,
-                      'eventExplainurl':
-                          await MultipartFile.fromFile(this.eventFilePath!),
-                    });
-                    print('*******************************************');
-                    print(formData.fields);
-                    print(formData.files);
-                    print('***********************************************');
+                    if (_isChecked == false) {
+                      if (myText.text == '' && messageFilePath == '') {
+                        print('내용을 입력해주세요');
+                      } else if (myText.text.length > 255) {
+                        print('내용은 255자까지');
+                      } else {
+                        print(this.messageFilePath.runtimeType);
+                        print('#########################');
+                        var formData = FormData.fromMap({
+                          'messageText': myText.text,
+                          'messageFileurl': this.messageFilePath != ''
+                              ? await MultipartFile.fromFile(
+                                  this.messageFilePath!)
+                              : '',
+                          'messageLongtitude': 37.60251338193296,
+                          'messageLatitude': 127.12306290392186,
+                          'isQuiz': _isChecked,
+                          'eventQuestion': myQuestion.text,
+                          'eventAnswer': myAnswer.text,
+                          'eventExplain': eventExplain.text,
+                          'eventExplainurl': this.eventFilePath != ''
+                              ? await MultipartFile.fromFile(
+                                  this.eventFilePath!)
+                              : '',
+                        });
+                        print('*******************************************');
+                        print(formData.fields);
+                        print(formData.files);
+                        print(
+                            '***********************************************');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyLocation()));
+                      }
+                    } else {
+                      if (myText.text == '' && messageFilePath == '') {
+                        final snackBar = SnackBar(
+                          content: const Text('메세지 내용을 입력해주세요!'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              // Some code to undo the change.
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else if (myText.text.length > 255) {
+                        final snackBar = SnackBar(
+                          content: const Text('내용은 255자 이하로만 작성 가능합니다!'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              // Some code to undo the change.
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else if (myQuestion.text == '' ||
+                          myAnswer == '' ||
+                          eventExplain.text == '') {
+                        final snackBar = SnackBar(
+                          content: const Text('퀴즈 정보를 입력해주세요!'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              // Some code to undo the change.
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        print(this.messageFilePath.runtimeType);
+                        print('#########################');
+                        var formData = FormData.fromMap({
+                          'messageText': myText.text,
+                          'messageFileurl': this.messageFilePath != ''
+                              ? await MultipartFile.fromFile(
+                                  this.messageFilePath!)
+                              : '',
+                          'messageLongtitude': 37.60251338193296,
+                          'messageLatitude': 127.12306290392186,
+                          'isQuiz': _isChecked,
+                          'eventQuestion': myQuestion.text,
+                          'eventAnswer': myAnswer.text,
+                          'eventExplain': eventExplain.text,
+                          'eventExplainurl': this.eventFilePath != ''
+                              ? await MultipartFile.fromFile(
+                                  this.eventFilePath!)
+                              : '',
+                        });
+                        print('*******************************************');
+                        print(formData.fields);
+                        print(formData.files);
+                        print(
+                            '***********************************************');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyLocation()));
+                      }
+                    }
                   },
                   icon: Icon(
                     Icons.handshake,
@@ -373,7 +457,7 @@ class _QuizFormState extends State<QuizForm> {
                   child: Text('메세지 파일 삭제'),
                   onPressed: (() {
                     setState(() {
-                      this.messageFilePath = null;
+                      this.messageFilePath = '';
                       this.showFileName = '';
                     });
                   }))),
@@ -382,7 +466,7 @@ class _QuizFormState extends State<QuizForm> {
                   child: Text('퀴즈 파일 삭제'),
                   onPressed: (() {
                     setState(() {
-                      this.eventFilePath = null;
+                      this.eventFilePath = '';
                       this.showEventFileName = '';
                     });
                   })))
