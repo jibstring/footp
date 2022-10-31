@@ -83,8 +83,8 @@ public class ChatController {
     	
     	try {
     		//내가 이미 차단한 유저인 경우
-			if(chatBlockRepository.existsByChatBlockingAndChatBlocked(blocking, blocked)) {
-				chatBlockRepository.deleteByChatBlockingAndChatBlocked(blocking, blocked);
+			if(chatBlockRepository.existsByUserBlockingAndUserBlocked(blocking, blocked)) {
+				chatBlockRepository.deleteByUserBlockingAndUserBlocked(blocking, blocked);
 			}else {
 				//아닌경우 (잘못된 접근임)
 				result = 0;
@@ -100,7 +100,7 @@ public class ChatController {
     @ApiOperation(value = "유저의 차단리스트 조회(FE용)",notes = "유저가 차단한 리스트 반환")
     public ResponseEntity<List<ChatBlock>> checkBlocking(@RequestParam long blocking){
     	
-    	List<ChatBlock> check = chatBlockRepository.findAllByChatBlocking(blocking);
+    	List<ChatBlock> check = chatBlockRepository.findAllByUserBlocking(blocking);
     	
     	
     	return new ResponseEntity<List<ChatBlock>>(check,HttpStatus.OK);

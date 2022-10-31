@@ -13,13 +13,13 @@ import com.ssafy.back_footp.entity.User;
 @Repository
 public interface ChatBlockRepository extends JpaRepository<ChatBlock, Long>{
 	
-	List<ChatBlock> findAllByChatBlocking(long userid);
+	List<ChatBlock> findAllByUserBlocking(long userid);
 	
-	boolean existsByChatBlockingAndChatBlocked(long blocking, long blocked);
-	ChatBlock findByChatBlockingAndChatBlocked(long blocking, long blocked);
+	boolean existsByUserBlockingAndUserBlocked(long blocking, long blocked);
+	ChatBlock findByUserBlockingAndUserBlocked(long blocking, long blocked);
 	
 	@Transactional
-	void deleteByChatBlockingAndChatBlocked(long blocking, long blocked);
+	void deleteByUserBlockingAndUserBlocked(long blocking, long blocked);
 	
 
 }
