@@ -56,12 +56,12 @@ public class ChatController {
     
     @PostMapping("/ban/{blocking}/{blocked}")
     @ApiOperation(value = "채팅 차단 유저 등록", notes = "특정 유저를 차단하여 더이상 실시간 채팅에 띄우지 않을 수 있다")
-    public ResponseEntity<Integer> addBlocking(@RequestParam long blocking, @RequestParam long blocked){
+    public ResponseEntity<Integer> addBlocking(@RequestParam User blocking, @RequestParam User blocked){
     	
     	int result = 1;
     	
     	try {
-			ChatBlock chatBlock = ChatBlock.builder().userBlocking(userRepository.findById(blocking).get()).userBlocked(userRepository.findById(blocked).get()).build();
+			ChatBlock chatBlock = ChatBlock.builder().userBlocking(blocking).userBlocked(blocked).build();
 			chatBlockRepository.save(chatBlock);
 			
 		} catch (Exception e) {
@@ -76,7 +76,7 @@ public class ChatController {
     
     @DeleteMapping("/ban/{blocking}/{blocked}")
     @ApiOperation(value = "채팅 차단 유저 삭제",notes = "차단한 유저를 다시 정상으로 되돌린다")
-    public ResponseEntity<Integer> deleteBlocking(@RequestParam long blocking, @RequestParam long blocked){
+    public ResponseEntity<Integer> deleteBlocking(@RequestParam User blocking, @RequestParam User blocked){
     	
     	int result = 1;
     	
@@ -98,7 +98,7 @@ public class ChatController {
     
     @GetMapping("/ban/{blocking}")
     @ApiOperation(value = "유저의 차단리스트 조회(FE용)",notes = "유저가 차단한 리스트 반환")
-    public ResponseEntity<List<ChatBlock>> checkBlocking(@RequestParam long blocking){
+    public ResponseEntity<List<ChatBlock>> checkBlocking(@RequestParam User blocking){
     	
     	List<ChatBlock> check = chatBlockRepository.findAllByUserBlocking(blocking);
     	
