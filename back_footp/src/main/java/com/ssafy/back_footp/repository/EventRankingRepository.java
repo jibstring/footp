@@ -13,5 +13,5 @@ import com.ssafy.back_footp.entity.User;
 public interface EventRankingRepository extends JpaRepository<EventRanking, Long>{
     public EventRanking findByEventIdAndUserId(Event eventId, User userId);
 
-	public List<EventRanking> findByEventIdOrderByEventrankingDateAsc(Event eventId);
+	public List<EventRanking> findAllByEventIdOrderByEventrankingDateAsc(Event eventId);
 }

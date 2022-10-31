@@ -113,7 +113,7 @@ public class EventController {
 		}
 		
 		// 일단 문제에 대한 전체 정답자 빨리 맞힌 순으로 가져오기
-		List<EventRanking> eventRankings = eventRankingRepository.findByEventIdOrderByEventrankingDateAsc(eventId);
+		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(eventId);
 		
 		List<UserRankingReq> FiveRankings = new ArrayList<>();
 		
@@ -139,7 +139,7 @@ public class EventController {
 	@ApiOperation(value = "이벤트 퀴즈 랭킹 확인", notes = "본인이 몇번째로 이 문제에 대한 정답을 맞췄는지 확인")
 	public ResponseEntity<Integer> checkMyRanking(@PathVariable User userId, @PathVariable Event eventId){
 		
-		List<EventRanking> eventRankings = eventRankingRepository.findByEventIdOrderByEventrankingDateAsc(eventId);
+		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(eventId);
 		
 		int cnt = 1;
 		
