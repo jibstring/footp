@@ -1,6 +1,8 @@
 package com.ssafy.back_footp.repository;
 
 import com.ssafy.back_footp.entity.Message;
+import com.ssafy.back_footp.entity.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
@@ -17,4 +19,6 @@ public interface EventRepository extends JpaRepository<Event, Long>{
     List<Event> findByUserIdOrderByEventWritedate(long id);
     List<Event> findAllByOrderByEventWritedate();
     List<Event> findAllByOrderByEventLikenumDesc();
+    
+    Event findByEventIdAndUserId(User userid, long eventid);
 }

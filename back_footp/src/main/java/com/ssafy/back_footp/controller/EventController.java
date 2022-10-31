@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -29,6 +30,7 @@ import com.ssafy.back_footp.repository.EventSpamRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.EventAnswerReq;
 import com.ssafy.back_footp.request.EventPostReq;
+import com.ssafy.back_footp.request.UserRankingReq;
 import com.ssafy.back_footp.service.EventLikeService;
 import com.ssafy.back_footp.service.EventService;
 import com.ssafy.back_footp.service.EventSpamService;
@@ -101,17 +103,56 @@ public class EventController {
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
 	
-	@GetMapping("/ranking/{userId}/{eventId}")
-	@ApiOperation(value = "이벤트 퀴즈 랭킹 확인", notes = "본인이 몇번째로 이 문제에 대한 정답을 맞췄는지 확인")
-	public ResponseEntity<Integer> checkRanking(@PathVariable long userId, @PathVariable long eventId){
+	@GetMapping("/ranking/joiner/{userId}/{eventId}")
+	@ApiOperation(value = "이벤트 퀴즈 상위 5명 확인", notes = "주최자의 경우 퀴즈를 가장 먼저 푼 5명 확인 가능")
+	public ResponseEntity<List<UserRankingReq>> checkRankings(@PathVariable User userId, @PathVariable Event eventId){
 		
-		List<EventRanking> eventRankings = eventRankingRepository.findAllByOrderByEventrankingDateAsc();
+		//주최자가 아니면 접근못함
+		if(eventRepository.findByEventIdAndUserId(userId, eventId.getEventId())==null) {
+			return null;
+		}
+		
+		// 일단 문제에 대한 전체 정답자 빨리 맞힌 순으로 가져오기
+		List<EventRanking> eventRankings = eventRankingRepository.findByEventIdOrderByEventrankingDateAsc(eventId);
+		
+		List<UserRankingReq> FiveRankings = new ArrayList<>();
+		
+		for(EventRanking e : eventRankings) {
+			
+			UserRankingReq temp = new UserRankingReq();
+			
+			temp.setUserId(e.getUserId().getUserId());
+			temp.setUserNickname(e.getUserId().getUserNickName());
+			
+			FiveRankings.add(temp);
+			// 5명까지 넣고 리턴
+			if(FiveRankings.size()>=5) {
+				break;
+			}
+			
+		}
+		
+		return new ResponseEntity<List<UserRankingReq>>(FiveRankings,HttpStatus.OK);
+	}
+	
+	@GetMapping("/ranking/owner/{userId}/{eventId}")
+	@ApiOperation(value = "이벤트 퀴즈 랭킹 확인", notes = "본인이 몇번째로 이 문제에 대한 정답을 맞췄는지 확인")
+	public ResponseEntity<Integer> checkMyRanking(@PathVariable User userId, @PathVariable Event eventId){
+		
+		List<EventRanking> eventRankings = eventRankingRepository.findByEventIdOrderByEventrankingDateAsc(eventId);
 		
 		int cnt = 1;
+		
+		// 아직 이 문제를 맞추지 않은 경우
+		if(eventRankingRepository.findByEventIdAndUserId(eventId, userId)==null) {
+			cnt = -1;
+			return new ResponseEntity<Integer>(cnt,HttpStatus.OK);
+		}
+		
 		// 이 문제를 맞춘 모든 랭킹 리스트를 불러온 후, 빨리 맞힌 순(EventrackingDate가 빠른 순)으로 정렬.
 		for(EventRanking e : eventRankings) {
 			// 현재 유저의 Id와 e의 Id가 일치하면 랭킹 순서인 cnt를 반환
-			if(e.getUserId().getUserId()==userId) {
+			if(e.getUserId().getUserId()==userId.getUserId()) {
 				break;
 			}
 			cnt++;
