@@ -45,7 +45,7 @@ class _FootListState extends State<FootList> {
   }
     
   Widget build(BuildContext context){
-    double width=MediaQuery.of(context).size.width* 0.7; 
+    double width=MediaQuery.of(context).size.width* 0.62; 
     readFile();
     return DraggableScrollableSheet(
         initialChildSize: 0.3,
@@ -110,81 +110,84 @@ class _FootListState extends State<FootList> {
               itemCount: 10,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
-                  child:Column(
-                    children: [
-                      SizedBox(
-                        height:10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                              jsonData["userNickname"],
-                              style:const TextStyle(
-                                fontSize:15,
-                                fontWeight:FontWeight.bold,
-                                color:Colors.grey),
-                                ),
-                          Text(
-                              jsonData["eventWritedate"],
-                              style:const TextStyle(
-                                fontSize:15,
-                                fontWeight:FontWeight.bold,
-                                color:Colors.grey),
-                                ),
-                        ],
-                      ),
-                      SizedBox(
-                        height:10,
-                      ),
-                      Row(children: [
+                  child:Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Column(
+                      children: [
                         SizedBox(
-                          width:100,
-                          height:100,
-                          child:Image.asset(jsonData["eventExplainurl"])
+                          height:10,
                         ),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          width:width,
-                          child:Text(
-                            jsonData["eventText"],//100자로 제한
-                            style:const TextStyle(
-                              fontSize:15,
-                              fontWeight:FontWeight.bold,
-                              color:Colors.grey),
-                              )
-                        )
-                      ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                        IconButton(//검색
-                          onPressed:(){},
-                          icon: Icon(Icons.more_horiz,size:30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                jsonData["userNickname"],
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  ),
+                            Text(
+                                jsonData["eventWritedate"],
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  ),
+                          ],
+                        ),
+                        SizedBox(
+                          height:10,
+                        ),
+                        Row(children: [
+                          SizedBox(
+                            width:100,
+                            height:100,
+                            child:Image.asset(jsonData["eventExplainurl"])
                           ),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                          child: Row(                          
-                            children: [
-                              IconButton(//검색
-                                onPressed:(){},
-                                icon: Icon(
-                                  Icons.favorite,
-                                  color:Color.fromARGB(255, 250, 31, 31),
-                                  size:30),
-                              ),
-                              Text(
-                                jsonData["eventLikenum"].toString(),
-                                style: TextStyle(
-                                  fontSize: 15,
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            width: width,
+                            child:Text(
+                              jsonData["eventText"],//100자로 제한
+                              style:const TextStyle(
+                                fontSize:15,
+                                fontWeight:FontWeight.bold,
+                                color:Colors.grey),
+                                )
+                          )
+                        ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                          IconButton(//검색
+                            onPressed:(){},
+                            icon: Icon(Icons.more_horiz,size:30),
+                            ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                            child: Row(                          
+                              children: [
+                                IconButton(//검색
+                                  onPressed:(){},
+                                  icon: Icon(
+                                    Icons.favorite,
+                                    color:Color.fromARGB(255, 250, 31, 31),
+                                    size:30),
                                 ),
-                              )
-                            ]),
-                        )
+                                Text(
+                                  jsonData["eventLikenum"].toString(),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                )
+                              ]),
+                          )
 
-                      ],)
-                    ],
+                        ],)
+                      ],
+                    ),
                   )
                 
                   );
