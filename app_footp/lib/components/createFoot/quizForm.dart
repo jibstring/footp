@@ -17,11 +17,28 @@ class QuizForm extends StatefulWidget {
 
 class _QuizFormState extends State<QuizForm> {
   int _currentValue = 0;
-  final int _maxValue = 24;
+  final int _maxValue = 48;
   final int _minValue = 0;
   bool _isChecked = false;
   String showFileName = "";
-  List<String> allowedFileTypes = ['jpg', 'mp4', 'txt', 'pdf'];
+  String showEventFileName = "";
+  List<String> allowedFileTypes = [
+    'jpg',
+    'mp4',
+    'txt',
+    'pdf',
+  ];
+  List<String> allowedEventFileTypes = [
+    'jpg',
+  ];
+  final myText = TextEditingController();
+  FilePickerResult? result;
+  FilePickerResult? eventResult;
+  String? messageFilePath;
+  String? eventFilePath;
+  final myQuestion = TextEditingController();
+  final myAnswer = TextEditingController();
+  final eventExplain = TextEditingController();
 
   void getHttp() async {
     try {
@@ -43,6 +60,7 @@ class _QuizFormState extends State<QuizForm> {
           alignLabelWithHint: true,
           hintText: '메세지를 입력하세요',
         ),
+        controller: myText,
       ),
       Container(
         height: 200,
@@ -63,16 +81,20 @@ class _QuizFormState extends State<QuizForm> {
                   type: FileType.custom,
                   allowedExtensions: allowedFileTypes,
                 );
-                if (result != null && result.files.isNotEmpty) {
+                if (result != null) {
+                  print('########## ${result.files.first}');
+                  PlatformFile file = result.files.single;
                   String fileName = result.files.first.name;
-                  Uint8List fileBytes = result.files.first.bytes!;
+                  // Uint8List fileBytes = result.files.first.bytes!;
                   debugPrint(fileName);
+                  this.messageFilePath = result.files.single.path;
+                  print('name: ${messageFilePath}');
+                  // var multipartFile = await MultipartFile.fromFile(
+                  //   file.path,
+                  // );
                   setState(() {
                     showFileName = "Now File Name: $fileName";
                   });
-                  /*
-                do jobs
-                 */
                 }
               },
               child: Row(
@@ -120,49 +142,52 @@ class _QuizFormState extends State<QuizForm> {
         onChanged: (value) {
           setState(() {
             _isChecked = value!;
+            myQuestion.clear();
+            myAnswer.clear();
+            eventExplain.clear();
           });
         },
       )),
       Container(
           child: Column(
-        children: <Widget>[
-          Text('시간 선택'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text('유지 시간: '),
-              NumberPicker(
-                value: _currentValue,
-                minValue: _minValue,
-                maxValue: _maxValue,
-                step: 1,
-                itemHeight: 100,
-                axis: Axis.horizontal,
-                onChanged: (value) => _currentValue = value,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: () => setState(() {
-                      final newValue = _currentValue - 1;
-                      _currentValue = newValue.clamp(_minValue, _maxValue);
-                    }),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () => setState(() {
-                      final newValue = _currentValue + 1;
-                      _currentValue = newValue.clamp(_minValue, _maxValue);
-                    }),
-                  ),
-                ],
-              )
-            ],
-          )
-        ],
-      )),
+              // children: <Widget>[
+              //   Text('시간 선택'),
+              //   Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //     children: [
+              //       Text('유지 시간: '),
+              //       NumberPicker(
+              //         value: _currentValue,
+              //         minValue: _minValue,
+              //         maxValue: _maxValue,
+              //         step: 1,
+              //         itemHeight: 100,
+              //         axis: Axis.horizontal,
+              //         onChanged: (value) => _currentValue = value,
+              //       ),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.center,
+              //         children: [
+              //           IconButton(
+              //             icon: Icon(Icons.remove),
+              //             onPressed: () => setState(() {
+              //               final newValue = _currentValue - 1;
+              //               _currentValue = newValue.clamp(_minValue, _maxValue);
+              //             }),
+              //           ),
+              //           IconButton(
+              //             icon: Icon(Icons.add),
+              //             onPressed: () => setState(() {
+              //               final newValue = _currentValue + 1;
+              //               _currentValue = newValue.clamp(_minValue, _maxValue);
+              //             }),
+              //           ),
+              //         ],
+              //       )
+              //     ],
+              //   )
+              // ],
+              )),
       Column(
         children: <Widget>[
           if (_isChecked == true)
@@ -185,6 +210,7 @@ class _QuizFormState extends State<QuizForm> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), hintText: '문제를 입력하세요'),
                     maxLines: 5,
+                    controller: myQuestion,
                   ),
                   Text(
                     '정답',
@@ -193,6 +219,7 @@ class _QuizFormState extends State<QuizForm> {
                   TextField(
                     decoration: InputDecoration(
                         border: OutlineInputBorder(), hintText: '정답을 입력하세요'),
+                    controller: myAnswer,
                   ),
                   const Divider(
                     color: Colors.grey,
@@ -223,23 +250,91 @@ class _QuizFormState extends State<QuizForm> {
                               border: OutlineInputBorder(),
                               hintText: '해설을 입력하세요'),
                           maxLines: 5,
+                          controller: eventExplain,
                         ),
                         Text(
                           '이미지',
                           textAlign: TextAlign.left,
                           style: TextStyle(fontSize: 15),
                         ),
-                        TextButton(
-                            onPressed: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles();
-                              if (result == null) {
-                                print("No file selected");
-                              } else {
-                                print(result.files.single.name);
-                              }
-                            },
-                            child: Text('버튼'))
+                        Container(
+                          height: 200,
+                          width: 400,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 5,
+                              color: Colors.grey,
+                            ),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  FilePickerResult? eventResult =
+                                      await FilePicker.platform.pickFiles(
+                                    type: FileType.custom,
+                                    allowedExtensions: allowedEventFileTypes,
+                                  );
+                                  if (eventResult != null) {
+                                    print(
+                                        '########## ${eventResult.files.first}');
+                                    String eventFileName =
+                                        eventResult.files.first.name;
+                                    // Uint8List fileBytes = result.files.first.bytes!;
+                                    debugPrint(eventFileName);
+                                    this.eventFilePath =
+                                        eventResult.files.single.path;
+                                    print('name: ${eventFilePath}');
+                                    // var multipartFile = await MultipartFile.fromFile(
+                                    //   file.path,
+                                    // );
+                                    setState(() {
+                                      showEventFileName =
+                                          "Now File Name: $eventFileName";
+                                    });
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "Find and Upload",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.upload_rounded,
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                "$allowedEventFileTypes",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                showEventFileName,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -248,7 +343,27 @@ class _QuizFormState extends State<QuizForm> {
             ),
           Container(
               child: IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    print(this.messageFilePath.runtimeType);
+                    print('#########################');
+                    var formData = FormData.fromMap({
+                      'messageText': myText.text,
+                      'messageFileurl':
+                          await MultipartFile.fromFile(this.messageFilePath!),
+                      'messageLongtitude': 37.60251338193296,
+                      'messageLatitude': 127.12306290392186,
+                      'isQuiz': _isChecked,
+                      'eventQuestion': myQuestion.text,
+                      'eventAnswer': myAnswer.text,
+                      'eventExplain': eventExplain.text,
+                      'eventExplainurl':
+                          await MultipartFile.fromFile(this.eventFilePath!),
+                    });
+                    print('*******************************************');
+                    print(formData.fields);
+                    print(formData.files);
+                    print('***********************************************');
+                  },
                   icon: Icon(
                     Icons.handshake,
                     size: 24,

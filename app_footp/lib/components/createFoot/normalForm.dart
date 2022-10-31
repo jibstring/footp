@@ -39,6 +39,7 @@ class _NormalFormState extends State<NormalForm> {
   List<String> allowedFileTypes = ['jpg', 'mp4', 'txt', 'pdf'];
   final myText = TextEditingController();
   FilePickerResult? result;
+  String? filePath;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +83,8 @@ class _NormalFormState extends State<NormalForm> {
                     String fileName = result.files.first.name;
                     // Uint8List fileBytes = result.files.first.bytes!;
                     debugPrint(fileName);
-                    print('name: ${file.path}');
+                    this.filePath = result.files.single.path;
+                    print('name: ${filePath}');
                     // var multipartFile = await MultipartFile.fromFile(
                     //   file.path,
                     // );
@@ -162,10 +164,13 @@ class _NormalFormState extends State<NormalForm> {
         ]),
         Container(
             child: IconButton(
-                onPressed: () {
+                onPressed: () async {
+                  print(this.filePath.runtimeType);
+                  print('#########################');
                   var formData = FormData.fromMap({
                     'messageText': myText.text,
-                    'messageFileurl': result?.files.first.name ?? '',
+                    'messageFileurl':
+                        await MultipartFile.fromFile(this.filePath!),
                     'messageLongtitude': 37.60251338193296,
                     'messageLatitude': 127.12306290392186,
                     'isOpentoall': _openRange == OpenRange.all ? true : false,
