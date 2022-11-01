@@ -122,7 +122,7 @@ public class EventController {
 			UserRankingReq temp = new UserRankingReq();
 			
 			temp.setUserId(e.getUserId().getUserId());
-			temp.setUserNickname(e.getUserId().getUserNickName());
+			temp.setUserNickname(e.getUserId().getUserNickname());
 			
 			FiveRankings.add(temp);
 			// 5명까지 넣고 리턴

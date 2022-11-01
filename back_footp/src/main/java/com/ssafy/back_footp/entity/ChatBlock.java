@@ -1,12 +1,6 @@
 package com.ssafy.back_footp.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,12 +20,12 @@ public class ChatBlock {
 	@Column(name = "chat_id")
 	private Long chatId;
 	
-	@Column(name = "user_blocking")
-	@ManyToOne
+	@JoinColumn(name = "user_blocking")
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User userBlocking;
 	
-	@Column(name = "user_blocked")
-	@ManyToOne
+	@JoinColumn(name = "user_blocked")
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User userBlocked;
 
 }
