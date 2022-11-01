@@ -205,7 +205,34 @@ public class AuthService {
 		return user;
 	}
 
-	public Mail sendEmailService(String email, String name) {
+	public Mail sendEmailServiceForSignUp(String email, String name) {
+
+		Optional<User> user = userRepository.findByUserEmail(email);
+
+		if (user.isPresent()) {
+			User temp = user.get();
+			
+			String str = getRandomCode();
+			Mail mail = new Mail();
+
+			mail.setAddress(email);
+			mail.setTitle(name+" 님의 회원가입 안내 인증코드 입니다.");
+			mail.setContent("안녕하세요. 푸프 회원가입 인증을 위한 인증번호 입니다. | "+ str +" | 시간내로 입력하여 주시기 바랍니다.");
+
+			//여기서 재발급 키담고 + 제한시간3분 설정
+			temp.setUserEmailKey(str);
+			temp.setUserPwfindtime(LocalDateTime.now().plusMinutes(3));
+			
+			userRepository.save(temp);
+			
+			return mail;
+
+		}
+		
+		return null;
+	}
+	
+	public Mail sendEmailServiceForPassword(String email, String name) {
 
 		Optional<User> user = userRepository.findByUserEmail(email);
 
