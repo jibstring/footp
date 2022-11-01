@@ -65,29 +65,10 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                     isSelected: _selectedTypes,
                     children: types,
                   ),
-                  // Container(
-                  //     child: TextField(
-                  //   maxLines: 10,
-                  //   decoration: InputDecoration(
-                  //     border: const OutlineInputBorder(),
-                  //     alignLabelWithHint: true,
-                  //     hintText: '메세지를 입력하세요',
-                  //   ),
-                  // )),
-                  Container(
-                    child: FootForm(),
-                  ),
                   Container(
                       child: _selectedTypes[0] == true
                           ? NormalForm()
                           : QuizForm()),
-                  Container(
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.handshake,
-                            size: 24,
-                          ))),
                 ],
               ),
             )));

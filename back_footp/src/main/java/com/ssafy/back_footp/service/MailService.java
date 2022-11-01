@@ -33,17 +33,5 @@ public class MailService {
 		MailSender.send(message);
 	}
 
-	public Mail sendEmailService(String email, String name) {
-		try {
-			Mail mail = new Mail();
-
-			mail.setAddress(email+"@naver.com");
-			mail.setTitle(name);
-			mail.setContent("test");
-
-			return mail;
-		} catch (Exception e) {
-			return null;
-		}
-	}
+	
 }
