@@ -4,6 +4,7 @@ import com.ssafy.back_footp.request.MypostUpdateReq;
 import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
 import com.ssafy.back_footp.service.AuthService;
+import com.ssafy.back_footp.service.UserService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 	//Autowire 하는곳
 	@Autowired
-	AuthService authService;
+	UserService userService;
 
 
 	@GetMapping("/myfoot/{userId}")
@@ -34,7 +35,7 @@ public class UserController {
 		JSONObject result = null;
 
 		try {
-			result = authService.getMymessages(userId);
+			result = userService.getMymessages(userId);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -49,7 +50,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = authService.updateMessage(mypostUpdateReq);
+			result = userService.updateMessage(mypostUpdateReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -64,7 +65,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = authService.deleteMessage(messageId);
+			result = userService.deleteMessage(messageId);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -80,7 +81,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = authService.updatePassword(passwordUpdateReq);
+			result = userService.updatePassword(passwordUpdateReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -96,7 +97,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = authService.updateNickname(nicknameUpdateReq);
+			result = userService.updateNickname(nicknameUpdateReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
