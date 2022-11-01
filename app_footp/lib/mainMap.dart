@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:vector_math/vector_math.dart' as vect;
+
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/location.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
@@ -38,7 +41,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  Completer<NaverMapController> _controller = Completer();
+
   int _selectedIndex = 0;
+
+  Location location = Location();
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -65,17 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     )
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-  Completer<NaverMapController> _controller = Completer();
-
-  Location location = Location();
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +106,18 @@ class _MyHomePageState extends State<MyHomePage> {
               maxZoom: 21.0,
               locationButtonEnable: true,
               initLocationTrackingMode: LocationTrackingMode.Follow,
+              markers: [
+                Marker(
+                  markerId: "marker1",
+                  position: LatLng(37.5013, 127.0397),
+                  // icon: OverlayImage.fromAssetImage(assetName: '/imgs/blue_print.png');
+                ),
+                Marker(
+                  markerId: "marker2",
+                  position: LatLng(37.5005, 127.0371),
+                  // icon: OverlayImage.fromAssetImage(assetName: '/imgs/orange_print.png');
+                )
+              ],
               circles: [
                 CircleOverlay(
                     overlayId: "radius25",
@@ -164,6 +173,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   void _onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
@@ -174,7 +189,17 @@ class _MyHomePageState extends State<MyHomePage> {
     Timer.periodic(Duration(seconds: 2), (v) {
       setState(() {
         location.getCurrentLocation();
-        print("wow ${location.latitude} / ${location.longitude}");
+        // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
+        double aLat = 37.5015;
+        double aLng = 127.0395;
+        double aDistance = (6371 *
+            acos(cos(vect.radians(location.latitude)) *
+                    cos(vect.radians(aLat)) *
+                    cos(vect.radians(aLng) - vect.radians(location.longitude)) +
+                sin(vect.radians(location.latitude)) *
+                    sin(vect.radians(aLat))));
+        print(
+            "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
       });
     });
   }
