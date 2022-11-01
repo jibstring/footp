@@ -2,89 +2,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:app_footp/components/msgFoot/eventFoot.dart';
 
 
 const footAPIURL='https://';
-
-// class EventFoot{
-//   int eventId;
-//   String userNickname;
-//   String eventText;
-//   String eventFileurl;
-//   String eventWritedate;
-//   String eventFinishdate;
-//   //eventPoint;
-//   int eventLikenum;
-//   int eventSpamnum;
-//   bool isQuiz;
-//   bool isMylike;
-//   String eventQuestion;
-//   String eventAnswer;
-//   String eventExplain;
-//   String eventExplainurl;
-//   bool isSolvedByMe;
-
-//   EventFoot({
-//     required this.eventId,
-//     required this.userNickname,
-//     required this.eventText,
-//     required this.eventFileurl,
-//     required this.eventWritedate,
-//     required this.eventFinishdate,
-//     //eventPoint,
-//     required this.eventLikenum,
-//     required this.eventSpamnum,
-//     required this.isQuiz,
-//     required this.isMylike,
-//     required this.eventQuestion,
-//     required this.eventAnswer,
-//     required this.eventExplain,
-//     required this.eventExplainurl,
-//     required this.isSolvedByMe,
-//   });
-
-//   Map<String,dynamic> toJson(){
-//     return{
-//       'eventId':this.eventId,
-//     'userNickname':this.userNickname,
-//     'eventText':this.eventText,
-//     'eventFileurl':this.eventFileurl,
-//     'eventWritedate':this.eventWritedate,
-//     'eventFinishdate':this.eventFinishdate,
-//     //eventPoint,
-//     'eventLikenum':this.eventLikenum,
-//     'eventSpamnum':this.eventSpamnum,
-//     'isQuiz':this.isQuiz,
-//     'isMylike':this.isMylike,
-//     'eventQuestion':this.eventQuestion,
-//     'eventAnswer':this.eventAnswer,
-//     'eventExplain':this.eventExplain,
-//     'eventExplainurl':this.eventExplainurl,
-//     'isSolvedByMe':this.isSolvedByMe,
-//     };
-//   }
-
-//   factory EventFoot.fromJson(Map<String,dynamic> jsonData){
-//     return EventFoot(
-//       eventId:jsonData['eventId'] as int,
-//       userNickname:jsonData['userNickname'],
-//       eventText:jsonData['eventText'],
-//       eventFileurl:jsonData['eventFileurl'],
-//       eventWritedate:jsonData['eventWritedate'],
-//       eventFinishdate:jsonData['eventFinishdate'],
-//   //eventPoint,
-//       eventLikenum:jsonData['eventLikenum'],
-//       eventSpamnum:jsonData['eventSpamnum'],
-//       isQuiz:jsonData['isQuiz'],
-//       isMylike:jsonData['isMylike'],
-//       eventQuestion:jsonData['eventQuestion'],
-//       eventAnswer:jsonData['eventAnswer'],
-//       eventExplain:jsonData['eventExplain'],
-//       eventExplainurl:jsonData['eventExplainurl'],
-//       isSolvedByMe:jsonData['isSolvedByMe'],
-//     );
-//   }
-// }
 
 class FootList extends StatefulWidget{
   const FootList({super.key});
@@ -102,7 +23,7 @@ class _FootListState extends State<FootList> {
 {
         "eventId" : 2013,
         "userNickname" : "역사박물관관장",
-        "eventText" : "오늘 10시까지 역사퀴즈 이벤트 진행합니다 다들 많관부",
+        "eventText" : "오늘 10시까지 역사퀴즈 이벤트 진행합니다 다들 많관부", 
         "eventFileurl" : "s3",
         "eventWritedate" : "2022-10-27 15:34",
         "eventFinishdate" : "2022-10-28 10:34",
@@ -113,17 +34,20 @@ class _FootListState extends State<FootList> {
         "eventQuestion" : "숭례문은 국보 몇 호 일까요?(숫자만)",
         "eventAnswer" : "1",
         "eventExplain" : "숭례문은 국보 1호였습니다. 안내데스크에서 사탕 받아가세요!",
-        "eventExplainurl" : "https://ldb-phinf.pstatic.net/20150901_60/1441045635833GhE61_JPEG/13491509_0.jpg",
+        "eventExplainurl" : "imgs/orange_print.png",
         "isSolvedByMe": false
         }
   ''';
+  Map<String,dynamic>jsonData={};
 
   void readFile(){
-    Map<String,dynamic>jsonData=jsonDecode(jsonString);
+    jsonData=jsonDecode(jsonString);
     print(jsonData);
   }
     
   Widget build(BuildContext context){
+    double width=MediaQuery.of(context).size.width* 0.62; 
+    readFile();
     return DraggableScrollableSheet(
         initialChildSize: 0.3,
         minChildSize: 0.3,
@@ -135,8 +59,9 @@ class _FootListState extends State<FootList> {
             
       children:<Widget>[
         Container(
-          color:Colors.blue[100],
+          color:Colors.white,
           height: 50,
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children:<Widget> [
@@ -169,40 +94,103 @@ class _FootListState extends State<FootList> {
           ),
               IconButton(//검색
                 onPressed:(){},
-                icon: Icon(Icons.search,size:50)
+                icon: Icon(Icons.search,size:40),
                 ),
+                
 
             ],
 
       ),
         ), 
           Container(
-            color: Colors.blue[100],
+            padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
+            color: Colors.white,
             height:MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
             child: ListView.builder(
               controller: scrollController,
-              itemCount: 25,
+              itemCount: 10,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Container(
-                    width: MediaQuery.of(context).size.width,
+                return Card(
+                  child:Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: Column(
-                        children: [
+                      children: [
+                        SizedBox(
+                          height:10,
+                        ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Align(
-                              alignment :Alignment.centerLeft,
-                              child: Text('닉넴',style: TextStyle(fontSize: 20),),),
-                            Align(
-                              alignment :Alignment.centerRight,
-                              child: Text('날짜'),)
+                            Text(
+                                jsonData["userNickname"],
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  ),
+                            Text(
+                                jsonData["eventWritedate"],
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  ),
                           ],
                         ),
-                        Text('hello'),
+                        SizedBox(
+                          height:10,
+                        ),
+                        Row(children: [
+                          SizedBox(
+                            width:100,
+                            height:100,
+                            child:Image.asset(jsonData["eventExplainurl"])
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            width: width,
+                            child:Text(
+                              jsonData["eventText"],//100자로 제한
+                              style:const TextStyle(
+                                fontSize:15,
+                                fontWeight:FontWeight.bold,
+                                color:Colors.grey),
+                                )
+                          )
+                        ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                          IconButton(//검색
+                            onPressed:(){},
+                            icon: Icon(Icons.more_horiz,size:30),
+                            ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                            child: Row(                          
+                              children: [
+                                IconButton(//검색
+                                  onPressed:(){},
+                                  icon: Icon(
+                                    Icons.favorite,
+                                    color:Color.fromARGB(255, 250, 31, 31),
+                                    size:30),
+                                ),
+                                Text(
+                                  jsonData["eventLikenum"].toString(),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                  ),
+                                )
+                              ]),
+                          )
+
+                        ],)
                       ],
                     ),
-                  ),
-
+                  )
+                
                   );
 
               },
