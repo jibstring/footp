@@ -57,8 +57,8 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                         for (int i = 0; i < _selectedTypes.length; i++) {
                           _selectedTypes[i] = i == index;
                         }
+                        modeController1.press(index);
                       });
-                      modeController1.press(index);
                     },
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                     selectedBorderColor: Colors.indigo[100],

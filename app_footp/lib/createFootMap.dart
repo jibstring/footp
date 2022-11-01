@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 
 class MyNaverMap extends StatefulWidget {
+  CreateMarker image = Get.put(CreateMarker());
   @override
   State<MyNaverMap> createState() => _MyNaverMapState();
 }
@@ -18,40 +19,45 @@ class _MyNaverMapState extends State<MyNaverMap> {
   ModeController modeController2 = Get.put(ModeController());
   MyPosition myPosition_map = Get.put(MyPosition());
   CreateMarker createMarker = Get.put(CreateMarker());
-  List png = ['assets/normalfoot.png', 'assets/eventfoot.png'];
-  // final List<CreateMarker> myMarkers = PracticeData.myMarkers()s;
+  List png = ['asset/normalfoot.png', 'asset/eventfoot.png'];
   Marker marker = Marker(markerId: '0', position: LatLng(0, 0));
   onpress() {}
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!this.mounted) return;
+      createMarker.createImage(context, modeController2.mode);
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // createMarker.createImage(context);
     return Scaffold(
         appBar: AppBar(title: Text("map")),
         body: Center(
           child: Stack(
             alignment: Alignment.topCenter,
-            children: [
-              Container(
-                child: NaverMap(
-                  onMapTap: (latLng) => {
-                    Fluttertoast.showToast(msg: '$latLng'),
-                    createMarker.tapped(latLng.latitude, latLng.longitude),
-                    // createMarker.createImage(context, latLng.latitude, latLng.longitude)
-                  },
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                          myPosition_map.latitude, myPosition_map.longitude),
-                      zoom: 18),
-                  mapType: _mapType,
-                  scrollGestureEnable: false,
-                  zoomGestureEnable: false,
-                  markers: createMarker.list
-                    // Marker(
-                    //     markerId: 'marker1',
-                    //     position: LatLng(
-                    //         createMarker.latitude, createMarker.longitude),
-                    //     // icon: OverlayImage.fromAssetImage(assetName: png[modeController2.mode], context: context))
-                  ,
+            children: <Widget>[
+              GetBuilder<CreateMarker>(
+                builder: (_) => Container(
+                  child: NaverMap(
+                    onMapTap: (latLng) => {
+                      // Fluttertoast.showToast(msg: '$latLng'),
+                      // createMarker.createImage(context),
+                      createMarker.tapped(latLng.latitude, latLng.longitude),
+                    },
+                    initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                            myPosition_map.latitude, myPosition_map.longitude),
+                        zoom: 18),
+                    mapType: _mapType,
+                    scrollGestureEnable: false,
+                    zoomGestureEnable: false,
+                    markers: createMarker.list,
+                  ),
                 ),
               ),
               Container(
@@ -65,7 +71,7 @@ class _MyNaverMapState extends State<MyNaverMap> {
                     CircleAvatar(
                       backgroundImage: AssetImage(png[modeController2.mode]),
                     ),
-                    Text("발자국을 드래그하여 \n발자국을 찍으세요!",
+                    Text("지도를 탭하여 \n발자국을 찍으세요!",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
