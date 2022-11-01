@@ -50,6 +50,10 @@ dependencies {
 	// jwt
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.1'
 	
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+	
+	
 	
 	
 }

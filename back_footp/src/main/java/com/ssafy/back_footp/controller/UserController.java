@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.service.MailService;
+import com.ssafy.back_footp.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @AllArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/user")
 public class UserController {
 
 	//Autowire 하는곳
 	@Autowired
 	MailService mailService;
-	
+	@Autowired
+	UserService userService;
 	
 	
 	@PostMapping("/email/{email}/{name}")
@@ -33,7 +35,7 @@ public class UserController {
 	public ResponseEntity<Integer> test(@PathVariable String email, @PathVariable String name) {
 		int result = 0;
 		
-		Mail mail = mailService.sendEmailService(email, name);
+		Mail mail = userService.sendEmailService(email, name);
 		
 		mailService.mailSend(mail);
 		result = 1;
