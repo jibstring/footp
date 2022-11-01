@@ -16,9 +16,11 @@ public interface EventRepository extends JpaRepository<Event, Long>{
     List<Event> findAllInRadiusOrderByEventWritedate(double lon, double lat);
     @Query(value = "select * from event as e where (ST_Distance_Sphere(e.event_point, point(:lon, :lat))) <= 500 order by e.event_likenum", nativeQuery = true)
     List<Event> findAllInRadiusOrderByEventLikenum(double lon, double lat);
-    List<Event> findByUserIdOrderByEventWritedate(long id);
+    List<Event> findByUserIdOrderByEventWritedate(User id);
     List<Event> findAllByOrderByEventWritedate();
     List<Event> findAllByOrderByEventLikenumDesc();
+
+    List<Event> findAllByUserId(User userId);
     
     Event findByEventIdAndUserId(User userid, long eventid);
 }
