@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.service.MailService;
+import com.ssafy.back_footp.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;

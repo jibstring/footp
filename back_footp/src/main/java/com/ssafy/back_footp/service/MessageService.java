@@ -51,7 +51,7 @@ public class MessageService {
 //				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
 				messagelist.add(new messagelistDTO(
 				Message.getMessageId(),
-				Message.getUserId().getUserNickName(),
+				Message.getUserId().getUserNickname(),
 				Message.getMessageText(),
 				Message.getMessageFileurl(),
 				Message.getMessagePoint().getX(),
@@ -66,7 +66,7 @@ public class MessageService {
 		List<eventlistDTO> eventlist = new ArrayList<>();
 		eventRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event->eventlist.add(new eventlistDTO(
 				Event.getEventId(),
-				Event.getUserId().getUserNickName(),
+				Event.getUserId().getUserNickname(),
 				Event.getEventText(),
 				Event.getEventFileurl(),
 				Event.getEventWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
