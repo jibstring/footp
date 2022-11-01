@@ -3,7 +3,7 @@ package com.ssafy.back_footp.controller;
 import com.ssafy.back_footp.request.MypostUpdateReq;
 import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
-import com.ssafy.back_footp.service.UserService;
+import com.ssafy.back_footp.service.AuthService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.service.MailService;
-import com.ssafy.back_footp.service.UserService;
+import com.ssafy.back_footp.service.AuthService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 	//Autowire 하는곳
 	@Autowired
-	UserService userService;
+	AuthService authService;
 
 
 	@GetMapping("/myfoot/{userId}")
@@ -34,7 +34,7 @@ public class UserController {
 		JSONObject result = null;
 
 		try {
-			result = userService.getMymessages(userId);
+			result = authService.getMymessages(userId);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -49,7 +49,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = userService.updateMessage(mypostUpdateReq);
+			result = authService.updateMessage(mypostUpdateReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = userService.deleteMessage(messageId);
+			result = authService.deleteMessage(messageId);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -80,7 +80,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = userService.updatePassword(passwordUpdateReq);
+			result = authService.updatePassword(passwordUpdateReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -96,7 +96,7 @@ public class UserController {
 		String result = "fail";
 
 		try {
-			result = userService.updateNickname(nicknameUpdateReq);
+			result = authService.updateNickname(nicknameUpdateReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

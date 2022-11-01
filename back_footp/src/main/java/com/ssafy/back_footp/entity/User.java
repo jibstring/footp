@@ -19,7 +19,6 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,7 +36,7 @@ public class User {
 	@Column(name = "user_password", nullable = false)
 	private String userPassword;
 
-	@Column(name = "user_nickname", nullable = false)
+	@Column(name = "user_nickname")
 	private String userNickname;
 
 	@Column(name = "user_emailkey")
