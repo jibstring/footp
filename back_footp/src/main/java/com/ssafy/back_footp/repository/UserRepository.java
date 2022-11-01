@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	
 	//중복처리
 	public boolean existsByUserEmail(String email);
-	public boolean existsByUserNickName(String nickname);
+	public boolean existsByUserNickname(String nickname);
 	
 	//로그인에 쓰일거
 	public User findByUserEmailAndUserPassword(String email, String password);

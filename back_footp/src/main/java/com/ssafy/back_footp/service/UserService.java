@@ -73,7 +73,7 @@ public class UserService {
 	}
 
 	public boolean nickCheck(String Nickname) {
-		return userRepository.existsByUserNickName(Nickname);
+		return userRepository.existsByUserNickname(Nickname);
 	}
 
 	// 인증 시 랜덤으로 코드 생성해주는 함수
