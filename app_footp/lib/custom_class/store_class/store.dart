@@ -47,8 +47,10 @@ class CreateMarker extends GetxController {
     _longitude = b;
     Marker temp = _marker;
     temp.position = (LatLng(a, b));
-    _list.add(temp);
+    // _list.add(Marker(markerId: '$a', position: LatLng(a,b)));
+    _list.insert(0, temp);
     update();
+    // print('@@@@$_list)');
   }
 
   Future<void> createImage(BuildContext context, int i) async {
