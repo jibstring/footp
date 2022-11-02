@@ -25,10 +25,11 @@ public class eventlistDTO implements Serializable {
     private double eventLatitude;
     private int eventLikenum;
     private int eventSpamnum;
-    private boolean isQuiz;
-    private boolean isMylike;
+    private Boolean isQuiz;
+    private Boolean isMylike;
     private String eventQuestion;
     private String eventAnswer;
     private String eventExplain;
     private String eventExplainurl;
+    private Boolean isSolvedByMe;
 }

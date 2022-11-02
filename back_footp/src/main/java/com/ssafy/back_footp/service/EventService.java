@@ -46,7 +46,7 @@ public class EventService {
 		savedEvent.setEventSpamnum(eventInfo.getEventSpamnum());
 		savedEvent.setEventWritedate(LocalDateTime.now());
 		savedEvent.setEventFinishdate(LocalDateTime.now().plusHours(48));
-		savedEvent.setQuiz(eventInfo.isQuiz());
+		savedEvent.setQuiz(eventInfo.getIsQuiz());
 		savedEvent.setEventQuestion(eventInfo.getEventQuestion());
 		savedEvent.setEventAnswer(eventInfo.getEventAnswer());
 		savedEvent.setEventExplain(eventInfo.getEventExplain());
