@@ -29,6 +29,7 @@ class _MyNaverMapState extends State<MyNaverMap> {
       if (!this.mounted) return;
       createMarker.createImage(context, modeController2.mode);
     });
+    createMarker.list.clear();
     super.initState();
   }
 
