@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:app_footp/components/mainMap/stampList.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Location location = Location();
 
+  late OverlayImage _commonFoot;
+  late OverlayImage _eventFoot;
+  late OverlayImage _disabledFoot;
+  late OverlayImage _myFoot;
+  late OverlayImage _tempFoot;
+
   // 목록
   static List<Widget> widgetOptions = <Widget>[
     // 발자국 글목록
@@ -86,21 +93,40 @@ class _MyHomePageState extends State<MyHomePage> {
                 0.65,
             child: NaverMap(
               onMapCreated: _onMapCreated,
-              minZoom: 15.0,
-              maxZoom: 21.0,
+              minZoom: 5.0,
               locationButtonEnable: true,
               initLocationTrackingMode: LocationTrackingMode.Follow,
               markers: [
                 Marker(
-                  markerId: "marker1",
-                  position: LatLng(37.5013, 127.0397),
-                  // icon: OverlayImage.fromAssetImage(assetName: '/imgs/blue_print.png');
-                ),
+                    markerId: "marker1",
+                    position: LatLng(37.5013, 127.0397),
+                    icon: _commonFoot,
+                    width: 30,
+                    height: 30),
                 Marker(
-                  markerId: "marker2",
-                  position: LatLng(37.5005, 127.0371),
-                  // icon: OverlayImage.fromAssetImage(assetName: '/imgs/orange_print.png');
-                )
+                    markerId: "marker2",
+                    position: LatLng(37.5005, 127.0371),
+                    icon: _eventFoot,
+                    width: 30,
+                    height: 30),
+                Marker(
+                    markerId: "marker3",
+                    position: LatLng(37.5015, 127.0385),
+                    icon: _disabledFoot,
+                    width: 30,
+                    height: 30),
+                Marker(
+                    markerId: "marker4",
+                    position: LatLng(37.5009, 127.0379),
+                    icon: _myFoot,
+                    width: 30,
+                    height: 30),
+                Marker(
+                    markerId: "marker5",
+                    position: LatLng(37.5011, 127.0389),
+                    icon: _tempFoot,
+                    width: 30,
+                    height: 30)
               ],
               circles: [
                 CircleOverlay(
@@ -168,7 +194,42 @@ class _MyHomePageState extends State<MyHomePage> {
     _controller.complete(controller);
   }
 
+  void _getImage() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/blue_print.png',
+      ).then((image) {
+        if (mounted) setState(() => _commonFoot = image);
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/golden_print.png',
+      ).then((image) {
+        if (mounted) setState(() => _eventFoot = image);
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/gray_print.png',
+      ).then((image) {
+        if (mounted) setState(() => _disabledFoot = image);
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/orange_print.png',
+      ).then((image) {
+        if (mounted) setState(() => _myFoot = image);
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/white_print.png',
+      ).then((image) {
+        if (mounted) setState(() => _tempFoot = image);
+      });
+    });
+  }
+
   void initState() {
+    _getImage();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
       setState(() {

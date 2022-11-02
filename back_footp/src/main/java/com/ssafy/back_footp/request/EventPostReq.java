@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
+@Getter
 @ApiModel("EventPostReq")
 public class EventPostReq {
 
@@ -32,8 +34,8 @@ public class EventPostReq {
 	int eventLikenum;
 	
 	int eventSpamnum;
-	
-	boolean isQuiz;
+
+	Boolean isQuiz;
 	
 	String eventQuestion;
 	
