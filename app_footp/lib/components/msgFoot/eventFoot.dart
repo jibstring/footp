@@ -38,24 +38,36 @@ class EventFoot extends StatelessWidget {
                         SizedBox(
                           height:10,
                         ),
-                        Row(children: [
-                          SizedBox(
-                            width:100,
-                            height:100,
-                            child:Image.asset(eventmsg["eventFileurl"])
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            width: width,
-                            child:Text(
-                              eventmsg["eventText"],//100자로 제한
-                              style:const TextStyle(
-                                fontSize:15,
-                                fontWeight:FontWeight.bold,
-                                color:Colors.grey),
-                                )
-                          )
-                        ],
+                        //중간
+                        Container(
+                          child:(eventmsg["eventFileurl"]!=null)?
+                          Row(children: 
+                          [
+                            SizedBox(
+                              width:100,
+                              height:100,
+                              child:Image.asset(eventmsg["eventFileurl"])
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              width: width,
+                              child:Text(
+                                eventmsg["eventText"],//100자로 제한
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  )
+                            )
+                          ],
+                          ):
+                          Text(
+                                eventmsg["eventText"],//100자로 제한
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  )
                         ),
                         //하단
                         Row(

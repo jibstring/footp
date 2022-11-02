@@ -37,27 +37,38 @@ class NormalFoot extends StatelessWidget {
                         SizedBox(
                           height:10,
                         ),
-                        Row(children: [
-                          SizedBox(
-                            width:100,
-                            height:100,
-                            child:((){
-                              if(normalmsg["messageFileurl"]!=null){
-                                Image.asset(normalmsg["messageFileurl"]);
-                              }})(),
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            width: width,
-                            child:Text(
-                              normalmsg["messageText"],//100자로 제한
-                              style:const TextStyle(
-                                fontSize:15,
-                                fontWeight:FontWeight.bold,
-                                color:Colors.grey),
-                                )
-                          )
-                        ],
+                        //중간
+                        Container(
+                          child:
+                          (normalmsg["messageFileurl"]!=null)? 
+                          Row(children: [
+                            SizedBox(
+                              width:100,
+                              height:100,
+                              child:((){
+                                if(normalmsg["messageFileurl"]!=null){
+                                  Image.asset(normalmsg["messageFileurl"]);
+                                }})(),
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              width: width,
+                              child:Text(
+                                normalmsg["messageText"],//100자로 제한
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  )
+                            )
+                          ],
+                          ):Text(
+                                normalmsg["messageText"],//100자로 제한
+                                style:const TextStyle(
+                                  fontSize:15,
+                                  fontWeight:FontWeight.bold,
+                                  color:Colors.grey),
+                                  )
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
