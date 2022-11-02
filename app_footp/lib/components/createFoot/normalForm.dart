@@ -166,7 +166,7 @@ class _NormalFormState extends State<NormalForm> {
         Container(
             child: IconButton(
                 onPressed: () async {
-                  if (this.filePath == null && myText.text.trim() == '') {
+                  if (this.filePath == '' && myText.text.trim() == '') {
                     final snackBar = SnackBar(
                       content: const Text('내용을 입력하거나 파일을 첨부해주세요!'),
                       action: SnackBarAction(
