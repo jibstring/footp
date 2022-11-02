@@ -34,12 +34,19 @@ class ToggleButtonsSample extends StatefulWidget {
 class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
   final List<bool> _selectedTypes = <bool>[true, false];
   bool vertical = false;
+  MyPosition myPosition_main = Get.put(MyPosition());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    myPosition_main.getCurrentLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     ModeController modeController1 = Get.put(ModeController());
-    MyPosition myPosition_main = Get.put(MyPosition());
 
     return Scaffold(
         body: Padding(
@@ -52,7 +59,7 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                   ToggleButtons(
                     direction: vertical ? Axis.vertical : Axis.horizontal,
                     onPressed: (int index) {
-                      myPosition_main.getCurrentLocation();
+                      // myPosition_main.getCurrentLocation();
                       setState(() {
                         for (int i = 0; i < _selectedTypes.length; i++) {
                           _selectedTypes[i] = i == index;
