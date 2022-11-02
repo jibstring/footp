@@ -51,7 +51,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/javax.mail/mail
 	
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+	// https://mvnrepository.com/artifact/javax.mail/mail
+	implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
+	
 	// jwt
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.1'
 	
