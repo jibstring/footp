@@ -109,8 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 0.65,
             child: NaverMap(
               onMapCreated: _onMapCreated,
-              minZoom: 15.0,
-              maxZoom: 21.0,
+              minZoom: 5.0,
               locationButtonEnable: true,
               initLocationTrackingMode: LocationTrackingMode.Follow,
               markers: [
