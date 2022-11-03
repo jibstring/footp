@@ -4,6 +4,10 @@ import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.MessagePostReq;
 import com.ssafy.back_footp.service.MessageService;
 import io.swagger.annotations.Api;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,6 +69,18 @@ public class MessageController {
 		return new ResponseEntity<JSONObject>(result, HttpStatus.OK);
 	}
 
+	@GetMapping("/message/likelist/{userId}")
+	@ApiOperation(value = "유저가 좋아요한 발자국 리스트를 전부 조회한다.")
+	public ResponseEntity<List<MessageLike>> messageLikeList(@RequestParam long userId){
+		
+		List<MessageLike> list = new ArrayList<>();
+		
+		list = messageLikeRepository.findAllByUserId(userRepository.findByUserId(userId));
+		
+		return new ResponseEntity<List<MessageLike>>(list,HttpStatus.OK);
+		
+	}
+	
 	@PostMapping("/message")
 	@ApiOperation(value = "메세지 발자국 쓰기", notes = "일반 메세지 발자국을 작성한다.")
 	public ResponseEntity<JSONObject> messageWrite(@RequestBody MessagePostReq messagePostReq){

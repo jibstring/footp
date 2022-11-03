@@ -8,6 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class StampService {
+public class StampboardService {
 
 }
