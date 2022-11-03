@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ChatBlock")
+@Table(name = "chatblock")
 public class ChatBlock {
 	
 	@Id

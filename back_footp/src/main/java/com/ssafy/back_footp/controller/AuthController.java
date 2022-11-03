@@ -65,6 +65,7 @@ public class AuthController {
 		try {
 			// 이미 등록된 이메일이 아니라면
 			if (!authService.emailCheck(userEntity.getUserEmail())) {
+				System.out.println(userEntity);
 				authService.createUser(userEntity);
 				String token = jwtService.create("user_id", user.getUserId(), "Authorization");
 				result.put("Authorization", token);

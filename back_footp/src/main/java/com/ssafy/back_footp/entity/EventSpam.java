@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="EventSpam")
+@Table(name="eventspam")
 public class EventSpam {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="eventspam_id")

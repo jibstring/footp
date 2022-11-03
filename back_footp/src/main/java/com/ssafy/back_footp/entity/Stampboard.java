@@ -24,7 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Stampboard")
+@Table(name = "stampboard")
 public class Stampboard {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
