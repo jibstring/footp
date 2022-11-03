@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="MessageSpam")
+@Table(name="messagespam")
 public class MessageSpam {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="messagespam_id")
