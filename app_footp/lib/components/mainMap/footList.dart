@@ -1,26 +1,23 @@
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:app_footp/components/msgFoot/eventFoot.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
 
+const footAPIURL = 'https://';
 
-const footAPIURL='https://';
-
-class FootList extends StatefulWidget{
+class FootList extends StatefulWidget {
   const FootList({super.key});
 
-  State<FootList> createState()=> _FootListState();
+  State<FootList> createState() => _FootListState();
 }
 
 class _FootListState extends State<FootList> {
-
   int _selectedIndex = 0;
-  final _valueList=['HOT','좋아요','NEW','EVENT'];
-  var _selectedValue="HOT";
+  final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
+  var _selectedValue = "HOT";
 
-  String jsonString='''
+  String jsonString = '''
 {
        "event": [
 	      {
@@ -92,98 +89,95 @@ class _FootListState extends State<FootList> {
         }
   ''';
 
-  Map<String,dynamic>jsonData={};
-  List <dynamic>footData=[];
+  Map<String, dynamic> jsonData = {};
+  List<dynamic> footData = [];
 
-  void readFile(){
-    jsonData=jsonDecode(jsonString);
+  void readFile() {
+    jsonData = jsonDecode(jsonString);
     print(jsonData);
 
-    int eventlen=jsonData["event"].length;
-    int messagelen=jsonData["message"].length;
+    int eventlen = jsonData["event"].length;
+    int messagelen = jsonData["message"].length;
 
-    for(int i=0;i<eventlen;i++){
-      jsonData["event"][i]["check"]=0;
+    for (int i = 0; i < eventlen; i++) {
+      jsonData["event"][i]["check"] = 0;
       footData.add(jsonData["event"][i]);
     }
-    for(int i=0;i<messagelen;i++){
-      jsonData["message"][i]["check"]=1;
+    for (int i = 0; i < messagelen; i++) {
+      jsonData["message"][i]["check"] = 1;
       footData.add(jsonData["message"][i]);
     }
-
   }
-    
-  Widget build(BuildContext context){
-    double width=MediaQuery.of(context).size.width* 0.62; 
+
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width * 0.62;
     readFile();
     return DraggableScrollableSheet(
-        initialChildSize: 0.3,
-        minChildSize: 0.3,
-        maxChildSize: 1,
-        snap: true,
-        snapSizes: [0.65],
-        builder: (BuildContext context, ScrollController scrollController) {
-          return Column(
-            
-      children:<Widget>[
-        Container(
-          color:Colors.white,
-          height: 50,
-          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children:<Widget> [
-              DropdownButton(
-                value:_selectedValue,
-                items: _valueList.map(
-                (value){
-                  return DropdownMenuItem(
-                    value:value,
-                    child:Text(value)
-                  );
-                },
-              ).toList(),
-              onChanged: (value){
-                setState((){
-                  _selectedValue=value!;
-                });
-              },
-            ),
-            IconButton(//새로고침
-            icon: Icon(
-              Icons.refresh,
-              //color: Color.fromARGB(255, 228, 229, 160),
-              size: 40,
-            ),
-            // padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
-            onPressed: () {
-              readFile();
-            },
-          ),
-              IconButton(//검색
-                onPressed:(){},
-                icon: Icon(Icons.search,size:40),
+      initialChildSize: 0.3,
+      minChildSize: 0.3,
+      maxChildSize: 1,
+      snap: true,
+      snapSizes: [0.65],
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Column(children: <Widget>[
+          Container(
+            color: Colors.white,
+            height: 50,
+            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                DropdownButton(
+                  value: _selectedValue,
+                  items: _valueList.map(
+                    (value) {
+                      return DropdownMenuItem(value: value, child: Text(value));
+                    },
+                  ).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedValue = value!;
+                    });
+                  },
                 ),
-            ],
-      ),
-        ), 
+                IconButton(
+                  //새로고침
+                  icon: Icon(
+                    Icons.refresh,
+                    //color: Color.fromARGB(255, 228, 229, 160),
+                    size: 40,
+                  ),
+                  // padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
+                  onPressed: () {
+                    readFile();
+                  },
+                ),
+                IconButton(
+                  //검색
+                  onPressed: () {},
+                  icon: Icon(Icons.search, size: 40),
+                ),
+              ],
+            ),
+          ),
           Container(
             padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
             color: Colors.white,
-            height:MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+            height: MediaQuery.of(context).size.height -
+                MediaQuery.of(context).padding.top,
             child: ListView.builder(
               controller: scrollController,
               itemCount: 4,
               itemBuilder: (BuildContext context, int index) {
-                return (footData[index]["check"]==0)? EventFoot(footData[index]) :NormalFoot(footData[index]);
+                return (footData[index]["check"] == 0)
+                    ? EventFoot(footData[index])
+                    : NormalFoot(footData[index]);
               },
             ),
           ),
-      ]
-          );
-        },
-      );
-
+        ]);
+      },
+    );
   }
 
   void _onItemTapped(int index) {
@@ -191,5 +185,4 @@ class _FootListState extends State<FootList> {
       _selectedIndex = index;
     });
   }
-  
 }

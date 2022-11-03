@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:collection';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
+import 'package:http/http.dart' as http;
 
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/location.dart';
@@ -14,6 +16,25 @@ import 'package:app_footp/components/mainMap/footList.dart';
 
 void main() {
   runApp(const mainMap());
+}
+
+String baseURL = 'http://k7a108.p.ssafy.io:8080';
+String apiKey = '';
+
+class MainData {
+  final mainDataUrl = Uri.parse('$baseURL/foot/main$apiKey');
+
+  Future getMainData() async {
+    http.Response response = await http.get(mainDataUrl);
+    if (response.statusCode == 200) {
+      var jsonDecodedData = jsonDecode(utf8.decode(response.bodyBytes));
+      print(jsonDecodedData);
+      return jsonDecodedData;
+    } else {
+      print(response.statusCode);
+      throw 'getMainData() error';
+    }
+  }
 }
 
 class mainMap extends StatelessWidget {
@@ -49,11 +70,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Location location = Location();
 
+  var _decodedData;
+
   late OverlayImage _commonFoot;
   late OverlayImage _eventFoot;
   late OverlayImage _disabledFoot;
   late OverlayImage _myFoot;
   late OverlayImage _tempFoot;
+
+  late NaverMapController mycontroller;
+  late LatLngBounds _mapEdge;
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -108,59 +134,52 @@ class _MyHomePageState extends State<MyHomePage> {
                     MediaQuery.of(context).padding.top) *
                 0.65,
             child: NaverMap(
-              onMapCreated: _onMapCreated,
-              minZoom: 5.0,
-              locationButtonEnable: true,
-              initLocationTrackingMode: LocationTrackingMode.Follow,
-              markers: [
-                Marker(
-                    markerId: "marker1",
-                    position: LatLng(37.5013, 127.0397),
-                    icon: _commonFoot,
-                    width: 30,
-                    height: 30),
-                Marker(
-                    markerId: "marker2",
-                    position: LatLng(37.5005, 127.0371),
-                    icon: _eventFoot,
-                    width: 30,
-                    height: 30),
-                Marker(
-                    markerId: "marker3",
-                    position: LatLng(37.5015, 127.0385),
-                    icon: _disabledFoot,
-                    width: 30,
-                    height: 30),
-                Marker(
-                    markerId: "marker4",
-                    position: LatLng(37.5009, 127.0379),
-                    icon: _myFoot,
-                    width: 30,
-                    height: 30),
-                Marker(
-                    markerId: "marker5",
-                    position: LatLng(37.5011, 127.0389),
-                    icon: _tempFoot,
-                    width: 30,
-                    height: 30)
-              ],
-              circles: [
-                CircleOverlay(
-                    overlayId: "radius25",
-                    center: location.lng,
-                    radius: 25,
-                    color: Colors.transparent,
-                    outlineColor: Colors.orangeAccent,
-                    outlineWidth: 1),
-                CircleOverlay(
-                    overlayId: "radius250",
-                    center: location.lng,
-                    radius: 250,
-                    color: Colors.transparent,
-                    outlineColor: Colors.lightBlueAccent,
-                    outlineWidth: 1)
-              ],
-            )),
+                onMapCreated: _onMapCreated,
+                onCameraIdle: _getMapEdge,
+                minZoom: 5.0,
+                locationButtonEnable: true,
+                initLocationTrackingMode: LocationTrackingMode.Follow,
+                markers: [
+                  Marker(
+                      markerId: "marker1",
+                      position: LatLng(37.5013, 127.0397),
+                      icon: _commonFoot,
+                      width: 30,
+                      height: 30),
+                  Marker(
+                      markerId: "marker2",
+                      position: LatLng(37.5005, 127.0371),
+                      icon: _eventFoot,
+                      width: 30,
+                      height: 30),
+                  Marker(
+                      markerId: "marker3",
+                      position: LatLng(37.5015, 127.0385),
+                      icon: _disabledFoot,
+                      width: 30,
+                      height: 30),
+                  Marker(
+                      markerId: "marker4",
+                      position: LatLng(37.5009, 127.0379),
+                      icon: _myFoot,
+                      width: 30,
+                      height: 30),
+                  Marker(
+                      markerId: "marker5",
+                      position: LatLng(37.5011, 127.0389),
+                      icon: _tempFoot,
+                      width: 30,
+                      height: 30)
+                ],
+                circles: [
+                  CircleOverlay(
+                      overlayId: "radius25",
+                      center: location.lng,
+                      radius: 25,
+                      color: Colors.transparent,
+                      outlineColor: Colors.orangeAccent,
+                      outlineWidth: 1)
+                ])),
         Align(
           alignment: Alignment.bottomRight,
           child: IconButton(
@@ -208,6 +227,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
+    mycontroller = controller;
+  }
+
+  void _getMapEdge() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      mycontroller.getVisibleRegion().then((value) {
+        _mapEdge = value;
+      });
+    });
   }
 
   void _getImage() {
@@ -244,6 +272,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void getData() async {
+    try {
+      dynamic data = await MainData().getMainData();
+      setState(() {
+        _decodedData = data;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void initState() {
     _getImage();
     super.initState();
@@ -261,6 +300,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     sin(vect.radians(aLat))));
         print(
             "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
+        print(
+            "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
+
+        apiKey = '/1/${location.longitude}/${location.latitude}';
+        // 이 부분은 2차 배포때 수정할 예정
+        // apiKey =
+        //     '/${_mapEdge.northeast.longitude}/${_mapEdge.southwest.longitude}/${_mapEdge.southwest.latitude}/${_mapEdge.northeast.latitude}';
+
+        getData();
+        print(_decodedData);
       });
     });
   }
