@@ -9,6 +9,8 @@ import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 
+import 'package:app_footp/myPage.dart';
+
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/location.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
@@ -81,7 +83,12 @@ class _MyHomePageState extends State<MyHomePage> {
               size: 40,
             ),
             padding: const EdgeInsets.only(top: 5, right: 20.0),
-            onPressed: () {},
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyPage()),
+              );
+            },
           ),
         ],
       ),
@@ -157,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateFoot()),
+                MaterialPageRoute(builder: (context) => const CreateFoot()),
               );
             },
           ),
