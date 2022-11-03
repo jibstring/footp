@@ -1,3 +1,4 @@
+import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/signUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -155,7 +156,17 @@ class _SignInState extends State<SignIn> {
     if (response.data['message'] == 'fail') {
       _showDialog('로그인 실패');
     } else {
-      _showDialog('로그인 성공');
+      final snackBar = SnackBar(
+        content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),
+        action: SnackBarAction(
+          label: '확인',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => mainMap()));
     }
   }
 }
