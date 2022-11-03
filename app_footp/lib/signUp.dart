@@ -1,3 +1,5 @@
+import 'package:app_footp/createFootMap.dart';
+import 'package:app_footp/mainMap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -18,8 +20,7 @@ class _SignUpState extends State<SignUp> {
   bool _value = false;
   bool obscurePasswordOne = true;
   bool obscurePasswordTwo = true;
-  String? passwordConfirm;
-  String? passwordValidation;
+  String passwordValidation = '알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자 이상';
   bool passwordConfirmed = true;
 
   TextEditingController emailController = TextEditingController();
@@ -31,7 +32,8 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
         body: Padding(
             padding: const EdgeInsets.all(10),
-            child: ListView(
+            child: Center(
+                child: ListView(
               children: <Widget>[
                 // 앱 이름
                 Container(
@@ -82,6 +84,7 @@ class _SignUpState extends State<SignUp> {
                                 ))),
                 ),
 
+                SizedBox(height: 20),
                 //비밀번호 입력창
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -119,7 +122,15 @@ class _SignUpState extends State<SignUp> {
                 ),
 
                 // 비밀번호 유효성 확인
-                Text('$passwordValidation'),
+                Container(
+                    padding: EdgeInsets.all(10),
+                    child: passwordValidation == '올바른 형식으로 입력해주세요.'
+                        ? Text('$passwordValidation',
+                            style: TextStyle(color: Colors.red))
+                        : Text('$passwordValidation',
+                            style: TextStyle(color: Colors.green))
+                    // child: Text('$passwordValidation'),
+                    ),
 
                 // 비밀번호 확인용 입력창
                 Container(
@@ -156,8 +167,18 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
 
-                Text('$passwordConfirmed'),
-                Text('${emailController.text == ''}'),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: passwordConfirmed
+                      ? Text(
+                          '비밀번호가 일치합니다.',
+                          style: TextStyle(color: Colors.green),
+                        )
+                      : Text(
+                          '비밀번호가 일치하지 않습니다.',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                ),
 
                 // 가입 버튼
                 Container(
@@ -181,7 +202,7 @@ class _SignUpState extends State<SignUp> {
                       },
                     )),
               ],
-            )));
+            ))));
   }
 
   void _showDialog(String message) {
@@ -204,14 +225,14 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  String? validatePassword(String value) {
+  String validatePassword(String value) {
     RegExp regex =
         RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-    if (value.isEmpty) {
+    if (value == '') {
       return '알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자 이상';
     } else {
       if (!regex.hasMatch(value)) {
-        return '올바른 형식으로 입력해주세요';
+        return '올바른 형식으로 입력해주세요.';
       } else {
         return '올바른 비밀번호입니다.';
       }
@@ -254,5 +275,6 @@ class _SignUpState extends State<SignUp> {
     print('#################################');
 
     _showDialog('가입 성공!');
+    Navigator.push(context, MaterialPageRoute(builder: (context) => mainMap()));
   }
 }
