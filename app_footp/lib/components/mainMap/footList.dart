@@ -54,7 +54,7 @@ class _FootListState extends State<FootList> {
         "eventLikenum" : 4,
         "eventSpamnum" : 0,
         "isQuiz" : true,
-        "isMylike": true,
+        "isMylike": false,
         "eventQuestion" : "숭례문은 국보 몇 호 일까요?(숫자만)",
         "eventAnswer" : "1",
         "eventExplain" : "숭례문은 국보 1호였습니다. 안내데스크에서 사탕 받아가세요!",

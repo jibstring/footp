@@ -2,13 +2,45 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 
-class NormalFoot extends StatelessWidget {
-  int userId=123;
+
+class NormalFoot extends StatefulWidget {
+
   Map<String,dynamic> normalmsg;
   NormalFoot(this.normalmsg,{Key? key}):super(key:key);
 
+  @override
+  State<NormalFoot> createState() => _NormalFootState();
+}
+
+class _NormalFootState extends State<NormalFoot> {
+  @override
+  int userId=123;
+
+  int heartnum=0;
+  List <String>heartList=[
+    "imgs/heart_empty.png",
+    "imgs/heart_color.png"
+  ];
+
+  void heartChange(){
+    setState(() {
+      if(heartnum==0){
+        heartnum=1;
+        widget.normalmsg["isMylike"]=true;
+        widget.normalmsg["messageLikenum"]=widget.normalmsg["messageLikenum"]+1;
+      }
+      else{
+        heartnum=0;
+        widget.normalmsg["isMylike"]=false;
+        widget.normalmsg["messageLikenum"]=widget.normalmsg["messageLikenum"]-1;
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
     double width=MediaQuery.of(context).size.width* 0.62; 
+    widget.normalmsg["isMylike"]? heartnum=1:heartnum=0;
+    
     return Card(
                   child:Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -21,14 +53,14 @@ class NormalFoot extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                                normalmsg["userNickname"],
+                                widget.normalmsg["userNickname"],
                                 style:const TextStyle(
                                   fontSize:15,
                                   fontWeight:FontWeight.bold,
                                   color:Colors.grey),
                                   ),
                             Text(
-                                normalmsg["messageWritedate"],
+                                widget.normalmsg["messageWritedate"],
                                 style:const TextStyle(
                                   fontSize:15,
                                   fontWeight:FontWeight.bold,
@@ -42,21 +74,21 @@ class NormalFoot extends StatelessWidget {
                         //중간
                         Container(
                           child:
-                          (normalmsg["messageFileurl"]!=null)? 
+                          (widget.normalmsg["messageFileurl"]!=null)? 
                           Row(children: [
                             SizedBox(
                               width:100,
                               height:100,
                               child:((){
-                                if(normalmsg["messageFileurl"]!=null){
-                                  Image.asset(normalmsg["messageFileurl"]);
+                                if(widget.normalmsg["messageFileurl"]!=null){
+                                  Image.asset(widget.normalmsg["messageFileurl"]);
                                 }})(),
                             ),
                             Container(
                               padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                               width: width,
                               child:Text(
-                                normalmsg["messageText"],//100자로 제한
+                                widget.normalmsg["messageText"],//100자로 제한
                                 style:const TextStyle(
                                   fontSize:15,
                                   fontWeight:FontWeight.bold,
@@ -65,7 +97,7 @@ class NormalFoot extends StatelessWidget {
                             )
                           ],
                           ):Text(
-                                normalmsg["messageText"],//100자로 제한
+                                widget.normalmsg["messageText"],//100자로 제한
                                 style:const TextStyle(
                                   fontSize:15,
                                   fontWeight:FontWeight.bold,
@@ -79,7 +111,7 @@ class NormalFoot extends StatelessWidget {
                           IconButton(
                             onPressed:(){
                               showDialog(context: context, builder: (context){
-                                return ReportModal(normalmsg["messageId"],userId);
+                                return ReportModal(widget.normalmsg["messageId"],userId);
                               });
                             },
                             icon: Icon(Icons.more_horiz,size:30),
@@ -90,27 +122,20 @@ class NormalFoot extends StatelessWidget {
                             child: Row(                          
                               children: [
                                 InkWell(
-                                  child: Image.asset("imgs/heart_empty.png",
+                                  child: Image.asset(heartList[heartnum],
                                   width: 30,
                                   height: 30,),
             
                                   onTap:(){
-                                    print("On Tap");
+                                    heartChange();
                                   }
-                                ), 
-                                // IconButton(
-                                //   onPressed:(){},
-                                //   icon: Icon(
-                                //     Icons.favorite,
-                                //     color:Color.fromARGB(255, 250, 31, 31),
-                                //     size:30),
-                                // ),
+                                ),
                                 SizedBox(width:10),
                                 SizedBox(
                                   width: 40,
                                   //height:30,
                                   child: Text(
-                                    normalmsg["messageLikenum"].toString(),
+                                    widget.normalmsg["messageLikenum"].toString(),
                                     style: TextStyle(
                                       fontSize: 15,
                                     ),
