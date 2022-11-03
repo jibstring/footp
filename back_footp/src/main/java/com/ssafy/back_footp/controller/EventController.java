@@ -105,15 +105,15 @@ public class EventController {
 	
 	@GetMapping("/ranking/joiner/{userId}/{eventId}")
 	@ApiOperation(value = "이벤트 퀴즈 상위 5명 확인", notes = "주최자의 경우 퀴즈를 가장 먼저 푼 5명 확인 가능")
-	public ResponseEntity<List<UserRankingReq>> checkRankings(@PathVariable User userId, @PathVariable Event eventId){
+	public ResponseEntity<List<UserRankingReq>> checkRankings(@PathVariable long userId, @PathVariable long eventId){
 		
 		//주최자가 아니면 접근못함
-		if(eventRepository.findByEventIdAndUserId(userId, eventId.getEventId())==null) {
+		if(eventRepository.findByEventIdAndUserId(eventId, userRepository.findById(userId).get())==null) {
 			return null;
 		}
 		
 		// 일단 문제에 대한 전체 정답자 빨리 맞힌 순으로 가져오기
-		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(eventId);
+		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(eventRepository.findById(eventId).get());
 		
 		List<UserRankingReq> FiveRankings = new ArrayList<>();
 		
@@ -132,7 +132,7 @@ public class EventController {
 			
 		}
 		
-		return new ResponseEntity<List<UserRankingReq>>(FiveRankings,HttpStatus.OK);
+		return new ResponseEntity<>(FiveRankings,HttpStatus.OK);
 	}
 	
 	@GetMapping("/ranking/owner/{userId}/{eventId}")
