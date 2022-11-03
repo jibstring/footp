@@ -16,8 +16,8 @@ public class MailConfig {
 		JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 		
 		javaMailSender.setHost("smtp.gmail.com");
-        javaMailSender.setUsername("apxjvm@gmail.com");
-        javaMailSender.setPassword("lvckmhooadfhoqzo"); //이제 구글 보안은 이 앱 비밀번호를 사용해서 해야합니다. (2단계 보안 설정 후 앱 비밀번호를 발급받아 사용)
+        javaMailSender.setUsername("footp.company@gmail.com");
+        javaMailSender.setPassword("yrdhlktdexkerzwk"); //이제 구글 보안은 이 앱 비밀번호를 사용해서 해야합니다. (2단계 보안 설정 후 앱 비밀번호를 발급받아 사용)
 
         javaMailSender.setPort(465);
 
@@ -35,10 +35,11 @@ public class MailConfig {
         properties.setProperty("mail.smtp.starttls.enable", "true");
         properties.setProperty("mail.debug", "true");
         properties.setProperty("mail.smtp.ssl.trust","smtp.gmail.com");
+        properties.setProperty("mail.smtp.port", "465");
         properties.setProperty("mail.smtp.ssl.enable","true");
-//        properties.setProperty("mail.smtp.socketFactory.port", "587");
-//        properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//        properties.setProperty("mail.smtp.socketFactory.fallback", "false");
+        properties.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
+        properties.setProperty("mail.smtp.connectiontimeout", "5000");
+        properties.setProperty("mail.smtp.writetimeout", "5000");
         return properties;
 	}
 }
