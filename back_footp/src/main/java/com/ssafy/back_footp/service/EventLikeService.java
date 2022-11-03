@@ -33,11 +33,11 @@ public class EventLikeService {
 		
 		//좋아요를 누르지 않은 상태에서 누른경우, Table에 추가하기 위해 Create한다.
 		@Transactional
-		public EventLike createLike(EventLike eventLike) {
-			EventLike savedLike = eventLikeRepository.save(eventLike);
+		public GatherLike createLike(GatherLike gatherLike) {
+			GatherLike savedLike = eventLikeRepository.save(gatherLike);
 
 			// Likenum 증가
-			Event evt = eventRepository.findById(eventLike.getEventId().getEventId()).get();
+			Gather evt = eventRepository.findById(gatherLike.getGatherId().getEventId()).get();
 			evt.setEventLikenum(evt.getEventLikenum()+1);
 			eventRepository.save(evt);
 
@@ -49,7 +49,7 @@ public class EventLikeService {
 		public void deleteLike(long eid, long uid) {
 
 			// Likenum 감소
-			Event evt = eventRepository.findById(eid).get();
+			Gather evt = eventRepository.findById(eid).get();
 			evt.setEventLikenum(evt.getEventLikenum()-1);
 			eventRepository.save(evt);
 

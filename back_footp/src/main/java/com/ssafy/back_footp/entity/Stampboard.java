@@ -35,16 +35,16 @@ public class Stampboard {
     @JoinColumn(name="user_id")
     private User userId;
 	
-	@Column(name = "stampboard_title")
+	@Column(name = "stampboard_title", length = 255)
 	private String stampboardTitle;
 	
-	@Column(name = "stampboard_text")
+	@Column(name = "stampboard_text", length = 255)
 	private String stampboardText;
 	
 	@Column(name = "stampboard_designcode")
 	private Integer stampboardDesigncode;
 	
-	@Column(name = "stampboard_designimgurl")
+	@Column(name = "stampboard_designimgurl", length = 1024)
 	private String stampboardDesignimgurl;
 	
 	@Column(name = "stampboard_writedate")
@@ -55,16 +55,17 @@ public class Stampboard {
 	
 	@Column(name = "stampboard_spamnum")
 	private Integer stampboardSpamnum;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="stampboard_message2")
-    private Message stampboardMessage2;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="stampboard_message3")
-    private Message stampboardMessage3;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="stampboard_message1")
     private Message stampboardMessage1;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="stampboard_message2")
+	private Message stampboardMessage2;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="stampboard_message3")
+	private Message stampboardMessage3;
+
 }

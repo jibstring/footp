@@ -6,9 +6,8 @@ import com.ssafy.back_footp.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.back_footp.entity.Event;
-import com.ssafy.back_footp.entity.EventSpam;
-import com.ssafy.back_footp.entity.MessageSpam;
+import com.ssafy.back_footp.entity.Gather;
+import com.ssafy.back_footp.entity.GatherSpam;
 import com.ssafy.back_footp.repository.EventSpamRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,11 +31,11 @@ public class EventSpamService {
 
 	// 신고를 누르지 않은 상태에서 누른경우, Table에 추가하기 위해 Create한다.
 	@Transactional
-	public EventSpam createSpam(EventSpam eventSpam) {
-		EventSpam savedSpam = eventSpamRepository.save(eventSpam);
+	public GatherSpam createSpam(GatherSpam gatherSpam) {
+		GatherSpam savedSpam = eventSpamRepository.save(gatherSpam);
 
 		// Likenum 증가
-		Event evt = eventRepository.findById(eventSpam.getEventId().getEventId()).get();
+		Gather evt = eventRepository.findById(gatherSpam.getGatherId().getEventId()).get();
 		evt.setEventSpamnum(evt.getEventSpamnum()+1);
 		eventRepository.save(evt);
 

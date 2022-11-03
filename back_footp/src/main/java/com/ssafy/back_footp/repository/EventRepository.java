@@ -1,26 +1,23 @@
 package com.ssafy.back_footp.repository;
 
-import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.entity.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-import com.ssafy.back_footp.entity.Event;
+import com.ssafy.back_footp.entity.Gather;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-
-public interface EventRepository extends JpaRepository<Event, Long>{
+public interface EventRepository extends JpaRepository<Gather, Long>{
     @Query(value = "select * from event as e where (ST_Distance_Sphere(e.event_point, point(:lon, :lat))) <= 500 order by e.event_writedate", nativeQuery = true)
-    List<Event> findAllInRadiusOrderByEventWritedate(double lon, double lat);
+    List<Gather> findAllInRadiusOrderByEventWritedate(double lon, double lat);
     @Query(value = "select * from event as e where (ST_Distance_Sphere(e.event_point, point(:lon, :lat))) <= 500 order by e.event_likenum", nativeQuery = true)
-    List<Event> findAllInRadiusOrderByEventLikenum(double lon, double lat);
-    List<Event> findByUserIdOrderByEventWritedate(User id);
-    List<Event> findAllByOrderByEventWritedate();
-    List<Event> findAllByOrderByEventLikenumDesc();
+    List<Gather> findAllInRadiusOrderByEventLikenum(double lon, double lat);
+    List<Gather> findByUserIdOrderByEventWritedate(User id);
+    List<Gather> findAllByOrderByEventWritedate();
+    List<Gather> findAllByOrderByEventLikenumDesc();
 
-    List<Event> findAllByUserId(User userId);
+    List<Gather> findAllByUserId(User userId);
     
-    Event findByEventIdAndUserId(long eventid, User userid);
+    Gather findByEventIdAndUserId(long eventid, User userid);
 }

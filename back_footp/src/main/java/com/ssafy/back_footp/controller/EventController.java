@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.back_footp.entity.Event;
-import com.ssafy.back_footp.entity.EventLike;
+import com.ssafy.back_footp.entity.Gather;
+import com.ssafy.back_footp.entity.GatherLike;
 import com.ssafy.back_footp.entity.EventRanking;
-import com.ssafy.back_footp.entity.EventSpam;
-import com.ssafy.back_footp.entity.Message;
+import com.ssafy.back_footp.entity.GatherSpam;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.EventLikeRepository;
 import com.ssafy.back_footp.repository.EventRankingRepository;
@@ -90,11 +89,11 @@ public class EventController {
 	public ResponseEntity<Integer> checkAnswer(@RequestBody EventAnswerReq eventAnswerReq){
 		int result = 0;
 		
-		Event event = eventRepository.findById(eventAnswerReq.getEventId()).get();
+		Gather gather = eventRepository.findById(eventAnswerReq.getEventId()).get();
 		
 		// 정답이 맞으면 EventRanking 테이블에 넣은 뒤 1 반환
-		if(event.getEventAnswer().equals(eventAnswerReq.getEventAnswer())) {
-			EventRanking eventRanking = EventRanking.builder().eventId(eventRepository.findById(eventAnswerReq.getEventId()).get()).userId(userRepository.findById(eventAnswerReq.getUserId()).get()).eventrankingDate(LocalDateTime.now()).build();
+		if(gather.getEventAnswer().equals(eventAnswerReq.getEventAnswer())) {
+			EventRanking eventRanking = EventRanking.builder().gatherId(eventRepository.findById(eventAnswerReq.getEventId()).get()).userId(userRepository.findById(eventAnswerReq.getUserId()).get()).eventrankingDate(LocalDateTime.now()).build();
 			
 			eventRankingRepository.save(eventRanking);
 			result= 1;
@@ -135,16 +134,16 @@ public class EventController {
 		return new ResponseEntity<>(FiveRankings,HttpStatus.OK);
 	}
 	
-	@GetMapping("/ranking/owner/{userId}/{eventId}")
+	@GetMapping("/ranking/owner/{userId}/{gatherId}")
 	@ApiOperation(value = "이벤트 퀴즈 랭킹 확인", notes = "본인이 몇번째로 이 문제에 대한 정답을 맞췄는지 확인")
-	public ResponseEntity<Integer> checkMyRanking(@PathVariable User userId, @PathVariable Event eventId){
+	public ResponseEntity<Integer> checkMyRanking(@PathVariable User userId, @PathVariable Gather gatherId){
 		
-		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(eventId);
+		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(gatherId);
 		
 		int cnt = 1;
 		
 		// 아직 이 문제를 맞추지 않은 경우
-		if(eventRankingRepository.findByEventIdAndUserId(eventId, userId)==null) {
+		if(eventRankingRepository.findByEventIdAndUserId(gatherId, userId)==null) {
 			cnt = -1;
 			return new ResponseEntity<Integer>(cnt,HttpStatus.OK);
 		}
@@ -168,7 +167,7 @@ public class EventController {
 	@ApiOperation(value = "이벤트 좋아요하기", notes = "이벤트 발자국일때 좋아요 누른다")
 	public ResponseEntity<Integer> eventLike(@PathVariable long eventId, @PathVariable long userId){
 		
-		EventLike msg = EventLike.builder().eventId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
+		GatherLike msg = GatherLike.builder().gatherId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
 		
 		int result = 1;
 		try {
@@ -199,7 +198,7 @@ public class EventController {
 	public ResponseEntity<Integer> messageLikenum(@PathVariable long eventId){
 		
 		int result = 0;
-		Event ev = eventRepository.findById(eventId).get();
+		Gather ev = eventRepository.findById(eventId).get();
 		try {
 			// 좋아요 후 업데이트 
 			int num = eventLikeService.likeNum(eventId);
@@ -221,7 +220,7 @@ public class EventController {
 	public ResponseEntity<Integer> eventSpam(@PathVariable long eventId, @PathVariable long userId){
 		
 		int result = 1;
-		EventSpam msg = EventSpam.builder().eventId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
+		GatherSpam msg = GatherSpam.builder().gatherId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
 		
 		try {
 			eventSpamService.createSpam(msg);
@@ -238,7 +237,7 @@ public class EventController {
 	public ResponseEntity<Integer> messageSpamnum(@PathVariable long eventId){
 		
 		int result = 0;
-		Event ev = eventRepository.findById(eventId).get();
+		Gather ev = eventRepository.findById(eventId).get();
 		try {
 			// 좋아요 후 업데이트 
 			int num = eventSpamService.spamNum(eventId);

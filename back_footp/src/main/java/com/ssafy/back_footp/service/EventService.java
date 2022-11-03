@@ -10,7 +10,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.back_footp.entity.Event;
+import com.ssafy.back_footp.entity.Gather;
 import com.ssafy.back_footp.repository.EventLikeRepository;
 import com.ssafy.back_footp.repository.EventRepository;
 import com.ssafy.back_footp.repository.UserRepository;
@@ -36,23 +36,23 @@ public class EventService {
 	
 	@Transactional
 	public String createEvent(EventPostReq eventInfo) throws ParseException{
-		Event savedEvent = new Event();
+		Gather savedGather = new Gather();
 		
-		savedEvent.setUserId(userRepository.findById(eventInfo.getUserId()).get());
-		savedEvent.setEventText(eventInfo.getEventText());
-		savedEvent.setEventFileurl(eventInfo.getEventFileurl());
-		savedEvent.setEventPoint(gf.createPoint(new Coordinate(eventInfo.getEventLongitude(), eventInfo.getEventLatitude())));
-		savedEvent.setEventLikenum(eventInfo.getEventLikenum());
-		savedEvent.setEventSpamnum(eventInfo.getEventSpamnum());
-		savedEvent.setEventWritedate(LocalDateTime.now());
-		savedEvent.setEventFinishdate(LocalDateTime.now().plusHours(48));
-		savedEvent.setQuiz(eventInfo.getIsQuiz());
-		savedEvent.setEventQuestion(eventInfo.getEventQuestion());
-		savedEvent.setEventAnswer(eventInfo.getEventAnswer());
-		savedEvent.setEventExplain(eventInfo.getEventExplain());
-		savedEvent.setEventExplainurl(eventInfo.getEventExplainurl());
+		savedGather.setUserId(userRepository.findById(eventInfo.getUserId()).get());
+		savedGather.setEventText(eventInfo.getEventText());
+		savedGather.setEventFileurl(eventInfo.getEventFileurl());
+		savedGather.setEventPoint(gf.createPoint(new Coordinate(eventInfo.getEventLongitude(), eventInfo.getEventLatitude())));
+		savedGather.setEventLikenum(eventInfo.getEventLikenum());
+		savedGather.setEventSpamnum(eventInfo.getEventSpamnum());
+		savedGather.setEventWritedate(LocalDateTime.now());
+		savedGather.setEventFinishdate(LocalDateTime.now().plusHours(48));
+		savedGather.setQuiz(eventInfo.getIsQuiz());
+		savedGather.setEventQuestion(eventInfo.getEventQuestion());
+		savedGather.setEventAnswer(eventInfo.getEventAnswer());
+		savedGather.setEventExplain(eventInfo.getEventExplain());
+		savedGather.setEventExplainurl(eventInfo.getEventExplainurl());
 		
-		eventRepository.save(savedEvent);
+		eventRepository.save(savedGather);
 		System.out.println("event saved");
 		
 		return "success";
