@@ -5,6 +5,7 @@ import com.ssafy.back_footp.request.MessagePostReq;
 import com.ssafy.back_footp.service.MessageService;
 import io.swagger.annotations.Api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,5 +196,32 @@ public class MessageController {
 		
 		
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+	}
+	
+	@GetMapping("/list/hot")
+	@ApiOperation(value = "일반 발자국 리스트(핫)")
+	public ResponseEntity<List<Message>> messageListHot(){
+		
+		List<Message> list = messageRepository.findAllByHot();
+		
+		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	}
+	
+	@GetMapping("/list/like")
+	@ApiOperation(value = "일반 발자국 리스트(좋아요)")
+	public ResponseEntity<List<Message>> messageListLike(){
+		
+		List<Message> list = messageRepository.findAllByOrderByMessageLikenumDesc();
+		
+		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	}
+	
+	@GetMapping("/list/new")
+	@ApiOperation(value = "일반 발자국 리스트(신규)")
+	public ResponseEntity<List<Message>> messageListNew(){
+		
+		List<Message> list = messageRepository.findAllByOrderByMessageWritedateDesc();
+		
+		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
 	}
 }
