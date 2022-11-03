@@ -1,5 +1,7 @@
 package com.ssafy.back_footp.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,8 +36,8 @@ public class User {
 	@Column(name = "user_password", nullable = false)
 	private String userPassword;
 
-	@Column(name = "user_nickname", nullable = false)
-	private String userNickName;
+	@Column(name = "user_nickname")
+	private String userNickname;
 
 	@Column(name = "user_emailkey")
 	private String userEmailKey;
@@ -45,8 +47,14 @@ public class User {
 
 	@Column(name = "user_socialtoken")
 	private String userSocialToken;
+	
+	@Column(name = "user_pwfindkey")
+	private String userPwfindkey;
+	
+	@Column(name = "user_pwfindtime")
+	private LocalDateTime userPwfindtime;
 
 	@Column(name = "user_cash", nullable = false)
-	private Long userCash;
+	private Integer userCash;
 	
 }

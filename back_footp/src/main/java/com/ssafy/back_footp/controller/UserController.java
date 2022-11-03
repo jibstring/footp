@@ -3,6 +3,7 @@ package com.ssafy.back_footp.controller;
 import com.ssafy.back_footp.request.MypostUpdateReq;
 import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
+import com.ssafy.back_footp.service.AuthService;
 import com.ssafy.back_footp.service.UserService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.service.MailService;
+import com.ssafy.back_footp.service.AuthService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;

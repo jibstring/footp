@@ -1,3 +1,4 @@
+import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/main.dart';
 import 'package:app_footp/myLocation.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
+// import 'package:get/get.dart';
+// import 'package:get/get.dart';
 
 class NormalForm extends StatefulWidget {
   const NormalForm({super.key});
@@ -45,6 +49,10 @@ class _NormalFormState extends State<NormalForm> {
 
   @override
   Widget build(BuildContext context) {
+
+    // ModeController modeController1 = Get.put(ModeController());
+    // MyPosition myPosition_main = Get.put(MyPosition());
+    // CreateMarker createMarker = Get.put(CreateMarker());
     return Container(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -201,7 +209,7 @@ class _NormalFormState extends State<NormalForm> {
                     print(formData.fields);
                     print(formData.files);
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyLocation()));
+                        MaterialPageRoute(builder: (context) => MyNaverMap()));
                   }
                 },
                 icon: Icon(

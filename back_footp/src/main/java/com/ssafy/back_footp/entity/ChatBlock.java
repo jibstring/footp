@@ -19,13 +19,13 @@ public class ChatBlock {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "chat_id")
 	private Long chatId;
-
-	@ManyToOne
-	@JoinColumn(name="user_blocking")
+	
+	@JoinColumn(name = "user_blocking")
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User userBlocking;
-
-	@ManyToOne
-	@JoinColumn(name="user_blocked")
+	
+	@JoinColumn(name = "user_blocked")
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User userBlocked;
 
 }

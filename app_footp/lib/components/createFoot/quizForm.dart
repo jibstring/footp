@@ -1,3 +1,4 @@
+import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/myLocation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -396,7 +397,7 @@ class _QuizFormState extends State<QuizForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyLocation()));
+                                builder: (context) => MyNaverMap()));
                       }
                     } else {
                       if (myText.text == '' && messageFilePath == '') {
@@ -462,7 +463,7 @@ class _QuizFormState extends State<QuizForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyLocation()));
+                                builder: (context) => MyNaverMap()));
                       }
                     }
                   },

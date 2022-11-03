@@ -1,5 +1,6 @@
 package com.ssafy.back_footp.service;
 
+import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.*;
@@ -8,17 +9,20 @@ import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
 import com.ssafy.back_footp.response.eventlistDTO;
 import com.ssafy.back_footp.response.messagelistDTO;
+import com.ssafy.back_footp.security.EncryptionUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -44,7 +48,7 @@ public class UserService {
 //				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
                         messagelist.add(new messagelistDTO(
                                 Message.getMessageId(),
-                                Message.getUserId().getUserNickName(),
+                                Message.getUserId().getUserNickname(),
                                 Message.getMessageText(),
                                 Message.getMessageFileurl(),
                                 Message.getMessagePoint().getX(),
@@ -59,7 +63,7 @@ public class UserService {
         List<eventlistDTO> eventlist = new ArrayList<>();
         eventRepository.findAllByUserId(userRepository.findById(userId).get()).forEach(Event->eventlist.add(new eventlistDTO(
                 Event.getEventId(),
-                Event.getUserId().getUserNickName(),
+                Event.getUserId().getUserNickname(),
                 Event.getEventText(),
                 Event.getEventFileurl(),
                 Event.getEventWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
@@ -111,7 +115,7 @@ public class UserService {
 
     public String updateNickname(NicknameUpdateReq nicknameUpdateReq){
         User usr = userRepository.findById(nicknameUpdateReq.getUserId()).get();
-        usr.setUserNickName(nicknameUpdateReq.getUserNickname());
+        usr.setUserNickname(nicknameUpdateReq.getUserNickname());
 //        usr = User.builder().userPassword(nicknameUpdateReq.getUserNickname()).build();
         userRepository.save(usr);
 
