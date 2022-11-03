@@ -68,7 +68,8 @@ class _FootListState extends State<FootList> {
         "userNickname" : "산책좋아 강아지",
         "messageText" : "숭례문 광장 산책하기 좋네",
         "messageFileurl" : "https://s3.us-west-2.amazonaws.com/secure.notion-static.com/26f8915a-0f71-4b1a-9c90-3afdf5ca7340/IMG_2543.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20221027%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20221027T040454Z&X-Amz-Expires=86400&X-Amz-Signature=af647a88e5be6e55610eb47b19a2d5dcadaf345afde02e07828412304a08ee4b&X-Amz-SignedHeaders=host&response-content-disposition=filename%3D%22IMG_2543.JPG.jpg%22&x-id=GetObject",        "messageLongitude": 127.0397679,
-	      "messageLatitude": 37.5012424,
+	      "messageLongitude":127.0419788,
+        "messageLatitude": 37.5012424,
         "isOpentoall" : true,
         "isMylike": false,
         "messageLikenum" : 10,
@@ -92,11 +93,14 @@ class _FootListState extends State<FootList> {
         }
   ''';
 
+
+
   Map<String,dynamic>jsonData={};
   List <dynamic>footData=[];
   int eventlen=0;
   int messagelen=0;
 
+///서버 통신으로 받아온 메시지 파싱
   void readFile(){
     jsonData=jsonDecode(jsonString);
     print(jsonData);
@@ -105,16 +109,15 @@ class _FootListState extends State<FootList> {
     messagelen=jsonData["message"].length;
 
     for(int i=0;i<eventlen;i++){
-      jsonData["event"][i]["check"]=0;
+      jsonData["event"][i]["check"]=0; //이걸로 어떤 메시지인지 파악
       footData.add(jsonData["event"][i]);
     }
     for(int i=0;i<messagelen;i++){
       jsonData["message"][i]["check"]=1;
       footData.add(jsonData["message"][i]);
     }
-
   }
-    
+
   Widget build(BuildContext context){
     double width=MediaQuery.of(context).size.width* 0.62; 
     readFile();

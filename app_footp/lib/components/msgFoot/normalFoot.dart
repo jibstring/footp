@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:app_footp/components/msgFoot/reportModal.dart';
 
 class NormalFoot extends StatelessWidget {
+  int userId=123;
   Map<String,dynamic> normalmsg;
   NormalFoot(this.normalmsg,{Key? key}):super(key:key);
 
@@ -70,28 +72,48 @@ class NormalFoot extends StatelessWidget {
                                   color:Colors.grey),
                                   )
                         ),
+                        //하단
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                          IconButton(//검색
-                            onPressed:(){},
+                          IconButton(
+                            onPressed:(){
+                              showDialog(context: context, builder: (context){
+                                return ReportModal(normalmsg["messageId"],userId);
+                              });
+                            },
                             icon: Icon(Icons.more_horiz,size:30),
                             ),
+                          
                           Container(
                             padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
                             child: Row(                          
                               children: [
-                                IconButton(//검색
-                                  onPressed:(){},
-                                  icon: Icon(
-                                    Icons.favorite,
-                                    color:Color.fromARGB(255, 250, 31, 31),
-                                    size:30),
-                                ),
-                                Text(
-                                  normalmsg["messageLikenum"].toString(),
-                                  style: TextStyle(
-                                    fontSize: 15,
+                                InkWell(
+                                  child: Image.asset("imgs/heart_empty.png",
+                                  width: 30,
+                                  height: 30,),
+            
+                                  onTap:(){
+                                    print("On Tap");
+                                  }
+                                ), 
+                                // IconButton(
+                                //   onPressed:(){},
+                                //   icon: Icon(
+                                //     Icons.favorite,
+                                //     color:Color.fromARGB(255, 250, 31, 31),
+                                //     size:30),
+                                // ),
+                                SizedBox(width:10),
+                                SizedBox(
+                                  width: 40,
+                                  //height:30,
+                                  child: Text(
+                                    normalmsg["messageLikenum"].toString(),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 )
                               ]),

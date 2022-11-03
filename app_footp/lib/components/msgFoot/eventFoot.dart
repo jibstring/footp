@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:app_footp/components/msgFoot/reportModal.dart';
 
 class EventFoot extends StatelessWidget {
+  int userId=123;
   Map<String,dynamic> eventmsg;
   EventFoot(this.eventmsg,{Key? key}):super(key:key);
+  
+  List <String>heartList=[
+    "imgs/heart_emtpy",
+    "imgs/heart_color"
+  ];
+
+  void heartChange(){
+    print("hi");
+  }
 
   Widget build(BuildContext context) {
     double width=MediaQuery.of(context).size.width* 0.62; 
@@ -75,7 +86,11 @@ class EventFoot extends StatelessWidget {
                           children: [
                           //더보기
                           IconButton(
-                            onPressed:(){},
+                            onPressed:(){
+                              showDialog(context: context, builder: (context){
+                                return ReportModal(eventmsg["eventId"],userId);
+                              });
+                            },
                             icon: Icon(Icons.more_horiz,size:30),
                             ),
                           
@@ -91,7 +106,9 @@ class EventFoot extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                 backgroundColor: (eventmsg["isSolvedByMe"]) ? Colors.blue[100]:Colors.blue[400]
                               ),
-                                onPressed: () { },
+                                onPressed: () {
+
+                                },
                                 child:(eventmsg["isSolvedByMe"]) ? const Text('결과보기') :const Text('퀴즈풀기')
                               ),
                             ),
@@ -103,18 +120,33 @@ class EventFoot extends StatelessWidget {
                                     onPressed: () {
                                   },
                                   child: Text("랭킹보기"),
-                                ),  
-                                IconButton(
-                                  onPressed:(){},
-                                  icon: Icon(
-                                    Icons.favorite,
-                                    color:Color.fromARGB(255, 250, 31, 31),
-                                    size:30),
                                 ),
-                                Text(
-                                  eventmsg["eventLikenum"].toString(),
-                                  style: TextStyle(
-                                    fontSize: 15,
+                                InkWell(
+                                  child: Image.asset("imgs/heart_empty.png",
+                                  width: 30,
+                                  height: 30,),
+            
+                                  onTap:(){
+                                      
+                                    heartChange();
+                                  }
+                                ), 
+                                // IconButton(
+                                //   onPressed:(){},
+                                //   icon: Icon(
+                                //     Icons.favorite,
+                                //     color:Color.fromARGB(255, 250, 31, 31),
+                                //     size:30),
+                                // ),
+                                SizedBox(width:10),
+                                SizedBox(
+                                  width: 30,
+                                  //height:30,
+                                  child: Text(
+                                    eventmsg["eventLikenum"].toString(),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 )
                               ]),
@@ -126,5 +158,4 @@ class EventFoot extends StatelessWidget {
                   )
                 
                   );
-  }
-}
+  }}
