@@ -2,13 +2,13 @@ package com.ssafy.back_footp.service;
 
 import javax.transaction.Transactional;
 
-import com.ssafy.back_footp.repository.EventRepository;
+import com.ssafy.back_footp.repository.GatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.entity.Gather;
 import com.ssafy.back_footp.entity.GatherSpam;
-import com.ssafy.back_footp.repository.EventSpamRepository;
+import com.ssafy.back_footp.repository.GatherSpamRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 public class EventSpamService {
 
 	@Autowired
-	private EventSpamRepository eventSpamRepository;
+	private GatherSpamRepository eventSpamRepository;
 	@Autowired
-	private EventRepository eventRepository;
+	private GatherRepository gatherRepository;
 
 	// 발자국의 id를 받아와 해당 발자국이 받은 신고 수를 반환한다.
 	public int spamNum(long eid) {
-		int result = eventSpamRepository.countByEventId(eventRepository.findById(eid).get());
+		int result = eventSpamRepository.countByEventId(gatherRepository.findById(eid).get());
 		return result;
 	}
 
@@ -35,9 +35,9 @@ public class EventSpamService {
 		GatherSpam savedSpam = eventSpamRepository.save(gatherSpam);
 
 		// Likenum 증가
-		Gather evt = eventRepository.findById(gatherSpam.getGatherId().getEventId()).get();
+		Gather evt = gatherRepository.findById(gatherSpam.getGatherId().getEventId()).get();
 		evt.setEventSpamnum(evt.getEventSpamnum()+1);
-		eventRepository.save(evt);
+		gatherRepository.save(evt);
 
 		return savedSpam;
 	}

@@ -7,13 +7,11 @@ import org.json.simple.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.response.messagelistDTO;
 import com.ssafy.back_footp.response.eventlistDTO;
-import org.locationtech.jts.geom.Point;
 
 
 import lombok.RequiredArgsConstructor;
@@ -34,9 +32,9 @@ public class MessageService {
 	@Autowired
 	MessageLikeRepository messageLikeRepository;
 	@Autowired
-	EventRepository eventRepository;
+	GatherRepository gatherRepository;
 	@Autowired
-	EventLikeRepository eventLikeRepository;
+    GatherLikeRepository gatherLikeRepository;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -64,7 +62,7 @@ public class MessageService {
 		);
 
 		List<eventlistDTO> eventlist = new ArrayList<>();
-		eventRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event->eventlist.add(new eventlistDTO(
+		gatherRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event->eventlist.add(new eventlistDTO(
 				Event.getEventId(),
 				Event.getUserId().getUserNickname(),
 				Event.getEventText(),
@@ -76,7 +74,7 @@ public class MessageService {
 				Event.getEventLikenum(),
 				Event.getEventSpamnum(),
 				Event.isQuiz(),
-				eventLikeRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null,
+				gatherLikeRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null,
 				Event.getEventQuestion(),
 				Event.getEventAnswer(),
 				Event.getEventExplain(),

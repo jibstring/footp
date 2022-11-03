@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.entity.Gather;
-import com.ssafy.back_footp.repository.EventLikeRepository;
-import com.ssafy.back_footp.repository.EventRepository;
+import com.ssafy.back_footp.repository.GatherLikeRepository;
+import com.ssafy.back_footp.repository.GatherRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.EventPostReq;
 
@@ -25,9 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class EventService {
 
 	@Autowired
-	EventRepository eventRepository;
+	GatherRepository gatherRepository;
 	@Autowired
-	EventLikeRepository eventLikeRepository;
+    GatherLikeRepository gatherLikeRepository;
 	@Autowired
 	UserRepository userRepository;
 	
@@ -52,7 +52,7 @@ public class EventService {
 		savedGather.setEventExplain(eventInfo.getEventExplain());
 		savedGather.setEventExplainurl(eventInfo.getEventExplainurl());
 		
-		eventRepository.save(savedGather);
+		gatherRepository.save(savedGather);
 		System.out.println("event saved");
 		
 		return "success";

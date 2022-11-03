@@ -22,10 +22,10 @@ import com.ssafy.back_footp.entity.GatherLike;
 import com.ssafy.back_footp.entity.EventRanking;
 import com.ssafy.back_footp.entity.GatherSpam;
 import com.ssafy.back_footp.entity.User;
-import com.ssafy.back_footp.repository.EventLikeRepository;
+import com.ssafy.back_footp.repository.GatherLikeRepository;
 import com.ssafy.back_footp.repository.EventRankingRepository;
-import com.ssafy.back_footp.repository.EventRepository;
-import com.ssafy.back_footp.repository.EventSpamRepository;
+import com.ssafy.back_footp.repository.GatherRepository;
+import com.ssafy.back_footp.repository.GatherSpamRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.EventAnswerReq;
 import com.ssafy.back_footp.request.EventPostReq;
@@ -47,12 +47,12 @@ public class EventController {
 	@Autowired
 	private EventLikeService eventLikeService;
 	@Autowired
-	private EventLikeRepository eventLikeRepository;
+	private GatherLikeRepository gatherLikeRepository;
 	
 	@Autowired
 	private EventSpamService eventSpamService;
 	@Autowired
-	private EventSpamRepository eventSpamRepository;
+	private GatherSpamRepository eventSpamRepository;
 	
 	@Autowired
 	private EventService eventService;
@@ -60,7 +60,7 @@ public class EventController {
 	private MessageService messageService;
 	
 	@Autowired
-	private EventRepository eventRepository;
+	private GatherRepository gatherRepository;
 	@Autowired
 	private EventRankingRepository eventRankingRepository;
 	
@@ -89,11 +89,11 @@ public class EventController {
 	public ResponseEntity<Integer> checkAnswer(@RequestBody EventAnswerReq eventAnswerReq){
 		int result = 0;
 		
-		Gather gather = eventRepository.findById(eventAnswerReq.getEventId()).get();
+		Gather gather = gatherRepository.findById(eventAnswerReq.getEventId()).get();
 		
 		// 정답이 맞으면 EventRanking 테이블에 넣은 뒤 1 반환
 		if(gather.getEventAnswer().equals(eventAnswerReq.getEventAnswer())) {
-			EventRanking eventRanking = EventRanking.builder().gatherId(eventRepository.findById(eventAnswerReq.getEventId()).get()).userId(userRepository.findById(eventAnswerReq.getUserId()).get()).eventrankingDate(LocalDateTime.now()).build();
+			EventRanking eventRanking = EventRanking.builder().gatherId(gatherRepository.findById(eventAnswerReq.getEventId()).get()).userId(userRepository.findById(eventAnswerReq.getUserId()).get()).eventrankingDate(LocalDateTime.now()).build();
 			
 			eventRankingRepository.save(eventRanking);
 			result= 1;
@@ -107,12 +107,12 @@ public class EventController {
 	public ResponseEntity<List<UserRankingReq>> checkRankings(@PathVariable long userId, @PathVariable long eventId){
 		
 		//주최자가 아니면 접근못함
-		if(eventRepository.findByEventIdAndUserId(eventId, userRepository.findById(userId).get())==null) {
+		if(gatherRepository.findByEventIdAndUserId(eventId, userRepository.findById(userId).get())==null) {
 			return null;
 		}
 		
 		// 일단 문제에 대한 전체 정답자 빨리 맞힌 순으로 가져오기
-		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(eventRepository.findById(eventId).get());
+		List<EventRanking> eventRankings = eventRankingRepository.findAllByEventIdOrderByEventrankingDateAsc(gatherRepository.findById(eventId).get());
 		
 		List<UserRankingReq> FiveRankings = new ArrayList<>();
 		
@@ -167,7 +167,7 @@ public class EventController {
 	@ApiOperation(value = "이벤트 좋아요하기", notes = "이벤트 발자국일때 좋아요 누른다")
 	public ResponseEntity<Integer> eventLike(@PathVariable long eventId, @PathVariable long userId){
 		
-		GatherLike msg = GatherLike.builder().gatherId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
+		GatherLike msg = GatherLike.builder().gatherId(gatherRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
 		
 		int result = 1;
 		try {
@@ -185,7 +185,7 @@ public class EventController {
 		
 		int result = 0;
 		
-		if(eventLikeRepository.findByEventIdAndUserId(eventRepository.findById(eventId).get(), userRepository.findById(userId).get())!=null) {
+		if(gatherLikeRepository.findByEventIdAndUserId(gatherRepository.findById(eventId).get(), userRepository.findById(userId).get())!=null) {
 			eventLikeService.deleteLike(eventId, userId);
 			result = 1;
 		}
@@ -198,12 +198,12 @@ public class EventController {
 	public ResponseEntity<Integer> messageLikenum(@PathVariable long eventId){
 		
 		int result = 0;
-		Gather ev = eventRepository.findById(eventId).get();
+		Gather ev = gatherRepository.findById(eventId).get();
 		try {
 			// 좋아요 후 업데이트 
 			int num = eventLikeService.likeNum(eventId);
 			ev.setEventLikenum(num);
-			eventRepository.save(ev);
+			gatherRepository.save(ev);
 			
 			result = 1;
 		} catch (Exception e) {
@@ -220,7 +220,7 @@ public class EventController {
 	public ResponseEntity<Integer> eventSpam(@PathVariable long eventId, @PathVariable long userId){
 		
 		int result = 1;
-		GatherSpam msg = GatherSpam.builder().gatherId(eventRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
+		GatherSpam msg = GatherSpam.builder().gatherId(gatherRepository.findById(eventId).get()).userId(userRepository.findById(userId).get()).build();
 		
 		try {
 			eventSpamService.createSpam(msg);
@@ -237,12 +237,12 @@ public class EventController {
 	public ResponseEntity<Integer> messageSpamnum(@PathVariable long eventId){
 		
 		int result = 0;
-		Gather ev = eventRepository.findById(eventId).get();
+		Gather ev = gatherRepository.findById(eventId).get();
 		try {
 			// 좋아요 후 업데이트 
 			int num = eventSpamService.spamNum(eventId);
 			ev.setEventSpamnum(num);
-			eventRepository.save(ev);
+			gatherRepository.save(ev);
 			
 			result = 1;
 		} catch (Exception e) {
