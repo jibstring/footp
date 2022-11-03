@@ -29,12 +29,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  geolocator: ^8.0.1
+  geolocator: ^9.0.2
   flutter:
     sdk: flutter
   dio: ^4.0.6
   numberpicker: ^2.1.1
   file_picker: ^3.0.3
+  http: ^0.13.5
   form_data: ^0.0.1-nullsafety.1
 
   # The following adds the Cupertino Icons font to your application.
@@ -42,6 +43,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   naver_map_plugin:
     git: https://github.com/LBSTECH/naver_map_plugin.git
+  get:
+  fluttertoast: ^8.0.7
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +72,8 @@ flutter:
   assets:
     - imgs/
     - asset/
+    - asset/eventfoot.png
+    - asset/normalfoot.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
