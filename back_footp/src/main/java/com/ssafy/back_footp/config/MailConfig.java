@@ -35,7 +35,11 @@ public class MailConfig {
         properties.setProperty("mail.smtp.starttls.enable", "true");
         properties.setProperty("mail.debug", "true");
         properties.setProperty("mail.smtp.ssl.trust","smtp.gmail.com");
+        properties.setProperty("mail.smtp.port", "465");
         properties.setProperty("mail.smtp.ssl.enable","true");
+        properties.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
+        properties.setProperty("mail.smtp.connectiontimeout", "5000");
+        properties.setProperty("mail.smtp.writetimeout", "5000");
         return properties;
 	}
 }
