@@ -25,12 +25,23 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class KakaoLoginService {
-    private final PasswordEncoder passwordEncoder;
+
+    private final PasswordEncoder passwordEncoder=new PasswordEncoder() {
+        @Override
+        public String encode(CharSequence rawPassword) {
+            return null;
+        }
+
+        @Override
+        public boolean matches(CharSequence rawPassword, String encodedPassword) {
+            return false;
+        }
+    };
     private final UserRepository userRepository;
 
     String CLIENT_ID = "f9d4d87389dc3dd42a471336ea892d97";
 
-    public SocialUserInfoReq kakaoLogin(String code) throws JsonProcessingException {
+    public User kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -46,7 +57,7 @@ public class KakaoLoginService {
         // 5. response Header에 JWT 토큰 추가
 //        kakaoUsersAuthorizationInput(authentication);
 
-        return kakaoUserInfo;
+        return kakaoUser;
     }
 
     // 1. "인가 코드"로 "액세스 토큰" 요청

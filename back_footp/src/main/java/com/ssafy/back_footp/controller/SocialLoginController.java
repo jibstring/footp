@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.request.SocialUserInfoReq;
 import com.ssafy.back_footp.service.KakaoLoginService;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class SocialLoginController {
 
 	// 카카오 로그인
 	@GetMapping("/auth/kakao/callback")
-	public SocialUserInfoReq kakaoLogin(String code) throws JsonProcessingException {
+	public User kakaoLogin(String code) throws JsonProcessingException {
 		return kakaoLoginService.kakaoLogin(code);
 	}
 }
