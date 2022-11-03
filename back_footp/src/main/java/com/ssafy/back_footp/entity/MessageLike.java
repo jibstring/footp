@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="MessageLike")
+@Table(name="messagelike")
 
 public class MessageLike {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

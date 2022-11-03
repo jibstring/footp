@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="EventLike")
+@Table(name="eventlike")
 public class EventLike {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="eventlike_id")

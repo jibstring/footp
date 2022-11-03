@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ChatBlock")
+@Table(name = "chatblock")
 public class ChatBlock {
 	
 	@Id
@@ -21,11 +21,11 @@ public class ChatBlock {
 	private Long chatId;
 	
 	@JoinColumn(name = "user_blocking")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private User userBlocking;
 	
 	@JoinColumn(name = "user_blocked")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private User userBlocked;
 
 }
