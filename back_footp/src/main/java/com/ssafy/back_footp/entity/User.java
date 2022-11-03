@@ -57,4 +57,13 @@ public class User {
 	@Column(name = "user_cash", nullable = false)
 	private Integer userCash;
 	
+//	@Column(name = "user_autologin")
+//	private Boolean userAutologin;
+//	
+//	@Column(name = "user_sessionkey")
+//	private String userSessionkey;
+//	
+//	@Column(name = "user_sessionlimit")
+//	private LocalDateTime userSessionlimit;
+	
 }

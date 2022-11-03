@@ -5,12 +5,18 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,6 +105,16 @@ public class AuthController {
 				result.put("Authorization", token);
 				result.put("message", SUCCESS);
 				status = HttpStatus.ACCEPTED;
+				
+//				if(loginUser.getUserAutologin()) {
+//					
+//					Cookie cookie = new Cookie( "loginCookie", session.getId());
+//					cookie.setPath("/");
+//					cookie.setMaxAge(60*60*24*30);
+//					
+//					response.addCookie(cookie);
+//				}
+				
 			} else {
 				result.put("message", FAIL);
 				status = HttpStatus.ACCEPTED;
@@ -111,6 +127,40 @@ public class AuthController {
 		}
 
 		return new ResponseEntity<Map<String, Object>>(result, status);
+	}
+	
+	@GetMapping("/valid")
+	@ApiOperation(value = "토큰 유효성 검사")
+	public ResponseEntity<Map<String, Object>> tokenValidation(HttpServletRequest request) {
+		logger.info("tokenValidation");
+		Map<String, Object> result = new HashMap<>();
+		if (jwtService.isUsable(request.getHeader("Authorization"))) {
+			result.put("message", SUCCESS);
+		} else {
+			result.put("Authorization", null);
+			result.put("message", FAIL);
+		}
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+
+	
+	@GetMapping("/logout")
+	@ApiOperation(value = "회원 로그아웃")
+	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) throws Exception {
+
+		logger.debug("logout - 호출");
+		Map<String, Object> result = new HashMap<>();
+
+		if (jwtService.isUsable(request.getHeader("Authorization"))) {
+			result.put("Authorization", null);
+			result.put("message", SUCCESS);
+//			session.invalidate();
+		} else {
+			result.put("message", FAIL);
+		}
+
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+
 	}
 
 	@PostMapping("/duplicate/{email}")
