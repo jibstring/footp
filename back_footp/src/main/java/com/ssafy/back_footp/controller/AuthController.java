@@ -176,22 +176,24 @@ public class AuthController {
 	public ResponseEntity<Integer> passwordMailSend(@PathVariable String email) {
 		int result = 1;
 
-		User user = userRepository.findByUserEmail(email).get();
+		if (userRepository.existsByUserEmail(email)) {
+			User user = userRepository.findByUserEmail(email).get();
 
-		// 이미 인증된 계정이거나, 존재하지 않는 계정이면 패스
-		if (authService.emailCheck(email)) {
+			// 이미 인증된 계정이거나, 존재하지 않는 계정이면 패스
+			if (authService.emailCheck(email)) {
 
-			Mail mail = authService.sendEmailServiceForPassword(email, user.getUserNickname());
-			System.out.println("메일이 잘 보내지나요");
-			mailService.mailSend(mail);
-			System.out.println("메일이 잘 보내지네요");
-		} else {
-			result = 0;
+				Mail mail = authService.sendEmailServiceForPassword(email, user.getUserNickname());
+				System.out.println("메일이 잘 보내지나요");
+				mailService.mailSend(mail);
+				System.out.println("메일이 잘 보내지네요");
+			} else {
+				result = 0;
+			}
 		}
 
 		return new ResponseEntity<Integer>(result, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/validate/{userId}/{code}")
 	@ApiOperation(value = "재설정 목적의 이메일 코드 인증")
 	public ResponseEntity<Boolean> codeCheckPassword(@PathVariable String code, @PathVariable long userId) {
@@ -205,19 +207,19 @@ public class AuthController {
 
 		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/lostPW/{userId}/{password}")
 	@ApiOperation(value = "재설정 목적의 이메일 코드 인증 후 비밀번호 재설정")
 	public ResponseEntity<Integer> resetPassword(@PathVariable long userId, @PathVariable String password) {
 		int result = 0;
-		
+
 		User user = userRepository.findByUserId(userId);
 
 		// 코드가 일치하고, 3분 기한 내에 입력하였을 경우
 		try {
 			user.setUserPassword(EncryptionUtils.encryptSHA256(password));
 			userRepository.save(user);
-			
+
 			result = 1;
 		} catch (Exception e) {
 			// TODO: handle exception
