@@ -96,18 +96,7 @@ class _FootListState extends State<FootList> {
                       });
                     },
                   ),
-                  //새로고침
-                  IconButton(
-                    icon: Icon(
-                      Icons.refresh,
-                      //color: Color.fromARGB(255, 228, 229, 160),
-                      size: 40,
-                    ),
-                    // padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
-                    onPressed: () {
-                      readFile();
-                    },
-                  ),
+                
                   IconButton(
                     //검색
                     onPressed: () {},

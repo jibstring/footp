@@ -22,6 +22,19 @@ void main() {
   runApp(const mainMap());
 }
 
+// class User{
+//   String usernickname="";
+//   User(this.usernickname);
+
+//   get user{
+//     return user;
+//   }
+
+//   set SetUserNickname(nickname){
+//     usernickname=nickname;
+//   }
+// }
+
 class MainData extends GetxController {
   var _dataList;
 
@@ -200,6 +213,24 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ),
+        //새로고침
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        //color: Color.fromARGB(255, 228, 229, 160),
+                        size: 40,
+                      ),
+                      padding: EdgeInsets.fromLTRB(0, 0, 100, 295),
+                      onPressed: () {
+                        maindata.getURL(
+            '1', location.longitude.toString(), location.latitude.toString());
+
+                      },
+                    ),
+                  )
+        ,
         widgetOptions.elementAt(_selectedIndex),
         Align(
             alignment: Alignment.bottomCenter,
