@@ -26,6 +26,9 @@ public interface StampboardLikeRepository extends JpaRepository<StampboardLike, 
 	
 	@Transactional
 	public void deleteAllByUserId(User user);
+
+	
+	public int countByStampboardId(Stampboard sid);
 	
 	
 }

@@ -1,5 +1,7 @@
 package com.ssafy.back_footp.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +23,6 @@ public interface StampboardSpamRepository extends JpaRepository<StampboardSpam, 
 	public void deleteAllByUserId(User uid);
 
 	public int countByStampboardId(Stampboard sid);
+
+	public List<StampboardSpam> findAllByUserId(User findByUserId);
 }
