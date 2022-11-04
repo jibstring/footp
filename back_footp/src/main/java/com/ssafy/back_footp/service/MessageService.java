@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.response.messagelistDTO;
-import com.ssafy.back_footp.response.eventlistDTO;
+import com.ssafy.back_footp.response.gatherlistDTO;
 
 
 import lombok.RequiredArgsConstructor;
@@ -37,8 +37,6 @@ public class MessageService {
     GatherLikeRepository gatherLikeRepository;
 	@Autowired
 	UserRepository userRepository;
-	@Autowired
-	EventRankingRepository eventRankingRepository;
 
 	GeometryFactory gf = new GeometryFactory();
 
@@ -51,40 +49,36 @@ public class MessageService {
 				Message.getMessageId(),
 				Message.getUserId().getUserNickname(),
 				Message.getMessageText(),
+				Message.getMessageBlurredtext(),
 				Message.getMessageFileurl(),
 				Message.getMessagePoint().getX(),
 				Message.getMessagePoint().getY(),
 				Message.isOpentoall(),
+				Message.isBlurred(),
 				messageLikeRepository.findByMessageIdAndUserId(Message, userRepository.findById(userId).get()) != null,
 				Message.getMessageLikenum(),
 				Message.getMessageSpamnum(),
 				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
 		);
 
-		List<eventlistDTO> eventlist = new ArrayList<>();
-		gatherRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event->eventlist.add(new eventlistDTO(
-				Event.getEventId(),
-				Event.getUserId().getUserNickname(),
-				Event.getEventText(),
-				Event.getEventFileurl(),
-				Event.getEventWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-				Event.getEventFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-				Event.getEventPoint().getX(),
-				Event.getEventPoint().getY(),
-				Event.getEventLikenum(),
-				Event.getEventSpamnum(),
-				Event.isQuiz(),
-				gatherLikeRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null,
-				Event.getEventQuestion(),
-				Event.getEventAnswer(),
-				Event.getEventExplain(),
-				Event.getEventExplainurl(),
-				eventRankingRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null
+		List<gatherlistDTO> Gatherlist = new ArrayList<>();
+		gatherRepository.findAllInRadiusOrderByGatherWritedate(lon, lat).forEach(Gather->Gatherlist.add(new gatherlistDTO(
+				Gather.getGatherId(),
+				Gather.getUserId().getUserNickname(),
+				Gather.getGatherText(),
+				Gather.getGatherFileurl(),
+				Gather.getGatherWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+				Gather.getGatherFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+				Gather.getGatherPoint().getX(),
+				Gather.getGatherPoint().getY(),
+				Gather.getGatherLikenum(),
+				Gather.getGatherSpamnum(),
+				Gather.getGatherDesigncode()
 		)));
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("message", messagelist);
-		jsonObject.put("event", eventlist);
+		jsonObject.put("gather", Gatherlist);
 
 		return jsonObject;
 	}
@@ -95,10 +89,12 @@ public class MessageService {
 
 		message.setUserId(userRepository.findById(messageInfo.getUserId()).get());
 		message.setMessageText(messageInfo.getMessageText());
+		message.setMessageBlurredtext(messageInfo.getMessageBlurredtext());
 		message.setMessageFileurl(messageInfo.getMessageFileurl());
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setOpentoall(messageInfo.getIsOpentoall());
+		message.setBlurred(messageInfo.getIsBlurred());
 		message.setMessageLikenum(messageInfo.getMessageLikenum());
 		message.setMessageSpamnum(messageInfo.getMessageSpamnum());
 		message.setMessageWritedate(LocalDateTime.now());

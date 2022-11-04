@@ -37,6 +37,8 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	// mysql
 	implementation 'mysql:mysql-connector-java'
+	// amazon
+	implementation "software.amazon.awssdk:s3:2.13.0"
 	
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 		

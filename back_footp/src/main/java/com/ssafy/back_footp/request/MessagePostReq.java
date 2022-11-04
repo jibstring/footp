@@ -19,6 +19,9 @@ public class MessagePostReq {
     @ApiModelProperty(name="메세지 내용", example = "여기 맛있어!")
     String messageText;
 
+    @ApiModelProperty(name="메세지 숨겨진 내용", example = "사실은 맛업어.")
+    String messageBlurredtext;
+
     @ApiModelProperty(name="메세지 첨부파일 URL", example = "https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTdfMjM5/MDAxNTc2NTgwNjQxMzIw.UIw2A-EU9OUtt5FQ_6iRP2QJQS-aFE7L_EkI_VK6ED0g.dGYlktZJPVI8Jn9z6czNo1FmNIKqNk6ap1tODyDVmswg.JPEG.ideaeditor_lee/officialDobes.jpg?type=w800")
     String messageFileurl;
 
@@ -30,6 +33,9 @@ public class MessagePostReq {
 
     @ApiModelProperty(name="메세지 공개 여부", example = "True")
     Boolean isOpentoall;
+
+    @ApiModelProperty(name="물음표 메세지 여부", example = "True")
+    Boolean isBlurred;
 
     @ApiModelProperty(name="메세지 좋아요 수", example = "0")
     int messageLikenum;

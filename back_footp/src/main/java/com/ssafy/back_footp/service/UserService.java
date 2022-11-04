@@ -6,7 +6,7 @@ import com.ssafy.back_footp.repository.*;
 import com.ssafy.back_footp.request.MypostUpdateReq;
 import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
-import com.ssafy.back_footp.response.eventlistDTO;
+import com.ssafy.back_footp.response.gatherlistDTO;
 import com.ssafy.back_footp.response.messagelistDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +33,6 @@ public class UserService {
     GatherLikeRepository gatherLikeRepository;
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    EventRankingRepository eventRankingRepository;
 
     @Transactional
     public JSONObject getMymessages(long userId) {
@@ -45,40 +43,36 @@ public class UserService {
                                 Message.getMessageId(),
                                 Message.getUserId().getUserNickname(),
                                 Message.getMessageText(),
+                                Message.getMessageBlurredtext(),
                                 Message.getMessageFileurl(),
                                 Message.getMessagePoint().getX(),
                                 Message.getMessagePoint().getY(),
                                 Message.isOpentoall(),
+                                Message.isBlurred(),
                                 messageLikeRepository.findByMessageIdAndUserId(Message, userRepository.findById(userId).get()) != null,
                                 Message.getMessageLikenum(),
                                 Message.getMessageSpamnum(),
                                 Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
         );
 
-        List<eventlistDTO> eventlist = new ArrayList<>();
-        gatherRepository.findAllByUserId(userRepository.findById(userId).get()).forEach(Event->eventlist.add(new eventlistDTO(
-                Event.getEventId(),
-                Event.getUserId().getUserNickname(),
-                Event.getEventText(),
-                Event.getEventFileurl(),
-                Event.getEventWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-                Event.getEventFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-                Event.getEventPoint().getX(),
-                Event.getEventPoint().getY(),
-                Event.getEventLikenum(),
-                Event.getEventSpamnum(),
-                Event.isQuiz(),
-                gatherLikeRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null,
-                Event.getEventQuestion(),
-                Event.getEventAnswer(),
-                Event.getEventExplain(),
-                Event.getEventExplainurl(),
-                eventRankingRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null
+        List<gatherlistDTO> gatherlist = new ArrayList<>();
+        gatherRepository.findAllByUserId(userRepository.findById(userId).get()).forEach(Gather->gatherlist.add(new gatherlistDTO(
+                Gather.getGatherId(),
+                Gather.getUserId().getUserNickname(),
+                Gather.getGatherText(),
+                Gather.getGatherFileurl(),
+                Gather.getGatherWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+                Gather.getGatherFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+                Gather.getGatherPoint().getX(),
+                Gather.getGatherPoint().getY(),
+                Gather.getGatherLikenum(),
+                Gather.getGatherSpamnum(),
+                Gather.getGatherDesigncode()
         )));
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", messagelist);
-        jsonObject.put("event", eventlist);
+        jsonObject.put("gather", gatherlist);
 
         return jsonObject;
     }
