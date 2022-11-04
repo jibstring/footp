@@ -58,9 +58,9 @@ public class AuthController {
 
 		Map<String, Object> result = new HashMap<>();
 
-		User userEntity = User.builder().userEmail(user.getUserEmail())
+		User userEntity = User.builder().userEmail(user.getUserEmail()).userNickname(user.getUserNickname())
 				.userPassword(EncryptionUtils.encryptSHA256(user.getUserPassword())).userCash(0).userEmailKey("N")
-				.build();
+				.userPwfindkey("invaild").build();
 
 		try {
 			// 이미 등록된 이메일이 아니라면
@@ -143,7 +143,7 @@ public class AuthController {
 		// 이미 인증된 계정이거나, 존재하지 않는 계정이면 패스
 		if (authService.emailCheck(email) && !user.getUserEmailKey().equals("Y")) {
 
-			Mail mail = authService.sendEmailServiceForSignUp(email, "회원");
+			Mail mail = authService.sendEmailServiceForSignUp(email, user.getUserNickname());
 			System.out.println("메일이 잘 보내지나요");
 			mailService.mailSend(mail);
 			System.out.println("메일이 잘 보내지네요");
