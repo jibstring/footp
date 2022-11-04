@@ -5,12 +5,15 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -111,6 +114,42 @@ public class AuthController {
 
 		return new ResponseEntity<Map<String, Object>>(result, status);
 	}
+	
+	@GetMapping("/info/{userid}")
+	@ApiOperation(value = "유저 본인의 정보를 불러온다", notes = "보려는 정보가 본인의 것이면 정보를 반환한다")
+	public ResponseEntity<Map<String, Object>> getUserInfo(@PathVariable("userid") int userid,
+			@ApiParam(value = "인증할 회원의 아이디.", required = true) HttpServletRequest request) {
+		// logger.debug("userid : {} ", userid);
+		Map<String, Object> result = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+//		System.out.println(userid);
+		if (jwtService.isUsable(request.getHeader("Authorization"))) {
+			if (jwtService.getUserId() == userid) {
+				// 유효한 토큰에 자기 정보 요청 맞을경우
+				try {
+					// 로그인 사용자 정보.
+					User userInfo = authService.getUser(userid);
+					result.put("userInfo", userInfo);
+					result.put("message", SUCCESS);
+					status = HttpStatus.ACCEPTED;
+				} catch (Exception e) {
+					logger.error("정보조회 실패 : {}", e);
+					result.put("message", e.getMessage());
+					status = HttpStatus.ACCEPTED;
+				}
+			} else {
+				// 토큰 정보랑 불일치 할 경우
+				result.put("message", FAIL);
+			}
+
+		} else {
+			// 토근 자체가 유효하지 않음
+			result.put("Authorization", null);
+			result.put("message", FAIL);
+		}
+		return new ResponseEntity<Map<String, Object>>(result, status);
+	}
+
 
 	@PostMapping("/duplicate/{email}")
 	@ApiOperation(value = "이메일 중복 체크")
