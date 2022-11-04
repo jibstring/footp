@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,22 +17,37 @@ import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
 
+MainData maindata = Get.put(MainData());
 void main() {
   runApp(const mainMap());
 }
 
-String baseURL = 'http://k7a108.p.ssafy.io:8080';
-String apiKey = '';
+class MainData extends GetxController {
+  var _dataList;
 
-class MainData {
-  final mainDataUrl = Uri.parse('$baseURL/foot/main$apiKey');
+  String _baseURL = 'http://k7a108.p.ssafy.io:8080';
+  String _apiKey = '';
+  dynamic _mainDataUrl;
+
+  get dataList => _dataList;
+
+  String get baseURL => _baseURL;
+  String get apiKey => _apiKey;
+  dynamic get mainDataUrl => _mainDataUrl;
+
+  void getURL(String userid, String lat, String lng) async {
+    _apiKey = '/${userid}/${lat}/${lng}';
+    _mainDataUrl = Uri.parse('$baseURL/foot/main$apiKey');
+    _dataList = await getMainData();
+    update();
+  }
 
   Future getMainData() async {
-    http.Response response = await http.get(mainDataUrl);
+    http.Response response = await http.get(_mainDataUrl);
     if (response.statusCode == 200) {
-      var jsonDecodedData = jsonDecode(utf8.decode(response.bodyBytes));
-      print(jsonDecodedData);
-      return jsonDecodedData;
+      _dataList = jsonDecode(utf8.decode(response.bodyBytes));
+      update();
+      return _dataList;
     } else {
       print(response.statusCode);
       throw 'getMainData() error';
@@ -71,8 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   Location location = Location();
-
-  var _decodedData;
 
   late OverlayImage _commonFoot;
   late OverlayImage _eventFoot;
@@ -261,17 +275,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void getData() async {
-    try {
-      dynamic data = await MainData().getMainData();
-      setState(() {
-        _decodedData = data;
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
   void initState() {
     _getImage();
     super.initState();
@@ -292,13 +295,12 @@ class _MyHomePageState extends State<MyHomePage> {
         print(
             "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
 
-        apiKey = '/1/${location.longitude}/${location.latitude}';
-        // 이 부분은 2차 배포때 수정할 예정
-        // apiKey =
-        //     '/${_mapEdge.northeast.longitude}/${_mapEdge.southwest.longitude}/${_mapEdge.southwest.latitude}/${_mapEdge.northeast.latitude}';
+        maindata.getURL(
+            '1', location.longitude.toString(), location.latitude.toString());
 
-        getData();
-        print(_decodedData);
+        // 이 부분은 2차 배포때 수정할 예정
+        // maindata.getURL(
+        //     '/${_mapEdge.northeast.longitude}/${_mapEdge.southwest.longitude}/${_mapEdge.southwest.latitude}/${_mapEdge.northeast.latitude}');
       });
     });
   }
