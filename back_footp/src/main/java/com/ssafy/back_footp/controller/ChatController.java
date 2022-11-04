@@ -34,18 +34,18 @@ public class ChatController {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
     private final SimpMessageSendingOperations sendingOperations;
-    private final String rootURL = new String("/topic");
+    private final String rootURL = new String("/topic/");
 
     /**
-     * 채팅을 입력받으면 모두에게 뿌려주는 함수
+     * 채팅을 입력받으면 해당 채팅방에 뿌려주는 함수
      * @param msg
      */
     @MessageMapping("/send")
-    public void chat(ChatMessage msg) {
+    public void send(ChatMessage msg) {
         logger.info("{} 님의 채팅 전송", msg.getUserNickName());
         LocalTime now = LocalTime.now(ZoneId.of(("Asia/Seoul")));
         msg.setNow(""+now.getHour() + ':' + now.getMinute());
-        sendingOperations.convertAndSend(rootURL, msg);
+        sendingOperations.convertAndSend(rootURL + msg.getEventId(), msg);
     }
     
     @PostMapping("/ban/{blocking}/{blocked}")
