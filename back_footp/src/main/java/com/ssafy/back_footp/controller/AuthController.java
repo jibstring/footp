@@ -58,9 +58,9 @@ public class AuthController {
 
 		Map<String, Object> result = new HashMap<>();
 
-		User userEntity = User.builder().userEmail(user.getUserEmail())
+		User userEntity = User.builder().userEmail(user.getUserEmail()).userNickname(user.getUserNickname())
 				.userPassword(EncryptionUtils.encryptSHA256(user.getUserPassword())).userCash(0).userEmailKey("N")
-				.build();
+				.userPwfindkey("invaild").build();
 
 		try {
 			// 이미 등록된 이메일이 아니라면
