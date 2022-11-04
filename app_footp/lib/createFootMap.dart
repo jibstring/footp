@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:app_footp/mainMap.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
@@ -27,9 +28,12 @@ class _MyNaverMapState extends State<MyNaverMap> {
   bool isTapped = false;
 
   onpress() {
-    setState(() {
-      isTapped = !isTapped;
-    });
+    // setState(() {
+    //   isTapped = !isTapped;
+    // });
+    _callPOST();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => mainMap()));
   }
 
   @override
@@ -48,6 +52,8 @@ class _MyNaverMapState extends State<MyNaverMap> {
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"},
         body: json.encode(createMarker.newmarker));
+
+    Fluttertoast.showToast(msg: "발자국을 찍었습니다");
 
     // Map marker = {
     //   "isOpentoall": true,
