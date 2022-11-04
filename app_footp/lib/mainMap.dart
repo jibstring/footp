@@ -3,10 +3,13 @@ import 'dart:math';
 import 'dart:collection';
 import 'dart:io';
 
+import 'package:app_footp/components/mainMap/stampList.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
+
+import 'package:app_footp/myPage.dart';
 
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/location.dart';
@@ -60,25 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 채팅방
-    DraggableScrollableSheet(
-      initialChildSize: 0.3,
-      minChildSize: 0.3,
-      maxChildSize: 1,
-      snap: true,
-      snapSizes: [0.65],
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-          color: Colors.red[100],
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: 25,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(title: Text('Item $index'));
-            },
-          ),
-        );
-      },
-    )
+    StampList()
+    
   ];
 
   @override
@@ -97,7 +83,12 @@ class _MyHomePageState extends State<MyHomePage> {
               size: 40,
             ),
             padding: const EdgeInsets.only(top: 5, right: 20.0),
-            onPressed: () {},
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyPage()),
+              );
+            },
           ),
         ],
       ),
@@ -173,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateFoot()),
+                MaterialPageRoute(builder: (context) => const CreateFoot()),
               );
             },
           ),
