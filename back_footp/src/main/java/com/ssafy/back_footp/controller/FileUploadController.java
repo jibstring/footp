@@ -1,5 +1,6 @@
 package com.ssafy.back_footp.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@AllArgsConstructor
 @RequestMapping("/fileupload")
 public class FileUploadController {
 /*
@@ -78,9 +78,10 @@ public class FileUploadController {
 
 
 	@Autowired
-	AmazonS3Client amazonS3Client;
-	@GetMapping("/{dir}")
-	public ResponseEntity<Object> messageFileUpload(MultipartFile[] multipartFileList, @PathVariable String dir) throws Exception {
+	private AmazonS3Client amazonS3Client;
+
+	@PostMapping("/{dir}")
+	public ResponseEntity<Object> messageFileUpload(MultipartFile[] multipartFileList, @PathVariable String dir) throws IOException {
 		List<String> imagePathList = new ArrayList<>();
 
 		for(MultipartFile multipartFile: multipartFileList) {
