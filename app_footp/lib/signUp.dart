@@ -18,6 +18,7 @@ final formKey = GlobalKey<FormState>();
 class _SignUpState extends State<SignUp> {
   final myEmail = TextEditingController();
   bool _value = false;
+  bool _nicknamevalue=false;
   bool obscurePasswordOne = true;
   bool obscurePasswordTwo = true;
   String passwordValidation = '알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자 이상';
@@ -26,6 +27,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
+  TextEditingController nicknameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +181,34 @@ class _SignUpState extends State<SignUp> {
                           style: TextStyle(color: Colors.red),
                         ),
                 ),
+                //닉네임 입력
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          _nicknamevalue = false;
+                        });
+                      },
+                      controller: nicknameController,
+                      maxLength: 20,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: '닉네임을 입력하세요',
+                          suffixIcon: _nicknamevalue != true
+                              ? Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      checknicknameDuplicate(nicknameController.text);
+                                    },
+                                    child: Text('중복확인'),
+                                  ))
+                              : Icon(
+                                  Icons.check_box_outlined,
+                                  color: Colors.green,
+                                ))),
+                ),
 
                 // 가입 버튼
                 Container(
@@ -196,7 +226,11 @@ class _SignUpState extends State<SignUp> {
                         } else if (passwordConfirmed == false ||
                             passwordValidation != '올바른 비밀번호입니다.') {
                           _showDialog('비밀번호를 확인해주세요.');
-                        } else {
+                        }
+                        else if (_nicknamevalue == false) {
+                          _showDialog('닉네임 중복확인을 완료해주세요.');
+                        } 
+                        else {
                           createAccount();
                         }
                       },
@@ -267,6 +301,7 @@ class _SignUpState extends State<SignUp> {
     var data = {
       'userEmail': emailController.text,
       'userPassword': passwordController.text,
+      'userNickname': nicknameController.text
     };
     final response =
         await dio.post('http://k7a108.p.ssafy.io:8080/auth/signup', data: data);
@@ -276,5 +311,21 @@ class _SignUpState extends State<SignUp> {
 
     _showDialog('가입 성공!');
     Navigator.push(context, MaterialPageRoute(builder: (context) => mainMap()));
+  }
+
+
+
+  Future checknicknameDuplicate(String nickname) async {
+    var dio = Dio();
+    final response =
+        await dio.post('http://k7a108.p.ssafy.io:8080/auth/nickname/$nickname');
+
+    if (response.data == true) {
+      _showDialog('이미 사용 중인 닉네임입니다.');
+    } else {
+      setState(() {
+        _nicknamevalue = !_nicknamevalue;
+      });
+    }
   }
 }
