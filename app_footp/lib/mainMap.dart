@@ -66,14 +66,18 @@ class MainData extends GetxController {
     int like = dataList["message"][idx]["messageLikenum"];
 
     Marker marker = Marker(
-        markerId: dataList["message"][idx]["messageId"].toString(),
-        position: LatLng(dataList["message"][idx]["messageLatitude"],
-            dataList["message"][idx]["messageLongitude"]),
-        icon: ((dataList["message"][idx]["messageId"] % 2) == 0
-            ? _footImage[0]
-            : _footImage[3]),
-        width: 5 * (6 + like),
-        height: 5 * (6 + like));
+      markerId: dataList["message"][idx]["messageId"].toString(),
+      position: LatLng(dataList["message"][idx]["messageLatitude"],
+          dataList["message"][idx]["messageLongitude"]),
+      icon: ((dataList["message"][idx]["messageId"] % 2) == 0
+          ? _footImage[0]
+          : _footImage[3]),
+      width: 5 * (6 + like),
+      height: 5 * (6 + like),
+      onMarkerTab: (marker, iconSize) {
+        print("Hi ${dataList["message"][idx]["messageId"]}");
+      },
+    );
 
     _markers.add(marker);
     update();
@@ -130,9 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Image.asset('imgs/logo.png', height: 45),
-        elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: true,
+        elevation: 0,
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -186,22 +190,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => const CreateFoot()),
               );
-            },
-          ),
-        ),
-        //새로고침
-        Align(
-          alignment: Alignment.bottomRight,
-          child: IconButton(
-            icon: Icon(
-              Icons.refresh,
-              //color: Color.fromARGB(255, 228, 229, 160),
-              size: 40,
-            ),
-            padding: EdgeInsets.fromLTRB(0, 0, 100, 295),
-            onPressed: () {
-              maindata.getURL('1', location.longitude.toString(),
-                  location.latitude.toString());
             },
           ),
         ),
