@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:app_footp/components/msgFoot/eventFoot.dart';
-import 'package:app_footp/components/msgFoot/normalFoot.dart';
+import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:app_footp/components/msgFoot/eventFoot.dart';
+import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/mainMap.dart' as mainmap;
 
 mainmap.MainData maindata = mainmap.maindata;
@@ -28,11 +29,23 @@ class _FootListState extends State<FootList> {
 
   ///서버 통신으로 받아온 메시지 파싱
   void readFile() {
-    jsonData = maindata.dataList;
-    print(jsonData);
+    try {
+      jsonData = maindata.dataList;
+    } catch (e) {
+      jsonData = {};
+    }
 
-    eventlen = jsonData["event"].length;
-    messagelen = jsonData["message"].length;
+    try {
+      eventlen = jsonData["event"].length;
+    } catch (e) {
+      eventlen = 0;
+    }
+
+    try {
+      messagelen = jsonData["message"].length;
+    } catch (e) {
+      messagelen = 0;
+    }
 
     for (int i = 0; i < eventlen; i++) {
       jsonData["event"][i]["check"] = 0; //이걸로 어떤 메시지인지 파악

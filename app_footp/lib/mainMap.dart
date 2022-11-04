@@ -24,21 +24,29 @@ void main() {
 
 class MainData extends GetxController {
   var _dataList;
-
+  int _listsize = 0;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   dynamic _mainDataUrl;
+  List<Marker> _markers = [];
+  List<OverlayImage> _footImage = [];
 
   get dataList => _dataList;
-
+  int get listsize => _listsize;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   dynamic get mainDataUrl => _mainDataUrl;
+  List<Marker> get markers => _markers;
+  List<OverlayImage> get footImage => _footImage;
 
   void getURL(String userid, String lat, String lng) async {
     _apiKey = '/${userid}/${lat}/${lng}';
     _mainDataUrl = Uri.parse('$baseURL/foot/main$apiKey');
     _dataList = await getMainData();
+    _listsize = await _dataList["message"].length;
+    for (int i = 0; i < _listsize; i++) {
+      createMarker(i);
+    }
     update();
   }
 
@@ -52,6 +60,23 @@ class MainData extends GetxController {
       print(response.statusCode);
       throw 'getMainData() error';
     }
+  }
+
+  void createMarker(int idx) {
+    int like = dataList["message"][idx]["messageLikenum"];
+
+    Marker marker = Marker(
+        markerId: dataList["message"][idx]["messageId"].toString(),
+        position: LatLng(dataList["message"][idx]["messageLatitude"],
+            dataList["message"][idx]["messageLongitude"]),
+        icon: ((dataList["message"][idx]["messageId"] % 2) == 0
+            ? _footImage[0]
+            : _footImage[3]),
+        width: 5 * (6 + like),
+        height: 5 * (6 + like));
+
+    _markers.add(marker);
+    update();
   }
 }
 
@@ -87,15 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   Location location = Location();
+  List<Marker> markers = [];
 
-  late OverlayImage _commonFoot;
-  late OverlayImage _eventFoot;
-  late OverlayImage _disabledFoot;
-  late OverlayImage _myFoot;
-  late OverlayImage _tempFoot;
-
-  late NaverMapController mycontroller;
-  late LatLngBounds _mapEdge;
+  // late NaverMapController mycontroller;
+  // late LatLngBounds _mapEdge;
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -138,42 +158,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 0.65,
             child: NaverMap(
                 onMapCreated: _onMapCreated,
-                onCameraIdle: _getMapEdge,
+                // onCameraIdle: _getMapEdge,
                 minZoom: 5.0,
                 locationButtonEnable: true,
                 initLocationTrackingMode: LocationTrackingMode.Follow,
-                markers: [
-                  Marker(
-                      markerId: "marker1",
-                      position: LatLng(37.5013, 127.0397),
-                      icon: _commonFoot,
-                      width: 30,
-                      height: 30),
-                  Marker(
-                      markerId: "marker2",
-                      position: LatLng(37.5005, 127.0371),
-                      icon: _eventFoot,
-                      width: 30,
-                      height: 30),
-                  Marker(
-                      markerId: "marker3",
-                      position: LatLng(37.5015, 127.0385),
-                      icon: _disabledFoot,
-                      width: 30,
-                      height: 30),
-                  Marker(
-                      markerId: "marker4",
-                      position: LatLng(37.5009, 127.0379),
-                      icon: _myFoot,
-                      width: 30,
-                      height: 30),
-                  Marker(
-                      markerId: "marker5",
-                      position: LatLng(37.5011, 127.0389),
-                      icon: _tempFoot,
-                      width: 30,
-                      height: 30)
-                ],
+                markers: markers,
                 circles: [
                   CircleOverlay(
                       overlayId: "radius25",
@@ -197,6 +186,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => const CreateFoot()),
               );
+            },
+          ),
+        ),
+        //새로고침
+        Align(
+          alignment: Alignment.bottomRight,
+          child: IconButton(
+            icon: Icon(
+              Icons.refresh,
+              //color: Color.fromARGB(255, 228, 229, 160),
+              size: 40,
+            ),
+            padding: EdgeInsets.fromLTRB(0, 0, 100, 295),
+            onPressed: () {
+              maindata.getURL('1', location.longitude.toString(),
+                  location.latitude.toString());
             },
           ),
         ),
@@ -230,47 +235,47 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
-    mycontroller = controller;
+    // mycontroller = controller;
   }
 
-  void _getMapEdge() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      mycontroller.getVisibleRegion().then((value) {
-        _mapEdge = value;
-      });
-    });
-  }
+  // void _getMapEdge() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     mycontroller.getVisibleRegion().then((value) {
+  //       _mapEdge = value;
+  //     });
+  //   });
+  // }
 
   void _getImage() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       OverlayImage.fromAssetImage(
         assetName: 'imgs/blue_print.png',
       ).then((image) {
-        if (mounted) setState(() => _commonFoot = image);
+        if (mounted) setState(() => maindata.footImage.add(image));
       });
 
       OverlayImage.fromAssetImage(
         assetName: 'imgs/golden_print.png',
       ).then((image) {
-        if (mounted) setState(() => _eventFoot = image);
+        if (mounted) setState(() => maindata.footImage.add(image));
       });
 
       OverlayImage.fromAssetImage(
         assetName: 'imgs/gray_print.png',
       ).then((image) {
-        if (mounted) setState(() => _disabledFoot = image);
+        if (mounted) setState(() => maindata.footImage.add(image));
       });
 
       OverlayImage.fromAssetImage(
         assetName: 'imgs/orange_print.png',
       ).then((image) {
-        if (mounted) setState(() => _myFoot = image);
+        if (mounted) setState(() => maindata.footImage.add(image));
       });
 
       OverlayImage.fromAssetImage(
         assetName: 'imgs/white_print.png',
       ).then((image) {
-        if (mounted) setState(() => _tempFoot = image);
+        if (mounted) setState(() => maindata.footImage.add(image));
       });
     });
   }
@@ -292,11 +297,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     sin(vect.radians(aLat))));
         print(
             "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
-        print(
-            "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
+        // print(
+        //     "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
 
         maindata.getURL(
             '1', location.longitude.toString(), location.latitude.toString());
+        markers = maindata.markers;
 
         // 이 부분은 2차 배포때 수정할 예정
         // maindata.getURL(
