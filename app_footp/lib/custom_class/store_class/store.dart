@@ -40,13 +40,28 @@ class CreateMarker extends GetxController {
   List<Marker> _list = [];
   List<Marker> get list => _list;
 
-  Marker _marker = Marker(markerId: 'marker1', position: LatLng(0, 0),width: 40,height: 40);
+  Map _newmarker = {
+    "isOpentoall": true,
+    "messageFileurl":
+        "https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTdfMjM5/MDAxNTc2NTgwNjQxMzIw.UIw2A-EU9OUtt5FQ_6iRP2QJQS-aFE7L_EkI_VK6ED0g.dGYlktZJPVI8Jn9z6czNo1FmNIKqNk6ap1tODyDVmswg.JPEG.ideaeditor_lee/officialDobes.jpg?type=w800",
+    "messageLatitude": 37.72479485462167,
+    "messageLongitude": 128.71639982661415,
+    "messageText": "test!",
+    "userId": 7
+  };
+
+  Map get newmarker => _newmarker; 
+
+  Marker _marker = Marker(
+      markerId: 'marker1', position: LatLng(0, 0), width: 40, height: 40);
 
   void tapped(double a, double b) {
     _latitude = a;
     _longitude = b;
     Marker temp = _marker;
     temp.position = (LatLng(a, b));
+    _newmarker["messageLatitude"]=a;
+    _newmarker["messageLongitude"]=b;
     // _list.add(Marker(markerId: '$a', position: LatLng(a,b)));
     _list.insert(0, temp);
     update();
@@ -55,20 +70,18 @@ class CreateMarker extends GetxController {
 
   Future<void> createImage(BuildContext context, int i) async {
     if (i == 0) {
-      _marker.icon = await OverlayImage.fromAssetImage(
-          assetName: "asset/normalfoot.png");
+      _marker.icon =
+          await OverlayImage.fromAssetImage(assetName: "asset/normalfoot.png");
     } else {
-      _marker.icon = await OverlayImage.fromAssetImage(
-          assetName: "asset/eventfoot.png");
+      _marker.icon =
+          await OverlayImage.fromAssetImage(assetName: "asset/eventfoot.png");
     }
     update();
   }
 }
 
-class Data{
+class Data {
+  int? type; //0 == 노멀, 1 == 이벤트
 
-  int ?type; //0 == 노멀, 1 == 이벤트
-
-  LatLng ?location;
-
+  LatLng? location;
 }
