@@ -44,9 +44,9 @@ public class FileUploadController {
 	private static final String SUCCESS = "success";
 	private static final String FAIL = "fail";
 
-	@GetMapping("/message/{Id}/{Type}")
+	@GetMapping("/message/{Type}")
 	@ApiOperation(value = "파일 업로드용 URL을 GET")
-	public String messageFileUpload(@PathVariable long Id, @PathVariable String Type) {
+	public String messageFileUpload(@PathVariable String Type) {
 /*
 		S3Presigner presigner = S3Presigner.create();;
 		String bucketName = "footp-bucket/message";
@@ -94,11 +94,6 @@ public class FileUploadController {
 			URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
 			preSignedURL = url.toString();
 			log.info("Pre-Signed URL : " + url.toString());
-
-			Message msg = messageRepository.findById(Id).get();
-			msg.setMessageFileurl(preSignedURL);
-			messageRepository.save(msg);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -106,9 +101,9 @@ public class FileUploadController {
 		return preSignedURL;
 	}
 
-	@GetMapping("/event/{Id}/{Type}")
+	@GetMapping("/event/{Type}")
 	@ApiOperation(value = "파일 업로드용 URL을 GET")
-	public String eventFileUpload(@PathVariable long Id, @PathVariable String Type) {
+	public String eventFileUpload(@PathVariable String Type) {
 /*
 		S3Presigner presigner = S3Presigner.create();;
 		String bucketName = "footp-bucket/message";
@@ -156,11 +151,6 @@ public class FileUploadController {
 			URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
 			preSignedURL = url.toString();
 			log.info("Pre-Signed URL : " + url.toString());
-
-			Event evt = eventRepository.findById(Id).get();
-			evt.setEventFileurl(preSignedURL);
-			eventRepository.save(evt);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
