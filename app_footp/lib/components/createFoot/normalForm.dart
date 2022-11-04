@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_this
+
 import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/main.dart';
 import 'package:app_footp/myLocation.dart';
@@ -9,6 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
 // import 'package:get/get.dart';
 // import 'package:get/get.dart';
 
@@ -40,6 +43,7 @@ Future<dynamic> patchFootData(dynamic input) async {
 enum OpenRange { all, me }
 
 class _NormalFormState extends State<NormalForm> {
+  CreateMarker createMarker = Get.put(CreateMarker());
   OpenRange _openRange = OpenRange.all;
   String showFileName = "";
   List<String> allowedFileTypes = ['jpg', 'mp4', 'txt', 'pdf'];
@@ -197,17 +201,22 @@ class _NormalFormState extends State<NormalForm> {
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   } else {
-                    var formData = FormData.fromMap({
-                      'messageText': myText.text,
-                      'messageFileurl': this.result != null
-                          ? await MultipartFile.fromFile(this.filePath!)
-                          : '',
-                      'messageLongtitude': 37.60251338193296,
-                      'messageLatitude': 127.12306290392186,
-                      'isOpentoall': _openRange == OpenRange.all ? true : false,
-                    });
-                    print(formData.fields);
-                    print(formData.files);
+                    createMarker.newmarker['messageText']=myText.text;
+                    createMarker.newmarker['messageFileurl']=this.result != null
+                          ? ''
+                          : '';
+                    createMarker.newmarker['isOpentoall']=_openRange == OpenRange.all ? true : false;
+                    // var formData = FormData.fromMap({
+                    //   'messageText': myText.text,
+                    //   'messageFileurl': this.result != null
+                    //       ? await MultipartFile.fromFile(this.filePath!)
+                    //       : '',
+                    //   'messageLongtitude': 37.60251338193296,
+                    //   'messageLatitude': 127.12306290392186,
+                    //   'isOpentoall': _openRange == OpenRange.all ? true : false,
+                    // });
+                    // print(formData.fields);
+                    // print(formData.files);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => MyNaverMap()));
                   }

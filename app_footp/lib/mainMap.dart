@@ -130,9 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Image.asset('imgs/logo.png', height: 45),
+        elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: true,
-        elevation: 0,
         actions: <Widget>[
           IconButton(
             icon: Icon(

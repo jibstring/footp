@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -16,6 +18,46 @@ class _SignInState extends State<SignIn> {
   bool obscurePassword = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  UserData user = Get.put(UserData());
+
+
+
+  Future signIn() async {
+    var dio = Dio();
+    var data = {
+      'userEmail': emailController.text,
+      'userPassword': passwordController.text,
+    };
+    final response =
+        await dio.post('http://k7a108.p.ssafy.io:8080/auth/signin', data: data);
+
+    print('####################################');
+    print(response.data);
+    print('####################################');
+    user.login(response.data["Authorization"]); //토큰 저장
+
+    String temp = user.Token;
+    Map<String, dynamic>? decoded_payload = user.decoding_payload(temp);
+
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@라라라$temp");
+    print("#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@$decoded_payload");
+
+    if (response.data['message'] == 'fail') {
+      _showDialog('로그인 실패');
+    } else {
+      final snackBar = SnackBar(
+        content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),
+        action: SnackBarAction(
+          label: '확인',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => mainMap()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,35 +180,5 @@ class _SignInState extends State<SignIn> {
         );
       },
     );
-  }
-
-  Future signIn() async {
-    var dio = Dio();
-    var data = {
-      'userEmail': emailController.text,
-      'userPassword': passwordController.text,
-    };
-    final response =
-        await dio.post('http://k7a108.p.ssafy.io:8080/auth/signin', data: data);
-
-    print('####################################');
-    print(response.data['message']);
-    print('####################################');
-
-    if (response.data['message'] == 'fail') {
-      _showDialog('로그인 실패');
-    } else {
-      final snackBar = SnackBar(
-        content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),
-        action: SnackBarAction(
-          label: '확인',
-          onPressed: () {
-            // Some code to undo the change.
-          },
-        ),
-      );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => mainMap()));
-    }
   }
 }
