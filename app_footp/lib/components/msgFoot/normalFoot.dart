@@ -92,13 +92,17 @@ class _NormalFootState extends State<NormalFoot> {
                             ))
                       ],
                     )
-                  : Text(
-                      widget.normalmsg["messageText"], //100자로 제한
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
-                    )),
+                  : Container(
+                    height:100,
+                    padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    child: Text(
+                        widget.normalmsg["messageText"], //100자로 제한
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey),
+                      ),
+                  )),
           //하단
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
