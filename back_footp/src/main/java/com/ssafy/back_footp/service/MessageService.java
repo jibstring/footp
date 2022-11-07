@@ -1,5 +1,9 @@
 package com.ssafy.back_footp.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.repository.*;
 import com.ssafy.back_footp.request.MessagePostReq;
@@ -20,15 +24,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageService {
+	@Autowired
+	private AmazonS3Client amazonS3Client;
+
 	@Autowired
 	MessageRepository messageRepository;
 	@Autowired
@@ -92,19 +101,42 @@ public class MessageService {
 	}
 
 	@Transactional
-	public String createMessage(MessagePostReq messageInfo) throws ParseException {
+	public String createMessage(MessagePostReq messageInfo) throws ParseException, IOException {
 		Message message = new Message();
 
-		message.setUserId(userRepository.findById(messageInfo.getUserId()).get());
-		message.setMessageText(messageInfo.getMessageText());
-		message.setMessageFileurl(messageInfo.getMessageFileurl());
+		// messege content
+
+		message.setUserId(userRepository.findById(messageInfo.getMessagePostContent().getUserId()).get());
+		message.setMessageText(messageInfo.getMessagePostContent().getMessageText());
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
-		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
-		message.setOpentoall(messageInfo.getIsOpentoall());
-		message.setMessageLikenum(messageInfo.getMessageLikenum());
-		message.setMessageSpamnum(messageInfo.getMessageSpamnum());
+		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessagePostContent().getMessageLongitude(), messageInfo.getMessagePostContent().getMessageLatitude())));
+		message.setOpentoall(messageInfo.getMessagePostContent().getIsOpentoall());
+		message.setMessageLikenum(0);
+		message.setMessageSpamnum(0);
 		message.setMessageWritedate(LocalDateTime.now());
 
+		// file upload
+		if(!messageInfo.getMessageFile().isEmpty()){
+
+			String originalName = UUID.randomUUID()+messageInfo.getMessageFile().getOriginalFilename(); // 파일 이름
+			long size = messageInfo.getMessageFile().getSize(); // 파일 크기
+			String S3Bucket = "footp-bucket"; // Bucket 이름
+			ObjectMetadata objectMetaData = new ObjectMetadata();
+			objectMetaData.setContentType(messageInfo.getMessageFile().getContentType());
+			objectMetaData.setContentLength(size);
+
+			// S3에 업로드
+			amazonS3Client.putObject(
+					new PutObjectRequest(S3Bucket+"/message", originalName, messageInfo.getMessageFile().getInputStream(), objectMetaData)
+							.withCannedAcl(CannedAccessControlList.PublicRead)
+			);
+
+			String imagePath = amazonS3Client.getUrl(S3Bucket+"/message", originalName).toString(); // 접근가능한 URL 가져오기
+
+			message.setMessageFileurl(imagePath);
+		}
+
+		// save
 		messageRepository.save(message);
 		System.out.println("message saved");
 
