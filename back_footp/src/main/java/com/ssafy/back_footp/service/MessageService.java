@@ -107,9 +107,8 @@ public class MessageService {
 		message.setMessageWritedate(LocalDateTime.now());
 
 		// file upload
-		MultipartFile mfile = messagePostReq.getMessageFile();
-		if(!mfile.isEmpty()){
-
+		if(messagePostReq.getMessageFile() != null){
+			MultipartFile mfile = messagePostReq.getMessageFile();
 			String originalName = UUID.randomUUID()+mfile.getOriginalFilename(); // 파일 이름
 			long size = mfile.getSize(); // 파일 크기
 			String S3Bucket = "footp-bucket"; // Bucket 이름
