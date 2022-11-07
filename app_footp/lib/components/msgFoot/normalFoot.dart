@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 
 class NormalFoot extends StatefulWidget {
@@ -43,7 +45,7 @@ class _NormalFootState extends State<NormalFoot> {
       child: Column(
         children: [
           SizedBox(
-            height: 10,
+            height: 20,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,24 +67,21 @@ class _NormalFootState extends State<NormalFoot> {
             ],
           ),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
           //중간
           Container(
-              child: (widget.normalmsg["messageFileurl"] != null)
+              child: (widget.normalmsg["messageFileurl"] != 'empty')
                   ? Row(
                       children: [
                         SizedBox(
                           width: 100,
                           height: 100,
-                          child: (() {
-                            if (widget.normalmsg["messageFileurl"] != null) {
-                              Image.asset(widget.normalmsg["messageFileurl"]);
-                            }
-                          })(),
+                          child:
+                              Image.network(widget.normalmsg["messageFileurl"]),
                         ),
                         Container(
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
                             width: width,
                             child: Text(
                               widget.normalmsg["messageText"], //100자로 제한
@@ -93,12 +92,20 @@ class _NormalFootState extends State<NormalFoot> {
                             ))
                       ],
                     )
-                  : Text(
-                      widget.normalmsg["messageText"], //100자로 제한
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                  : Row(
+                      children: [
+                        Container(
+                          height: 100,
+                          padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                          child: Text(
+                            widget.normalmsg["messageText"], //100자로 제한
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey),
+                          ),
+                        )
+                      ],
                     )),
           //하단
           Row(

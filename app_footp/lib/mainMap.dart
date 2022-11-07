@@ -281,16 +281,16 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         location.getCurrentLocation();
         // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
-        double aLat = 37.5015;
-        double aLng = 127.0395;
-        double aDistance = (6371 *
-            acos(cos(vect.radians(location.latitude)) *
-                    cos(vect.radians(aLat)) *
-                    cos(vect.radians(aLng) - vect.radians(location.longitude)) +
-                sin(vect.radians(location.latitude)) *
-                    sin(vect.radians(aLat))));
-        print(
-            "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
+        // double aLat = 37.5015;
+        // double aLng = 127.0395;
+        // double aDistance = (6371 *
+        //     acos(cos(vect.radians(location.latitude)) *
+        //             cos(vect.radians(aLat)) *
+        //             cos(vect.radians(aLng) - vect.radians(location.longitude)) +
+        //         sin(vect.radians(location.latitude)) *
+        //             sin(vect.radians(aLat))));
+        // print(
+        //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
         // print(
         //     "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
 
