@@ -2,6 +2,9 @@ import 'package:app_footp/components/userSetting/nicknameSetting.dart';
 import 'package:app_footp/mainMap.dart';
 import 'package:flutter/material.dart';
 import 'package:app_footp/setting.dart';
+import 'package:app_footp/singIn.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage ({super.key});
@@ -24,9 +27,10 @@ class MyHompageState extends StatefulWidget {
 }
 
 class _MyHompageStateState extends State<MyHompageState> {
-  String userName="역삼요정";
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(UserData());
     return Scaffold(
       appBar:AppBar(
         backgroundColor: Colors.white,       
@@ -72,11 +76,14 @@ class _MyHompageStateState extends State<MyHompageState> {
             Row(
               children: [
                 SizedBox(width: 20,),
-                Text(
-                  userName,
-                  style: TextStyle(
-                     fontSize: 30
-                    ),
+                SizedBox(
+                  width:MediaQuery.of(context).size.width*0.8,
+                  child: Text(
+                    '${controller.userinfo["userNickname"]}',
+                    style: TextStyle(
+                       fontSize: 30
+                      ),
+                  ),
                 ),
                 IconButton(
                   icon: Icon(
