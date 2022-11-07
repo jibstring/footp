@@ -14,7 +14,7 @@ public class MessagePostReq {
     Long messageId;
 
     @ApiModelProperty(name="유저 ID", example = "1")
-    Long userId;
+    Long userId;  
 
     @ApiModelProperty(name="메세지 내용", example = "여기 맛있어!")
     String messageText;
