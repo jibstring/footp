@@ -75,14 +75,11 @@ class _NormalFootState extends State<NormalFoot> {
                         SizedBox(
                           width: 100,
                           height: 100,
-                          child: (() {
-                            if (widget.normalmsg["messageFileurl"] != null) {
-                              Image.asset(widget.normalmsg["messageFileurl"]);
-                            }
-                          })(),
+                          child: Image.network(widget.normalmsg["messageFileurl"])
+                          ,
                         ),
                         Container(
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
                             width: width,
                             child: Text(
                               widget.normalmsg["messageText"], //100자로 제한

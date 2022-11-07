@@ -98,7 +98,7 @@ class _EventFootState extends State<EventFoot> {
                             width: 100,
                             height: 100,
                             child:
-                                Image.asset(widget.eventmsg["eventFileurl"])),
+                                Image.network(widget.eventmsg["eventFileurl"])),
                         Container(
                             padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                             width: width,
