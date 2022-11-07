@@ -117,9 +117,9 @@ class _FootListState extends State<FootList> {
             Container(
               color: Colors.white,
               padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
-              height: MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.top -
-                  302,
+              height: (MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.78,
               child: ListView.builder(
                 controller: scrollController,
                 itemCount: eventlen + messagelen,
