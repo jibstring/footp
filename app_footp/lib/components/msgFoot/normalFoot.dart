@@ -45,7 +45,7 @@ class _NormalFootState extends State<NormalFoot> {
       child: Column(
         children: [
           SizedBox(
-            height: 10,
+            height: 20,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,7 +67,7 @@ class _NormalFootState extends State<NormalFoot> {
             ],
           ),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
           //중간
           Container(
@@ -92,17 +92,21 @@ class _NormalFootState extends State<NormalFoot> {
                             ))
                       ],
                     )
-                  : Container(
-                    height:100,
-                    padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Text(
-                        widget.normalmsg["messageText"], //100자로 제한
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                  )),
+                  : Row(
+                      children: [
+                        Container(
+                          height: 100,
+                          padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                          child: Text(
+                            widget.normalmsg["messageText"], //100자로 제한
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey),
+                          ),
+                        )
+                      ],
+                    )),
           //하단
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

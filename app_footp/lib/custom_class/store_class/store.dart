@@ -110,6 +110,8 @@ class UserData extends GetxController {
   //토큰들
   String get Token => _Token;
 
+  get userNickname => null;
+
   //로그인 토큰저장
   void login(String a) {
     _Token = a;
