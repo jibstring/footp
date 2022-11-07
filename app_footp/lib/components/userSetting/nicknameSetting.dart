@@ -12,6 +12,7 @@ class NicknameSetting extends StatefulWidget {
 }
 
 class _NicknameSettingState extends State<NicknameSetting> {
+  int background=0;
   final userInput=TextEditingController();
   void updateNickname(context) async{
     print('되라라라ㅏㅏㅏㅏ1');
@@ -32,12 +33,11 @@ class _NicknameSettingState extends State<NicknameSetting> {
     if(response.statusCode==200){
       var decodedData=jsonDecode(response.body);
       print(decodedData);
+      Navigator.of(context).pop();
     }
     else{
       print('닉네임 실패패패패패패ㅐ퍂');
       print(response.statusCode);
-
-      throw 'sendReport() error';
     }
   }
     
@@ -61,8 +61,8 @@ class _NicknameSettingState extends State<NicknameSetting> {
           child: Text("취소")),
           TextButton(
             onPressed: (){
-              updateNickname(context);
-              Navigator.of(context).pop();
+              print('인풋 :${userInput.text}');
+              userInput.text !="" ?updateNickname(context):background=0;
             },
             child: Text("확인")
           )
