@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
 
-const serverUrl='http://k7a108.p.ssafy.io:8080/foot';
+const serverUrl='http://k7a108.p.ssafy.io:8080';
 
 class NicknameSetting extends StatefulWidget {
   const NicknameSetting({super.key});
@@ -12,19 +14,25 @@ class NicknameSetting extends StatefulWidget {
 }
 
 class _NicknameSettingState extends State<NicknameSetting> {
+  int background=0;
+  final controller = Get.put(UserData());
   final userInput=TextEditingController();
   void updateNickname(context) async{
     print('되라라라ㅏㅏㅏㅏ1');
     int userId=1223;
     
     final uri=Uri.parse(serverUrl+'/user/nickname');
-    
+    final bbody=json.encode({
+        "userId":controller.userinfo["userId"],
+        "userNickname":userInput.text
+      });
+
+    print("bbody");
+    print(bbody);
+
     http.Response response=await http.put(
       uri,
-      body:json.encode({
-        'userId':userId,
-        'userNickname':userInput.text
-      })
+      body:bbody
     );
     
     print('2되라라라ㅏㅏㅏㅏ2');
@@ -32,12 +40,11 @@ class _NicknameSettingState extends State<NicknameSetting> {
     if(response.statusCode==200){
       var decodedData=jsonDecode(response.body);
       print(decodedData);
+      Navigator.of(context).pop();
     }
     else{
       print('닉네임 실패패패패패패ㅐ퍂');
       print(response.statusCode);
-
-      throw 'sendReport() error';
     }
   }
     
@@ -61,8 +68,8 @@ class _NicknameSettingState extends State<NicknameSetting> {
           child: Text("취소")),
           TextButton(
             onPressed: (){
-              updateNickname(context);
-              Navigator.of(context).pop();
+              print('인풋 :${userInput.text}');
+              userInput.text !="" ?updateNickname(context):background=0;
             },
             child: Text("확인")
           )

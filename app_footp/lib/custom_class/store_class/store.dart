@@ -95,8 +95,25 @@ class UserData extends GetxController {
   //토큰들
   String _Token = "";
 
+  Map _userinfo = {
+    "userId": null,
+    "userEmail": "",
+    "userPassword": "",
+    "userNickname": "",
+    "userEmailKey": "",
+    "userSocial": null,
+    "userSocialToken": null,
+    "userPwfindkey": "invaild",
+    "userPwfindtime": null,
+    "userCash": 0
+  };
+
+  Map get userinfo => _userinfo;
+
   //토큰들
   String get Token => _Token;
+
+  get userNickname => null;
 
   //로그인 토큰저장
   void login(String a) {
@@ -127,5 +144,9 @@ class UserData extends GetxController {
       return null;
     }
     return payloadMap;
+  }
+
+  void userinfoSet(Map a) {
+    _userinfo = a;
   }
 }

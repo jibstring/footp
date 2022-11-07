@@ -33,6 +33,7 @@ class _NormalFormState extends State<NormalForm> {
   final myText = TextEditingController();
   FilePickerResult? result;
   String? filePath = '';
+  UserData user = Get.put(UserData());
 
   @override
   Widget build(BuildContext context) {
@@ -217,15 +218,15 @@ class _NormalFormState extends State<NormalForm> {
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else {
               createMarker.newmarker['messageText'] = myText.text;
-              // createMarker.newmarker['messageFileurl'] = this.result != null
-              //     ? await DIO.MultipartFile.fromFile(filePath!)
-              //     : '';
+
               createMarker.newmarker['isOpentoall'] =
                   _openRange == OpenRange.all ? true : false;
 
               DIO.MultipartFile? file = this.result != null
                   ? await DIO.MultipartFile.fromFile(this.filePath!)
                   : null;
+
+              createMarker.newmarker['userId'] = user.userinfo["userId"];
 
               createMarker.file = file;
 
