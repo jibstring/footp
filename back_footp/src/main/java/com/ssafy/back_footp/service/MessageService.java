@@ -98,6 +98,8 @@ public class MessageService {
 		message.setUserId(userRepository.findById(messageInfo.getUserId()).get());
 		message.setMessageText(messageInfo.getMessageText());
 		message.setMessageFileurl(messageInfo.getMessageFileurl());
+		message.setUserNickname(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
+		System.out.println(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setOpentoall(messageInfo.getIsOpentoall());
