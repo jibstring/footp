@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 
 class NormalFoot extends StatefulWidget {
@@ -69,14 +71,14 @@ class _NormalFootState extends State<NormalFoot> {
           ),
           //중간
           Container(
-              child: (widget.normalmsg["messageFileurl"] != null)
+              child: (widget.normalmsg["messageFileurl"] != 'empty')
                   ? Row(
                       children: [
                         SizedBox(
                           width: 100,
                           height: 100,
-                          child: Image.network(widget.normalmsg["messageFileurl"])
-                          ,
+                          child:
+                              Image.network(widget.normalmsg["messageFileurl"]),
                         ),
                         Container(
                             padding: EdgeInsets.fromLTRB(10, 10, 0, 10),

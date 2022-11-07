@@ -231,7 +231,7 @@ class _NormalFormState extends State<NormalForm> {
             } else {
               createMarker.newmarker['messageText'] = myText.text;
               createMarker.newmarker['messageFileurl'] =
-                  this.result != null ? '' : '';
+                  this.result != null ? '' : 'empty';
               createMarker.newmarker['isOpentoall'] =
                   _openRange == OpenRange.all ? true : false;
               // var formData = FormData.fromMap({
