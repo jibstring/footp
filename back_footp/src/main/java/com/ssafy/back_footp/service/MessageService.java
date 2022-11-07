@@ -15,7 +15,6 @@ import com.ssafy.back_footp.response.messagelistDTO;
 import com.ssafy.back_footp.response.eventlistDTO;
 import org.locationtech.jts.geom.Point;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,42 +46,25 @@ public class MessageService {
 	@Transactional
 	public JSONObject getMessageList(long userId, double lon, double lat) {
 		List<messagelistDTO> messagelist = new ArrayList<>();
-		messageRepository.findAllInRadiusOrderByMessageWritedate(lon, lat).forEach(Message->
+		messageRepository.findAllInRadiusOrderByMessageWritedate(lon, lat).forEach(Message ->
 //				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
-				messagelist.add(new messagelistDTO(
-				Message.getMessageId(),
-				Message.getUserId().getUserNickname(),
-				Message.getMessageText(),
-				Message.getMessageFileurl(),
-				Message.getMessagePoint().getX(),
-				Message.getMessagePoint().getY(),
-				Message.isOpentoall(),
+		messagelist.add(new messagelistDTO(Message.getMessageId(), Message.getUserId().getUserNickname(),
+				Message.getMessageText(), Message.getMessageFileurl(), Message.getMessagePoint().getX(),
+				Message.getMessagePoint().getY(), Message.isOpentoall(),
 				messageLikeRepository.findByMessageIdAndUserId(Message, userRepository.findById(userId).get()) != null,
-				Message.getMessageLikenum(),
-				Message.getMessageSpamnum(),
-				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
-		);
+				Message.getMessageLikenum(), Message.getMessageSpamnum(),
+				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")))));
 
 		List<eventlistDTO> eventlist = new ArrayList<>();
-		eventRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event->eventlist.add(new eventlistDTO(
-				Event.getEventId(),
-				Event.getUserId().getUserNickname(),
-				Event.getEventText(),
-				Event.getEventFileurl(),
+		eventRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event -> eventlist.add(new eventlistDTO(
+				Event.getEventId(), Event.getUserId().getUserNickname(), Event.getEventText(), Event.getEventFileurl(),
 				Event.getEventWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
 				Event.getEventFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-				Event.getEventPoint().getX(),
-				Event.getEventPoint().getY(),
-				Event.getEventLikenum(),
-				Event.getEventSpamnum(),
-				Event.isQuiz(),
+				Event.getEventPoint().getX(), Event.getEventPoint().getY(), Event.getEventLikenum(),
+				Event.getEventSpamnum(), Event.isQuiz(),
 				eventLikeRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null,
-				Event.getEventQuestion(),
-				Event.getEventAnswer(),
-				Event.getEventExplain(),
-				Event.getEventExplainurl(),
-				eventRankingRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null
-		)));
+				Event.getEventQuestion(), Event.getEventAnswer(), Event.getEventExplain(), Event.getEventExplainurl(),
+				eventRankingRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null)));
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("message", messagelist);
@@ -97,11 +79,16 @@ public class MessageService {
 
 		message.setUserId(userRepository.findById(messageInfo.getUserId()).get());
 		message.setMessageText(messageInfo.getMessageText());
-		message.setMessageFileurl(messageInfo.getMessageFileurl());
+		if (messageInfo.getMessageFileurl() == null || messageInfo.getMessageFileurl().equals("")) {
+			message.setMessageFileurl("empty");
+		} else {
+			message.setMessageFileurl(messageInfo.getMessageFileurl());
+		}
 		message.setUserNickname(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
-		System.out.println(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
+		//System.out.println(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
-		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
+		message.setMessagePoint(
+				gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setOpentoall(messageInfo.getIsOpentoall());
 		message.setMessageLikenum(messageInfo.getMessageLikenum());
 		message.setMessageSpamnum(messageInfo.getMessageSpamnum());
