@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+const serverUrl='http://k7a108.p.ssafy.io:8080/foot';
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -14,30 +19,78 @@ class NormalFoot extends StatefulWidget {
 
 class _NormalFootState extends State<NormalFoot> {
   @override
-  int userId = 123;
+
 
   int heartnum = 0;
+
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
+  final controller = Get.put(UserData());
+
+  void heartRequest(context,var heartInfo) async{
+        final uri=Uri.parse(serverUrl+"/"+heartInfo+"/"+widget.normalmsg["messageId"].toString()+"/"+'${controller.userinfo["userId"]}'.toString());
+
+        print("하트하트하트하트");
+        print(uri);
+        
+        http.Response response;
+
+        if(heartInfo=="like"){
+          response=await http.post(
+          uri
+        );
+
+        }
+        else{
+          response=await http.delete(
+          uri
+          );
+        }
+
+        if(response.statusCode==200){
+          var decodedData=jsonDecode(response.body);
+          print(decodedData);
+        }
+        else{
+          print('실패패패패패패ㅐ퍂');
+          print(response.statusCode);
+        }
+
+    }
+
+    void heartCheck(){
+        if(widget.normalmsg["isMylike"] == false){
+          heartnum=0;
+        }
+        else{
+          heartnum=1;
+        }   
+    }
 
   void heartChange() {
     setState(() {
-      if (heartnum == 0) {
+      var heartInfo="";
+      if (heartnum==0) {
         heartnum = 1;
         widget.normalmsg["isMylike"] = true;
         widget.normalmsg["messageLikenum"] =
             widget.normalmsg["messageLikenum"] + 1;
+        heartInfo="like";
       } else {
         heartnum = 0;
         widget.normalmsg["isMylike"] = false;
         widget.normalmsg["messageLikenum"] =
             widget.normalmsg["messageLikenum"] - 1;
+        heartInfo="unlike";
       }
+      heartRequest(context,heartInfo);
+
     });
   }
 
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
+    heartCheck();
 
     return Card(
         child: Container(
@@ -117,7 +170,7 @@ class _NormalFootState extends State<NormalFoot> {
                       context: context,
                       builder: (context) {
                         return ReportModal(
-                            widget.normalmsg["messageId"], userId);
+                            widget.normalmsg["messageId"], controller.userinfo["userId"]);
                       });
                 },
                 icon: Icon(Icons.more_horiz, size: 30),
