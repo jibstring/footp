@@ -51,7 +51,8 @@ class CreateMarker extends GetxController {
     "messageLatitude": 37.72479485462167,
     "messageLongitude": 128.71639982661415,
     "messageText": "test!",
-    "userId": 7
+    "userId": 7,
+    "userNickname": "",
   };
 
   Map get newmarker => _newmarker;
@@ -91,6 +92,21 @@ class UserData extends GetxController {
   //토큰들
   String _Token = "";
 
+  Map _userinfo = {
+    "userId": null,
+    "userEmail": "",
+    "userPassword": "",
+    "userNickname": "",
+    "userEmailKey": "",
+    "userSocial": null,
+    "userSocialToken": null,
+    "userPwfindkey": "invaild",
+    "userPwfindtime": null,
+    "userCash": 0
+  };
+
+  Map get userinfo => _userinfo;
+
   //토큰들
   String get Token => _Token;
 
@@ -123,5 +139,9 @@ class UserData extends GetxController {
       return null;
     }
     return payloadMap;
+  }
+
+  void userinfoSet(Map a){
+    _userinfo=a;
   }
 }
