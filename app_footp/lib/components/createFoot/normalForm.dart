@@ -50,6 +50,7 @@ class _NormalFormState extends State<NormalForm> {
   final myText = TextEditingController();
   FilePickerResult? result;
   String? filePath = '';
+  UserData user = Get.put(UserData());
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +207,8 @@ class _NormalFormState extends State<NormalForm> {
                           ? ''
                           : '';
                     createMarker.newmarker['isOpentoall']=_openRange == OpenRange.all ? true : false;
+                    createMarker.newmarker['userId']=user.userinfo["userId"];
+                    // createMarker.newmarker['userNickname']=user.userinfo["userNickname"];
                     // var formData = FormData.fromMap({
                     //   'messageText': myText.text,
                     //   'messageFileurl': this.result != null
