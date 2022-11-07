@@ -74,7 +74,7 @@ public class MessageController {
 
 	@PostMapping("/message")
 	@ApiOperation(value = "메세지 발자국 쓰기", notes = "일반 메세지 발자국을 작성한다.")
-	public ResponseEntity<JSONObject> messageWrite(@RequestParam("messageFile") MultipartFile messageFile, @RequestParam("messageContent") String messageContent){
+	public ResponseEntity<JSONObject> messageWrite(@RequestParam(value="messageFile", required = false) MultipartFile messageFile, @RequestParam("messageContent") String messageContent){
 		JSONObject result = null;
 
 		try {
