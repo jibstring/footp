@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.repository.*;
+import com.ssafy.back_footp.request.MessagePostContent;
 import com.ssafy.back_footp.request.MessagePostReq;
 import org.json.simple.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
@@ -23,6 +24,7 @@ import org.locationtech.jts.geom.Point;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -56,7 +58,7 @@ public class MessageService {
 	@Transactional
 	public JSONObject getMessageList(long userId, double lon, double lat) {
 		List<messagelistDTO> messagelist = new ArrayList<>();
-		messageRepository.findAllInRadiusOrderByMessageWritedate(lon, lat).forEach(Message ->
+		messageRepository.findAllInRadiusOrderByMessageWritedate(lon, lat).forEach(Message->
 //				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
 		messagelist.add(new messagelistDTO(Message.getMessageId(), Message.getUserId().getUserNickname(),
 				Message.getMessageText(), Message.getMessageFileurl(), Message.getMessagePoint().getX(),
@@ -84,47 +86,40 @@ public class MessageService {
 	}
 
 	@Transactional
-	public String createMessage(MessagePostReq messageInfo) throws ParseException, IOException {
+	public String createMessage(MessagePostReq messagePostReq) throws ParseException, IOException {
 		Message message = new Message();
 
 		// messege content
+		MessagePostContent messageInfo = messagePostReq.getMessagePostContent();
 
-		message.setUserId(userRepository.findById(messageInfo.getMessagePostContent().getUserId()).get());
-		message.setMessageText(messageInfo.getMessagePostContent().getMessageText());
 		message.setUserId(userRepository.findById(messageInfo.getUserId()).get());
 		message.setMessageText(messageInfo.getMessageText());
-		if (messageInfo.getMessageFileurl() == null || messageInfo.getMessageFileurl().equals("")) {
-			message.setMessageFileurl("empty");
-		} else {
-			message.setMessageFileurl(messageInfo.getMessageFileurl());
-		}
+		message.setUserId(userRepository.findById(messageInfo.getUserId()).get());
+		message.setMessageText(messageInfo.getMessageText());
+		message.setMessageFileurl("empty");
 		message.setUserNickname(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
 		//System.out.println(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
-		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessagePostContent().getMessageLongitude(), messageInfo.getMessagePostContent().getMessageLatitude())));
-		message.setOpentoall(messageInfo.getMessagePostContent().getIsOpentoall());
+		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
+		message.setOpentoall(messageInfo.getIsOpentoall());
 		message.setMessageLikenum(0);
 		message.setMessageSpamnum(0);
-		message.setMessagePoint(
-				gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
-		message.setOpentoall(messageInfo.getIsOpentoall());
-		message.setMessageLikenum(messageInfo.getMessageLikenum());
-		message.setMessageSpamnum(messageInfo.getMessageSpamnum());
 		message.setMessageWritedate(LocalDateTime.now());
 
 		// file upload
-		if(!messageInfo.getMessageFile().isEmpty()){
+		MultipartFile mfile = messagePostReq.getMessageFile();
+		if(!mfile.isEmpty()){
 
-			String originalName = UUID.randomUUID()+messageInfo.getMessageFile().getOriginalFilename(); // 파일 이름
-			long size = messageInfo.getMessageFile().getSize(); // 파일 크기
+			String originalName = UUID.randomUUID()+mfile.getOriginalFilename(); // 파일 이름
+			long size = mfile.getSize(); // 파일 크기
 			String S3Bucket = "footp-bucket"; // Bucket 이름
 			ObjectMetadata objectMetaData = new ObjectMetadata();
-			objectMetaData.setContentType(messageInfo.getMessageFile().getContentType());
+			objectMetaData.setContentType(mfile.getContentType());
 			objectMetaData.setContentLength(size);
 
 			// S3에 업로드
 			amazonS3Client.putObject(
-					new PutObjectRequest(S3Bucket+"/message", originalName, messageInfo.getMessageFile().getInputStream(), objectMetaData)
+					new PutObjectRequest(S3Bucket+"/message", originalName, mfile.getInputStream(), objectMetaData)
 							.withCannedAcl(CannedAccessControlList.PublicRead)
 			);
 
