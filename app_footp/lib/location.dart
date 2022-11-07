@@ -1,7 +1,10 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:get/get.dart';
 
-class Location {
+Location location = Get.put(Location());
+
+class Location extends GetxController{
   double latitude = 0;
   double longitude = 0;
   LatLng lng = LatLng(0, 0);
