@@ -15,6 +15,9 @@ public class MessagePostReq {
 
     @ApiModelProperty(name="유저 ID", example = "1")
     Long userId;
+    
+    @ApiModelProperty(name="유저 닉네임", example = "푸프짱")
+    String userNickname;
 
     @ApiModelProperty(name="메세지 내용", example = "여기 맛있어!")
     String messageText;
