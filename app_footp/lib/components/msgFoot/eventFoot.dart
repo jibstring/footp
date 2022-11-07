@@ -87,20 +87,20 @@ class _EventFootState extends State<EventFoot> {
             ],
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           //중간
           Container(
-              child: (widget.eventmsg["eventFileurl"] != null)
+              child: (widget.eventmsg["eventFileurl"].length()!=0)
                   ? Row(
                       children: [
                         SizedBox(
                             width: 100,
                             height: 100,
                             child:
-                                Image.asset(widget.eventmsg["eventFileurl"])),
+                                Image.network(widget.eventmsg["eventFileurl"])),
                         Container(
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
                             width: width,
                             child: Text(
                               widget.eventmsg["eventText"], //100자로 제한
@@ -111,13 +111,17 @@ class _EventFootState extends State<EventFoot> {
                             ))
                       ],
                     )
-                  : Text(
-                      widget.eventmsg["eventText"], //100자로 제한
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
-                    )),
+                  : Container(
+                    height: 100,
+                    padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                    child: Text(
+                        widget.eventmsg["eventText"], //100자로 제한
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey),
+                      ),
+                  )),
           //하단
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
