@@ -45,6 +45,7 @@ dependencies:
     git: https://github.com/LBSTECH/naver_map_plugin.git
   get:
   fluttertoast: ^8.0.7
+  stomp_dart_client: ^0.4.4
 
 dev_dependencies:
   flutter_test:
