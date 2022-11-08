@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.controller;
 
 import com.ssafy.back_footp.repository.UserRepository;
+import com.ssafy.back_footp.request.MessagePostContent;
 import com.ssafy.back_footp.request.MessagePostReq;
 import com.ssafy.back_footp.response.messagelikeDTO;
 import com.ssafy.back_footp.service.MessageService;
@@ -13,6 +14,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,10 @@ import com.ssafy.back_footp.service.MessageSpamService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Api(value = "메세지 API", tags = {"Message"})
 @RestController
@@ -93,12 +99,28 @@ public class MessageController {
 	
 	@PostMapping("/message")
 	@ApiOperation(value = "메세지 발자국 쓰기", notes = "일반 메세지 발자국을 작성한다.")
-	public ResponseEntity<JSONObject> messageWrite(@RequestBody MessagePostReq messagePostReq){
+	public ResponseEntity<JSONObject> messageWrite(@RequestParam(value="messageFile", required = false) MultipartFile messageFile, @RequestParam("messageContent") String messageContent){
 		JSONObject result = null;
 
 		try {
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse( messageContent );
+			JSONObject jObject = new JSONObject((JSONObject)obj);
+
+			MessagePostContent messagePostContent = new MessagePostContent();
+			messagePostContent.setMessageLatitude((double) jObject.get("messageLatitude"));
+			messagePostContent.setMessageLongitude((double) jObject.get("messageLongitude"));
+			messagePostContent.setMessageText((String) jObject.get("messageText"));
+			messagePostContent.setMessageWritedate(LocalDateTime.now());
+			messagePostContent.setUserId((long) jObject.get("userId"));
+			messagePostContent.setIsOpentoall((boolean) jObject.get("isOpentoall"));
+
+			MessagePostReq messagePostReq = new MessagePostReq();
+			messagePostReq.setMessagePostContent(messagePostContent);
+			messagePostReq.setMessageFile(messageFile);
+
 			messageService.createMessage(messagePostReq);
-			result = messageService.getMessageList(messagePostReq.getUserId(), messagePostReq.getMessageLongitude(), messagePostReq.getMessageLatitude());
+			result = messageService.getMessageList(messagePostReq.getMessagePostContent().getUserId(), messagePostReq.getMessagePostContent().getMessageLongitude(), messagePostReq.getMessagePostContent().getMessageLatitude());
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

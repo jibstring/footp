@@ -31,6 +31,9 @@ public class Message {
     @JoinColumn(name="user_id")
     private User userId;
 
+    @Column(name = "user_nickname")
+    private String userNickname;
+    
     @Column(name="message_text", length = 255, nullable = false)
     private String messageText;
 

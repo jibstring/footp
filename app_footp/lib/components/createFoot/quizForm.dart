@@ -1,3 +1,4 @@
+import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/myLocation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -347,9 +348,27 @@ class _QuizFormState extends State<QuizForm> {
                   onPressed: () async {
                     if (_isChecked == false) {
                       if (myText.text == '' && messageFilePath == '') {
-                        print('내용을 입력해주세요');
+                        final snackBar = SnackBar(
+                          content: const Text('메세지 내용을 입력해주세요!'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              // Some code to undo the change.
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else if (myText.text.length > 255) {
-                        print('내용은 255자까지');
+                        final snackBar = SnackBar(
+                          content: const Text('내용은 255자 이하로 입력해주세요!'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              // Some code to undo the change.
+                            },
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
                         print(this.messageFilePath.runtimeType);
                         print('#########################');
@@ -378,7 +397,7 @@ class _QuizFormState extends State<QuizForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyLocation()));
+                                builder: (context) => MyNaverMap()));
                       }
                     } else {
                       if (myText.text == '' && messageFilePath == '') {
@@ -444,7 +463,7 @@ class _QuizFormState extends State<QuizForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyLocation()));
+                                builder: (context) => MyNaverMap()));
                       }
                     }
                   },

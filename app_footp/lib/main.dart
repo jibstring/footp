@@ -1,3 +1,5 @@
+import 'package:app_footp/signUp.dart';
+import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
 import 'package:app_footp/mainMap.dart';
 

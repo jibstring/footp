@@ -21,11 +21,11 @@ public class ChatBlock {
 	private Long chatId;
 	
 	@JoinColumn(name = "user_blocking")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private User userBlocking;
 	
 	@JoinColumn(name = "user_blocked")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	private User userBlocked;
 
 }
