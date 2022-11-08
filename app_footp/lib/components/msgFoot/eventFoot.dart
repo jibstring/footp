@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:http/http.dart' as http;
+import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
 
@@ -18,6 +20,7 @@ class _EventFootState extends State<EventFoot> {
   int userId = 123;
   int heartnum = 0;
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
+  final controller = Get.put(UserData());
 
   void heartChange() {
     setState(() {
@@ -132,7 +135,7 @@ class _EventFootState extends State<EventFoot> {
                   showDialog(
                       context: context,
                       builder: (context) {
-                        return ReportModal(widget.eventmsg["eventId"], userId);
+                        return ReportModal(widget.eventmsg["eventId"],controller.userinfo["userId"]);
                       });
                 },
                 icon: Icon(Icons.more_horiz, size: 30),

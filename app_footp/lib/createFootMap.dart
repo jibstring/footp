@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart' as DIO;
 
 class MyNaverMap extends StatefulWidget {
   CreateMarker image = Get.put(CreateMarker());
@@ -31,9 +32,9 @@ class _MyNaverMapState extends State<MyNaverMap> {
     // setState(() {
     //   isTapped = !isTapped;
     // });
+    print('hello');
     _callPOST();
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => mainMap()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => mainMap()));
   }
 
   @override
@@ -49,10 +50,36 @@ class _MyNaverMapState extends State<MyNaverMap> {
   void _callPOST() async {
     var url = Uri.parse('http://k7a108.p.ssafy.io:8080/foot/message');
 
-    var response = await http.post(url,
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(createMarker.newmarker));
+    var data = DIO.FormData.fromMap({
+      'messageContent': json.encode(createMarker.newmarker),
+    });
 
+    if (createMarker.filePath != '') {
+      data.files.addAll([
+        MapEntry('messageFile',
+            await DIO.MultipartFile.fromFile(createMarker.filePath))
+      ]);
+    } else {}
+    ;
+
+    // var response = await http.post(url,
+    //     headers: {"Content-Type": "multipart/form-data"}, data: data);
+
+    var dio = DIO.Dio();
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.maxRedirects.isFinite;
+    print('******************************');
+    print(data);
+    print(data.fields);
+    print(data.files);
+    print('***********************************');
+    var response = await dio.post(url.toString(), data: data);
+
+    print('############################################');
+    print(response.statusCode);
+    print(data);
+    print(createMarker.filePath);
+    print('########################################');
     Fluttertoast.showToast(msg: "발자국을 찍었습니다");
 
     // Map marker = {
