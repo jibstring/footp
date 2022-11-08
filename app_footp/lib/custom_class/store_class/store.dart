@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'dart:convert';
+import 'package:dio/dio.dart' as DIO;
 
 //일반 or 이벤트 모드
 class ModeController extends GetxController {
@@ -44,16 +45,18 @@ class CreateMarker extends GetxController {
   List<Marker> _list = [];
   List<Marker> get list => _list;
 
-  Map _newmarker = {
+  var _newmarker = {
     "isOpentoall": true,
-    "messageFileurl":
-        "https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTdfMjM5/MDAxNTc2NTgwNjQxMzIw.UIw2A-EU9OUtt5FQ_6iRP2QJQS-aFE7L_EkI_VK6ED0g.dGYlktZJPVI8Jn9z6czNo1FmNIKqNk6ap1tODyDVmswg.JPEG.ideaeditor_lee/officialDobes.jpg?type=w800",
     "messageLatitude": 37.72479485462167,
     "messageLongitude": 128.71639982661415,
     "messageText": "test!",
     "userId": 7,
-    "userNickname": "",
+    "messageWritedate": DateTime.now().toString(),
   };
+
+  DIO.MultipartFile? file;
+
+  String filePath = '';
 
   Map get newmarker => _newmarker;
 

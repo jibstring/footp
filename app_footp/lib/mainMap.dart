@@ -4,13 +4,13 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
-
 import 'package:app_footp/myPage.dart';
 import 'package:app_footp/location.dart';
 import 'package:app_footp/createFoot.dart';
@@ -126,7 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 스탬프 글목록
-    StampList()
+    StampList(),
+    // 채팅방
+    ChatRoom(0,0,"unknown"),
   ];
 
   @override
@@ -205,6 +207,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.chat),
                   label: 'Stamp',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat),
+                  label: 'Chat',
                 )
               ],
               currentIndex: _selectedIndex,
