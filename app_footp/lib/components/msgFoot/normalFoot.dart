@@ -36,14 +36,10 @@ class _NormalFootState extends State<NormalFoot> {
 
         if(heartInfo=="like"){
           response=await http.post(
-          uri
-        );
-
-        }
-        else{
+          uri );
+        }else{
           response=await http.delete(
-          uri
-          );
+          uri);
         }
 
         if(response.statusCode==200){
