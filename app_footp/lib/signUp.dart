@@ -18,7 +18,7 @@ final formKey = GlobalKey<FormState>();
 class _SignUpState extends State<SignUp> {
   final myEmail = TextEditingController();
   bool _value = false;
-  bool _nicknamevalue=false;
+  bool _nicknamevalue = false;
   bool obscurePasswordOne = true;
   bool obscurePasswordTwo = true;
   String passwordValidation = '알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자 이상';
@@ -200,7 +200,8 @@ class _SignUpState extends State<SignUp> {
                                   padding: const EdgeInsets.all(10),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      checknicknameDuplicate(nicknameController.text);
+                                      checknicknameDuplicate(
+                                          nicknameController.text);
                                     },
                                     child: Text('중복확인'),
                                   ))
@@ -226,11 +227,9 @@ class _SignUpState extends State<SignUp> {
                         } else if (passwordConfirmed == false ||
                             passwordValidation != '올바른 비밀번호입니다.') {
                           _showDialog('비밀번호를 확인해주세요.');
-                        }
-                        else if (_nicknamevalue == false) {
+                        } else if (_nicknamevalue == false) {
                           _showDialog('닉네임 중복확인을 완료해주세요.');
-                        } 
-                        else {
+                        } else {
                           createAccount();
                         }
                       },
@@ -312,8 +311,6 @@ class _SignUpState extends State<SignUp> {
     _showDialog('가입 성공!');
     Navigator.push(context, MaterialPageRoute(builder: (context) => mainMap()));
   }
-
-
 
   Future checknicknameDuplicate(String nickname) async {
     var dio = Dio();

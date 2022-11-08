@@ -12,6 +12,9 @@ class ReportModal extends StatelessWidget {
 
   void reportSpam(context) async{
   final uri=Uri.parse(serverUrl+'/spam/'+'$msgId'+"/"+'$userId');
+
+  print("신고신고신고시");
+  print(uri);
   http.Response response=await http.post(
     uri
   );
@@ -23,8 +26,6 @@ class ReportModal extends StatelessWidget {
   else{
     print('실패패패패패패ㅐ퍂');
     print(response.statusCode);
-
-    throw 'sendReport() error';
   }
 }
 
