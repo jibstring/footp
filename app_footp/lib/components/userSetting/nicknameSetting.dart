@@ -39,7 +39,7 @@ class _NicknameSettingState extends State<NicknameSetting> {
                         });
                       },
                       controller: nicknameController,
-                      maxLength: 15,
+                      maxLength: 10,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: '닉네임을 입력하세요',)),
