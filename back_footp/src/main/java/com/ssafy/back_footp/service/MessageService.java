@@ -60,12 +60,19 @@ public class MessageService {
 		List<messagelistDTO> messagelist = new ArrayList<>();
 		messageRepository.findAllInRadiusOrderByMessageWritedate(lon, lat).forEach(Message->
 //				System.out.println(messageLikeRepository.findByMessageIdAndUserId(Message, Message.getUserId()))
-		messagelist.add(new messagelistDTO(Message.getMessageId(), Message.getUserId().getUserNickname(),
-				Message.getMessageText(), Message.getMessageFileurl(), Message.getMessagePoint().getX(),
-				Message.getMessagePoint().getY(), Message.isOpentoall(),
-				messageLikeRepository.findByMessageIdAndUserId(Message, userRepository.findById(userId).get()) != null,
-				Message.getMessageLikenum(), Message.getMessageSpamnum(),
-				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")))));
+				messagelist.add(new messagelistDTO(
+				Message.getMessageId(),
+				Message.getUserId().getUserNickname(),
+				Message.getMessageText(),
+				Message.getMessageFileurl(),
+				Message.getMessagePoint().getX(),
+				Message.getMessagePoint().getY(),
+				Message.isOpentoall(),
+				true,
+				Message.getMessageLikenum(),
+				Message.getMessageSpamnum(),
+				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+		);
 
 		List<eventlistDTO> eventlist = new ArrayList<>();
 		eventRepository.findAllInRadiusOrderByEventWritedate(lon, lat).forEach(Event -> eventlist.add(new eventlistDTO(

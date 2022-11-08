@@ -11,14 +11,18 @@ import com.ssafy.back_footp.entity.Message;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long>{
-	List<Message> findByUserIdOrderByMessageWritedate(User id);
-	List<Message> findAllByOrderByMessageWritedate();
-	List<Message> findAllByOrderByMessageLikenum();
+	List<Message> findByUserIdOrderByMessageWritedateDesc(User id);
+	List<Message> findAllByOrderByMessageWritedateDesc();
+	List<Message> findAllByOrderByMessageLikenumDesc();
 	List<Message> findAllByUserId(User userId);
 
 	@Query(value = "select * from message as m where (ST_Distance_Sphere(m.message_point, point(:lon, :lat))) <= 500 order by m.message_writedate", nativeQuery = true)
 	List<Message> findAllInRadiusOrderByMessageWritedate(double lon, double lat);
 	@Query(value = "select * from message as m where (ST_Distance_Sphere(m.message_point, point(:lon, :lat))) <= 500 order by m.message_likenum", nativeQuery = true)
 	List<Message> findAllInRadiusOrderByMessageLikenum(double lon, double lat);
+	
+	public static final String sortHot = "select * from message where message_writedate > date_sub(NOW(),INTERVAL 7 DAY) order by message_writedate DESC";
+	@Query(value = sortHot, nativeQuery = true)
+	List<Message> findAllByHot();
 
 }
