@@ -4,7 +4,6 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:app_footp/singIn.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -12,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
+import 'package:app_footp/signIn.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromARGB(255, 153, 181, 229),
               size: 40,
             ),
-            padding: const EdgeInsets.only(top: 5, right: 20.0),
+            padding: const EdgeInsets.only(top: 5.0, right: 20.0),
             onPressed: () {
               if (!user.isLogin()) {
                 Navigator.push(
@@ -192,7 +192,11 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromARGB(255, 153, 181, 229),
               size: 55,
             ),
-            padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
+            padding: EdgeInsets.only(
+                right: 50.0,
+                bottom: (MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.35),
             onPressed: () {
               if (!user.isLogin()) {
                 Navigator.push(
