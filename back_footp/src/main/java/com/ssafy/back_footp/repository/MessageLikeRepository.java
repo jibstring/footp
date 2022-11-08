@@ -15,10 +15,10 @@ import com.ssafy.back_footp.entity.MessageLike;
 public interface MessageLikeRepository extends JpaRepository<MessageLike, Long>{
 
 	// 한 유저가 좋아요 누른 발자국들의 리스트를 반환
-	public List<MessageLike> findByUserId(User id);
+	public List<MessageLike> findAllByUserId(User id);
 	 
 	// 유저가 해당 발자국에 좋아요를 눌렀는지 파악하기 
-	public MessageLike findByMessageIdAndUserId(Message messageId, User userId);
+	public Boolean existsByMessageIdAndUserId(Message messageId, User userId);
 	
 	// 발자국이 받은 좋아요 수 반환
 	public int countByMessageId(Message messageId);

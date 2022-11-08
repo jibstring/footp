@@ -191,7 +191,7 @@ class _SignUpState extends State<SignUp> {
                         });
                       },
                       controller: nicknameController,
-                      maxLength: 20,
+                      maxLength: 10,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: '닉네임을 입력하세요',

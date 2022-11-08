@@ -10,56 +10,60 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
 class ChatRoom extends StatefulWidget {
-  var eventId = 0;
-  var userId = 0;
-  String userNickName = "";
-  var chatList = new List<Chat>.empty(growable: true);
+  var eventId = 0; //참가하려는 이벤트의 아이디
+  var userId = 0; //나의 유저 아이디
+  String userNickName = ""; //나의 유저 닉네임
+  var chatList = List<Chat>.empty(growable: true); //채팅 리스트
   //STOMP 웹소켓
-  StompClient stompClient = StompClient(config: StompConfig.SockJS(url: 'https://k7a108.p.ssafy.io/ws'));
-  ChatRoom(this.eventId, this.userId, this.userNickName, {Key? key}) : super(key: key);
+  StompClient stompClient = StompClient(
+      config: StompConfig.SockJS(url: 'https://k7a108.p.ssafy.io/ws'));
+  ChatRoom(this.eventId, this.userId, this.userNickName, {Key? key})
+      : super(key: key);
 
   @override
   State<ChatRoom> createState() => _ChatRoomState();
 }
 
 class _ChatRoomState extends State<ChatRoom> {
-  
   //채팅 메시지를 만드는 함수(자신의 메시지는 파란색, 다른사람의 메시지는 검정색)
   Text mkText(Chat chat) {
-    if(chat.userId == widget.userId) {
+    if (chat.userId == widget.userId) {
       return Text(
-      chat.userNickName + " " + chat.time + "\n" + chat.msg,
-      style: TextStyle(color: Colors.blue[900]),
-      );  
-    }else {
+        chat.userNickName + " " + chat.time + "\n" + chat.msg,
+        style: TextStyle(color: Colors.blue[900]),
+      );
+    } else {
       return Text(
         chat.userNickName + " " + chat.time + "\n" + chat.msg,
         style: TextStyle(color: Colors.black),
       );
     }
-  }// end of function mkText
+  } // end of function mkText
 
   @override
   Widget build(BuildContext context) {
-    var eventId = widget.eventId;
-    var userId = widget.userId;
-    String userNickName = widget.userNickName;
-    if(eventId == 0) {
-      Chat chat = Chat(userId, "이벤트 목록에서 실시간 채팅에 참여해보세요.", userNickName, ".");
+    widget.chatList.clear(); //기존 채팅 리스트 비우기
+    if (widget.eventId <= 0) {
+      //이벤트 아이디가 유효하지 않은 경우
+      Chat chat = Chat(
+          widget.userId, "이벤트 목록에서 실시간 채팅에 참여해보세요.", widget.userNickName, ".");
       widget.chatList.add(chat);
-    }else {
-      // widget.stompClient = StompClient(
-      //   config: StompConfig.SockJS(url: 'https://k7a108.p.ssafy.io/ws',
-      //   onConnect: (StompFrame frame) {
-      //     setState(() {});
-      //     print("소켓 연결 시도 : " + eventId.toString());
-      //     widget.stompClient?.subscribe(destination: "/topic/"+eventId.toString(), callback: (frame) {widget.chatList.add(Chat(frame.body., frame.body.msg, frame.body.userNickName, frame.body.time))})
-      //   }
-      //   )
-      // );
-      Chat chat = Chat(userId, "실시간 채팅에 입장하였습니다", userNickName, ".");
-      widget.chatList.add(chat);
-    }
+    } else {
+      //해당이벤트의 채팅 구독
+      widget.stompClient = StompClient(
+          config: StompConfig.SockJS(
+              url: 'https://k7a108.p.ssafy.io/ws',
+              onConnect: (StompFrame frame) {
+                setState(() {});
+                print("소켓 연결 시도 : " + widget.eventId.toString());
+                widget.stompClient?.subscribe(
+                    destination: '/app/${widget.eventId}',
+                    callback: (frame) {
+                      widget.chatList.add(Chat(widget.userId, "실시간 채팅에 입장하였습니다",
+                          widget.userNickName, "."));
+                    });
+              }));
+    } // end of if 소켓 연결
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -71,7 +75,7 @@ class _ChatRoomState extends State<ChatRoom> {
           itemCount: widget.chatList.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title:  mkText(widget.chatList[index]),
+              title: mkText(widget.chatList[index]),
             );
           },
         );
