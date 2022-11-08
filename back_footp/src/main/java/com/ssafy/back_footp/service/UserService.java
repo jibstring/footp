@@ -54,7 +54,7 @@ public class UserService {
                                 Message.getMessagePoint().getX(),
                                 Message.getMessagePoint().getY(),
                                 Message.isOpentoall(),
-                                true,
+                                messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 Message.getMessageLikenum(),
                                 Message.getMessageSpamnum(),
                                 Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
