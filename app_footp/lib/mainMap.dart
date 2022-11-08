@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
+import 'package:app_footp/signIn.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
@@ -111,6 +112,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
+  UserData user = Get.put(UserData());
 
   int _selectedIndex = 0;
   List<Marker> markers = [];
@@ -143,12 +145,19 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromARGB(255, 153, 181, 229),
               size: 40,
             ),
-            padding: const EdgeInsets.only(top: 5, right: 20.0),
+            padding: const EdgeInsets.only(top: 5.0, right: 20.0),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyPage()),
-              );
+              if (!user.isLogin()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyPage()),
+                );
+              }
             },
           ),
         ],
@@ -183,12 +192,23 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromARGB(255, 153, 181, 229),
               size: 55,
             ),
-            padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
+            padding: EdgeInsets.only(
+                right: 50.0,
+                bottom: (MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.35),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreateFoot()),
-              );
+              if (!user.isLogin()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateFoot()),
+                );
+              }
             },
           ),
         ),
@@ -224,6 +244,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onMapCreated(NaverMapController controller) {
+    // if (!user.isLogin()) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => const SignIn()),
+    //   );
+    // }
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
     // mycontroller = controller;

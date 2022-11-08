@@ -1,5 +1,5 @@
 import 'package:app_footp/signUp.dart';
-import 'package:app_footp/singIn.dart';
+import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
 import 'package:app_footp/mainMap.dart';
 
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SignIn(),
+      home: mainMap(),
     );
   }
 }
