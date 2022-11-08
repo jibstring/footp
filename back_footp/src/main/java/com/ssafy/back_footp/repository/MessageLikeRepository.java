@@ -18,7 +18,7 @@ public interface MessageLikeRepository extends JpaRepository<MessageLike, Long>{
 	public List<MessageLike> findAllByUserId(User id);
 	 
 	// 유저가 해당 발자국에 좋아요를 눌렀는지 파악하기 
-	public MessageLike findByMessageIdAndUserId(Message messageId, User userId);
+	public Boolean existsByMessageIdAndUserId(Message messageId, User userId);
 	
 	// 발자국이 받은 좋아요 수 반환
 	public int countByMessageId(Message messageId);

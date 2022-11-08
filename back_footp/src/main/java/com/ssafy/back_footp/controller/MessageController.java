@@ -156,7 +156,7 @@ public class MessageController {
 		
 		int result = 0;
 		
-		if(messageLikeRepository.findByMessageIdAndUserId(messageRepository.findById(messageId).get(), userRepository.findById(userId).get())!=null) {
+		if(messageLikeRepository.existsByMessageIdAndUserId(messageRepository.findById(messageId).get(), userRepository.findById(userId).get())) {
 			messageLikeService.deleteLike(messageId, userId);
 			result = 1;
 		}
