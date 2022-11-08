@@ -57,6 +57,15 @@ public class User {
 	@Column(name = "user_cash", nullable = false)
 	private Integer userCash;
 	
+	@Column(name = "user_isplaying")
+	private Long userIsplaying;
+	
+	@Column(name = "user_stampclearnum")
+	private Integer userStampclearnum;
+	
+	@Column(name = "user_stampcreatenum")
+	private Integer userStampcreatenum;
+	
 //	@Column(name = "user_autologin")
 //	private Boolean userAutologin;
 //	

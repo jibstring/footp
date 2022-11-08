@@ -1,5 +1,7 @@
 package com.ssafy.back_footp.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,5 +48,13 @@ public class UserJoinedStampboard {
 	@Column(name = "userjoinedstampboard_isclear3")
 	private Boolean userjoinedstampboardIsclear3;
 	
+	@Column(name = "userjoinedstampboard_cleardate1")
+	private LocalDateTime userjoinedstampboardCleardate1;
+	
+	@Column(name = "userjoinedstampboard_cleardate2")
+	private LocalDateTime userjoinedstampboardCleardate2;
+	
+	@Column(name = "userjoinedstampboard_cleardate3")
+	private LocalDateTime userjoinedstampboardCleardate3;
 	
 }

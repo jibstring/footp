@@ -2,6 +2,8 @@ package com.ssafy.back_footp.controller;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,13 @@ import com.ssafy.back_footp.entity.Stampboard;
 import com.ssafy.back_footp.entity.StampboardLike;
 import com.ssafy.back_footp.entity.StampboardSpam;
 import com.ssafy.back_footp.entity.User;
+import com.ssafy.back_footp.request.StampboardReq;
+import com.ssafy.back_footp.response.myStampDTO;
+import com.ssafy.back_footp.response.stampboardDTO;
 import com.ssafy.back_footp.service.StampboardLikeService;
 import com.ssafy.back_footp.service.StampboardService;
 import com.ssafy.back_footp.service.StampboardSpamService;
+import com.ssafy.back_footp.service.UserJoinedStampboardService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +44,13 @@ public class StampController {
 	@Autowired
 	StampboardSpamService stampboardSpamService;
 	
+	@Autowired
+	UserJoinedStampboardService userJoinedStampboardService;
+	
 	@PostMapping("/create")
 	@ApiOperation(value = "스탬푸 작성")
-	public ResponseEntity<Integer> createStamp(@RequestBody Stampboard stamp){
+	@Transactional
+	public ResponseEntity<Integer> createStamp(@RequestBody StampboardReq stamp){
 		
 		int result = stampboardService.createStamp(stamp);
 		
@@ -49,6 +59,7 @@ public class StampController {
 	
 	@DeleteMapping("/delete/{userId}/{stampboardId}")
 	@ApiOperation(value = "내가 작성한 스탬프 삭제")
+	@Transactional
 	public ResponseEntity<Integer> deleteStamp(@PathVariable long userId, @PathVariable long stampboardId){
 		int result = 0;
 		
@@ -125,12 +136,38 @@ public class StampController {
 	
 	@GetMapping("/mystamp/{userId}")
 	@ApiOperation(value = "내가 작성한 스탬프들 조회(최신순)")
-	public ResponseEntity<List<Stampboard>> myStamp(@PathVariable long userId){
+	public ResponseEntity<List<myStampDTO>> myStamp(@PathVariable long userId){
 		
-		List<Stampboard> list = stampboardService.myStamp(userId);
+		List<myStampDTO> list = stampboardService.myStamp(userId);
 		
-		return new ResponseEntity<List<Stampboard>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<myStampDTO>>(list,HttpStatus.OK);
 	}
 	
+	@GetMapping("/joinList/{userId}")
+	@ApiOperation(value = "내가 진행중인 스탬푸 조회")
+	public ResponseEntity<stampboardDTO> playingStamp(@PathVariable long userId){
+		
+		stampboardDTO result = userJoinedStampboardService.playingStamp(userId);
+		
+		return new ResponseEntity<stampboardDTO>(result,HttpStatus.OK);
+	}
 	
+	@PostMapping("/join/{userId}/{stampboardId}")
+	@ApiOperation(value = "스탬푸 참가하기")
+	public ResponseEntity<Integer> joinStamp(@PathVariable long userId, @PathVariable long stampboardId){
+		
+		int result = userJoinedStampboardService.startStamp(userId, stampboardId);
+		
+		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/clearList/{userId}")
+	@ApiOperation(value = "내가 완료한 스탬푸 조회")
+	public ResponseEntity<List<stampboardDTO>> myClearStamp(@PathVariable long userId){
+		
+		List<stampboardDTO> list = userJoinedStampboardService.clearedStamp(userId);
+		
+		return new ResponseEntity<List<stampboardDTO>>(list,HttpStatus.OK);
+	}
 }

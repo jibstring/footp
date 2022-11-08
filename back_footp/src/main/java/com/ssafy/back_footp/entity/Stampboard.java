@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +33,7 @@ public class Stampboard {
     @Column(name="stampboard_id")
     private Long stampboardId;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name="user_id")
     private User userId;
 	
@@ -56,15 +58,18 @@ public class Stampboard {
 	@Column(name = "stampboard_spamnum")
 	private Integer stampboardSpamnum;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	
+	@ManyToOne
     @JoinColumn(name="stampboard_message2")
     private Message stampboardMessage2;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	
+	@ManyToOne
     @JoinColumn(name="stampboard_message3")
     private Message stampboardMessage3;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	
+	@ManyToOne
     @JoinColumn(name="stampboard_message1")
     private Message stampboardMessage1;
 }

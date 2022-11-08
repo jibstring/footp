@@ -2,12 +2,15 @@ package com.ssafy.back_footp.controller;
 
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.MessagePostReq;
+import com.ssafy.back_footp.response.messagelikeDTO;
 import com.ssafy.back_footp.service.MessageService;
 import io.swagger.annotations.Api;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,13 +75,19 @@ public class MessageController {
 
 	@GetMapping("/message/likelist/{userId}")
 	@ApiOperation(value = "유저가 좋아요한 발자국 리스트를 전부 조회한다.")
-	public ResponseEntity<List<MessageLike>> messageLikeList(@RequestParam long userId){
+	public ResponseEntity<List<messagelikeDTO>> messageLikeList(@RequestParam long userId){
 		
-		List<MessageLike> list = new ArrayList<>();
+		List<MessageLike> temps = messageLikeRepository.findAllByUserId(userRepository.findByUserId(userId));
 		
-		list = messageLikeRepository.findAllByUserId(userRepository.findByUserId(userId));
+		List<messagelikeDTO> list = new ArrayList<>();
 		
-		return new ResponseEntity<List<MessageLike>>(list,HttpStatus.OK);
+		for(MessageLike temp : temps) {
+			messagelikeDTO dto = messagelikeDTO.builder().messagelikeId(temp.getMessagelikeId()).userId(temp.getUserId().getUserId()).messageId(temp.getMessageId().getMessageId()).build();
+			
+			list.add(dto);
+		}
+		
+		return new ResponseEntity<List<messagelikeDTO>>(list,HttpStatus.OK);
 		
 	}
 	
@@ -118,6 +127,7 @@ public class MessageController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
+	@Transactional
 	@DeleteMapping("unlike/{messageId}/{userId}")
 	@ApiOperation(value = "발자국 좋아요 취소",notes = "유저가 좋아요를 두번 누르면 취소된다")
 	public ResponseEntity<Integer> messageUnlike(@PathVariable long messageId, @PathVariable long userId){
