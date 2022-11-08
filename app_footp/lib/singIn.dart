@@ -30,25 +30,29 @@ class _SignInState extends State<SignIn> {
       'userEmail': emailController.text,
       'userPassword': passwordController.text,
     };
-    final response =
+    final response_login =
         await dio.post('http://k7a108.p.ssafy.io:8080/auth/signin', data: data);
 
     print('####################################');
-    print(response.data);
+    print(response_login.data);
     print('####################################');
-    user.login(response.data["Authorization"]); //토큰 저장
 
-    String temp = user.Token;
-    Map<String, dynamic>? decoded_payload = user.decoding_payload(temp);
-    var aa = decoded_payload?["userid"];
+    if (response_login.data['message'] == 'fail') {
+      _showDialog('로그인 실패');
+    } 
+    else {
+      user.login(response_login.data["Authorization"]); //토큰 저장
+      String temp = user.Token;
+      Map<String, dynamic>? decoded_payload = user.decoding_payload(temp);
+      var aa = decoded_payload?["userid"];
 
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@라라라$temp");
-    print(
+      print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@라라라$temp");
+      print(
         "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
 
-    if (response.data['message'] == 'fail') {
-      _showDialog('로그인 실패');
-    } else {
+
+
+
       final snackBar = SnackBar(
         content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),
         action: SnackBarAction(
@@ -62,9 +66,10 @@ class _SignInState extends State<SignIn> {
       //userinfo Get
       var url = Uri.parse(
           'http://k7a108.p.ssafy.io:8080/auth/info/${decoded_payload?["userid"]}');
+      print(url);
       var response = await http.get(url);
       var qqqqq = json.decode(response.body);
-      // user.userinfoSet(response.body);
+      //user.userinfoSet(response.body);
       user.userinfoSet(qqqqq["userInfo"]);
       print("@@@@@@@@@@#################@@@@@@@@@@@${user.userinfo}");
 
