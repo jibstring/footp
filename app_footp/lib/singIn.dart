@@ -50,9 +50,6 @@ class _SignInState extends State<SignIn> {
       print(
         "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
 
-
-
-
       final snackBar = SnackBar(
         content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),
         action: SnackBarAction(
