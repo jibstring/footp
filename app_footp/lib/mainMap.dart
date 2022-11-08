@@ -4,23 +4,22 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
+
 import 'package:app_footp/myPage.dart';
-import 'package:app_footp/location.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
+import 'package:app_footp/components/mainMap/chatRoom.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
 
 MainData maindata = Get.put(MainData());
-void main() {
-  runApp(const mainMap());
-}
+MyPosition location = Get.put(MyPosition());
 
 class MainData extends GetxController {
   var _dataList;
@@ -114,8 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Completer<NaverMapController> _controller = Completer();
 
   int _selectedIndex = 0;
-
-  Location location = Location();
   List<Marker> markers = [];
 
   // late NaverMapController mycontroller;
@@ -125,10 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
   static List<Widget> widgetOptions = <Widget>[
     // 발자국 글목록
     FootList(),
+    // 실시간 채팅방
+    ChatRoom(0, 0, "unknown"),
     // 스탬프 글목록
-    StampList(),
-    // 채팅방
-    ChatRoom(0,0,"unknown"),
+    StampList()
   ];
 
   @override
@@ -172,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 circles: [
                   CircleOverlay(
                       overlayId: "radius25",
-                      center: location.lng,
+                      center: LatLng(location.latitude, location.longitude),
                       radius: 25,
                       color: Colors.transparent,
                       outlineColor: Colors.orangeAccent,
@@ -205,12 +202,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: 'List',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
-                  label: 'Stamp',
+                  icon: Icon(Icons.location_pin),
+                  label: 'Alarm',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
-                  label: 'Chat',
+                  icon: Icon(Icons.linear_scale),
+                  label: 'Stamp',
                 )
               ],
               currentIndex: _selectedIndex,
@@ -276,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     _getImage();
+    location.getCurrentLocation();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
       setState(() {
