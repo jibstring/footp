@@ -15,39 +15,40 @@ class ChatRoom extends StatefulWidget {
   String userNickName = "";
   var chatList = new List<Chat>.empty(growable: true);
   //STOMP 웹소켓
-  StompClient stompClient = StompClient(config: StompConfig.SockJS(url: 'https://k7a108.p.ssafy.io/ws'));
-  ChatRoom(this.eventId, this.userId, this.userNickName, {Key? key}) : super(key: key);
+  StompClient stompClient = StompClient(
+      config: StompConfig.SockJS(url: 'https://k7a108.p.ssafy.io/ws'));
+  ChatRoom(this.eventId, this.userId, this.userNickName, {Key? key})
+      : super(key: key);
 
   @override
   State<ChatRoom> createState() => _ChatRoomState();
 }
 
 class _ChatRoomState extends State<ChatRoom> {
-  
   //채팅 메시지를 만드는 함수(자신의 메시지는 파란색, 다른사람의 메시지는 검정색)
   Text mkText(Chat chat) {
-    if(chat.userId == widget.userId) {
+    if (chat.userId == widget.userId) {
       return Text(
-      chat.userNickName + " " + chat.time + "\n" + chat.msg,
-      style: TextStyle(color: Colors.blue[900]),
-      );  
-    }else {
+        chat.userNickName + " " + chat.time + "\n" + chat.msg,
+        style: TextStyle(color: Colors.blue[900]),
+      );
+    } else {
       return Text(
         chat.userNickName + " " + chat.time + "\n" + chat.msg,
         style: TextStyle(color: Colors.black),
       );
     }
-  }// end of function mkText
+  } // end of function mkText
 
   @override
   Widget build(BuildContext context) {
     var eventId = widget.eventId;
     var userId = widget.userId;
     String userNickName = widget.userNickName;
-    if(eventId == 0) {
+    if (eventId == 0) {
       Chat chat = Chat(userId, "이벤트 목록에서 실시간 채팅에 참여해보세요.", userNickName, ".");
       widget.chatList.add(chat);
-    }else {
+    } else {
       // widget.stompClient = StompClient(
       //   config: StompConfig.SockJS(url: 'https://k7a108.p.ssafy.io/ws',
       //   onConnect: (StompFrame frame) {
@@ -65,13 +66,12 @@ class _ChatRoomState extends State<ChatRoom> {
       minChildSize: 0.3,
       maxChildSize: 0.9,
       snap: true,
-      snapSizes: [0.65],
       builder: (BuildContext context, ScrollController scrollController) {
         return ListView.builder(
           itemCount: widget.chatList.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title:  mkText(widget.chatList[index]),
+              title: mkText(widget.chatList[index]),
             );
           },
         );
