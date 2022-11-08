@@ -17,34 +17,36 @@ class _NicknameSettingState extends State<NicknameSetting> {
   int background=0;
   final controller = Get.put(UserData());
   final userInput=TextEditingController();
+
+  bool _fail_nickname=false;
   void updateNickname(context) async{
-    print('되라라라ㅏㅏㅏㅏ1');
-    int userId=1223;
+    print('닉네임수정요청');
     
     final uri=Uri.parse(serverUrl+'/user/nickname');
     final bbody=json.encode({
         "userId":controller.userinfo["userId"],
         "userNickname":userInput.text
       });
-
-    print("bbody");
-    print(bbody);
+    
+    // print("bbody");
+    // print(bbody);
 
     http.Response response=await http.put(
       uri,
-      body:bbody
+      body:bbody,
+      headers: {
+        "Accept": "application/json",
+        "content-type":"application/json"
+      }
     );
-    
-    print('2되라라라ㅏㅏㅏㅏ2');
-    print(uri);
     if(response.statusCode==200){
-      var decodedData=jsonDecode(response.body);
-      print(decodedData);
+      controller.userinfo["userNickname"]=userInput.text;
       Navigator.of(context).pop();
     }
     else{
       print('닉네임 실패패패패패패ㅐ퍂');
       print(response.statusCode);
+      _fail_nickname=true;
     }
   }
     
@@ -57,8 +59,10 @@ class _NicknameSettingState extends State<NicknameSetting> {
             Text('닉네임을 입력해주세요(1~10자)'),
             TextField(
               controller: userInput,
-              maxLength: 20,
-            )
+              maxLength: 10,
+            ),
+            Visibility(child: Text("닉네임 변경에 실패했습니다"),visible: _fail_nickname,)
+            
           ]),
         ),
         actions:<Widget>[
