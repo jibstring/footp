@@ -40,10 +40,11 @@ class _SignInState extends State<SignIn> {
 
     String temp = user.Token;
     Map<String, dynamic>? decoded_payload = user.decoding_payload(temp);
-    var aa=decoded_payload?["userid"];
+    var aa = decoded_payload?["userid"];
 
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@라라라$temp");
-    print("#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
+    print(
+        "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
 
     if (response.data['message'] == 'fail') {
       _showDialog('로그인 실패');
@@ -59,7 +60,8 @@ class _SignInState extends State<SignIn> {
       );
 
       //userinfo Get
-      var url = Uri.parse('http://k7a108.p.ssafy.io:8080/auth/info/${decoded_payload?["userid"]}');
+      var url = Uri.parse(
+          'http://k7a108.p.ssafy.io:8080/auth/info/${decoded_payload?["userid"]}');
       var response = await http.get(url);
       var qqqqq = json.decode(response.body);
       // user.userinfoSet(response.body);
@@ -68,7 +70,6 @@ class _SignInState extends State<SignIn> {
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => mainMap()));
-
     }
   }
 
