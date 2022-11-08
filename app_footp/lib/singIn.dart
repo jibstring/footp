@@ -68,8 +68,9 @@ class _SignInState extends State<SignIn> {
       user.userinfoSet(qqqqq["userInfo"]);
       print("@@@@@@@@@@#################@@@@@@@@@@@${user.userinfo}");
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => mainMap()));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => mainMap()));
+      Navigator.pop(context);
     }
   }
 

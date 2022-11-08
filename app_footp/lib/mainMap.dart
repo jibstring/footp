@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:app_footp/singIn.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -111,6 +112,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
+  UserData user = Get.put(UserData());
 
   int _selectedIndex = 0;
   List<Marker> markers = [];
@@ -145,10 +147,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             padding: const EdgeInsets.only(top: 5, right: 20.0),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyPage()),
-              );
+              if (!user.isLogin()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyPage()),
+                );
+              }
             },
           ),
         ],
@@ -185,10 +194,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreateFoot()),
-              );
+              if (!user.isLogin()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateFoot()),
+                );
+              }
             },
           ),
         ),
@@ -224,6 +240,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onMapCreated(NaverMapController controller) {
+    // if (!user.isLogin()) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => const SignIn()),
+    //   );
+    // }
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
     // mycontroller = controller;
