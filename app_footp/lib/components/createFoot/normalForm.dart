@@ -9,9 +9,10 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as DIO;
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 // import 'package:get/get.dart';
 // import 'package:get/get.dart';
 
@@ -22,31 +23,13 @@ class NormalForm extends StatefulWidget {
   State<NormalForm> createState() => _NormalFormState();
 }
 
-Future<dynamic> patchFootData(dynamic input) async {
-  print("일반 게시글을 작성합니다.");
-  var dio = new Dio();
-  try {
-    dio.options.contentType = 'multipart/form-data';
-
-    print("############data: $input");
-
-    // var response = await dio.patch(
-    //   baseUri + '/users/profileimage',
-    //   data: input,
-    // );
-    print('성공적으로 업로드했습니다');
-  } catch (e) {
-    print(e);
-  }
-}
-
 enum OpenRange { all, me }
 
 class _NormalFormState extends State<NormalForm> {
   CreateMarker createMarker = Get.put(CreateMarker());
   OpenRange _openRange = OpenRange.all;
   String showFileName = "";
-  List<String> allowedFileTypes = ['jpg', 'mp4', 'txt', 'pdf'];
+  List<String> allowedFileTypes = ['jpg', 'm4a', 'mp4'];
   final myText = TextEditingController();
   FilePickerResult? result;
   String? filePath = '';
@@ -100,10 +83,14 @@ class _NormalFormState extends State<NormalForm> {
                     String fileName = result.files.first.name;
                     // Uint8List fileBytes = result.files.first.bytes!;
                     debugPrint(fileName);
-                    this.filePath = result.files.first.path;
+                    filePath = result.files.first.path;
                     // var multipartFile = await MultipartFile.fromFile(
                     //   file.path,
                     // );
+                    print('-----------------------------------');
+                    print(filePath);
+                    createMarker.filePath = filePath!;
+                    print('--------------------------------------');
                     setState(() {
                       showFileName = "Now File Name: $fileName";
                     });
@@ -231,20 +218,18 @@ class _NormalFormState extends State<NormalForm> {
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else {
               createMarker.newmarker['messageText'] = myText.text;
-              createMarker.newmarker['messageFileurl'] =
-                  this.result != null ? '' : 'empty';
+
               createMarker.newmarker['isOpentoall'] =
                   _openRange == OpenRange.all ? true : false;
-              createMarker.newmarker['userId']=user.userinfo["userId"];
-              // var formData = FormData.fromMap({
-              //   'messageText': myText.text,
-              //   'messageFileurl': this.result != null
-              //       ? await MultipartFile.fromFile(this.filePath!)
-              //       : '',
-              //   'messageLongtitude': 37.60251338193296,
-              //   'messageLatitude': 127.12306290392186,
-              //   'isOpentoall': _openRange == OpenRange.all ? true : false,
-              // });
+
+              DIO.MultipartFile? file = this.result != null
+                  ? await DIO.MultipartFile.fromFile(this.filePath!)
+                  : null;
+
+              createMarker.newmarker['userId'] = user.userinfo["userId"];
+
+              createMarker.file = file;
+
               // print(formData.fields);
               // print(formData.files);
               Navigator.push(context,
