@@ -5,12 +5,18 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,13 +64,15 @@ public class AuthController {
 
 		Map<String, Object> result = new HashMap<>();
 
-		User userEntity = User.builder().userEmail(user.getUserEmail())
+		User userEntity = User.builder().userEmail(user.getUserEmail()).userNickname(user.getUserNickname())
 				.userPassword(EncryptionUtils.encryptSHA256(user.getUserPassword())).userCash(0).userEmailKey("N")
+				.userIsplaying((long)-1).userStampclearnum(0).userStampcreatenum(0).userNickname(user.getUserNickname())
 				.build();
 
 		try {
 			// 이미 등록된 이메일이 아니라면
 			if (!authService.emailCheck(userEntity.getUserEmail())) {
+				System.out.println(userEntity);
 				authService.createUser(userEntity);
 				String token = jwtService.create("user_id", user.getUserId(), "Authorization");
 				result.put("Authorization", token);
@@ -98,6 +106,16 @@ public class AuthController {
 				result.put("Authorization", token);
 				result.put("message", SUCCESS);
 				status = HttpStatus.ACCEPTED;
+				
+//				if(loginUser.getUserAutologin()) {
+//					
+//					Cookie cookie = new Cookie( "loginCookie", session.getId());
+//					cookie.setPath("/");
+//					cookie.setMaxAge(60*60*24*30);
+//					
+//					response.addCookie(cookie);
+//				}
+				
 			} else {
 				result.put("message", FAIL);
 				status = HttpStatus.ACCEPTED;
@@ -107,6 +125,65 @@ public class AuthController {
 			logger.error("로그인 에러 : {}", e);
 			result.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Map<String, Object>>(result, status);
+	}
+	
+	@GetMapping("/valid")
+	@ApiOperation(value = "토큰 유효성 검사")
+	public ResponseEntity<Map<String, Object>> tokenValidation(HttpServletRequest request) {
+		logger.info("tokenValidation");
+		Map<String, Object> result = new HashMap<>();
+		if (jwtService.isUsable(request.getHeader("Authorization"))) {
+			result.put("message", SUCCESS);
+		} else {
+			result.put("Authorization", null);
+			result.put("message", FAIL);
+		}
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+
+	
+	@GetMapping("/logout")
+	@ApiOperation(value = "회원 로그아웃")
+	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) throws Exception {
+
+		logger.debug("logout - 호출");
+		Map<String, Object> result = new HashMap<>();
+
+		if (jwtService.isUsable(request.getHeader("Authorization"))) {
+			result.put("Authorization", null);
+			result.put("message", SUCCESS);
+//			session.invalidate();
+		} else {
+			result.put("message", FAIL);
+		}
+
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+
+	}
+
+	@GetMapping("/info/{userid}")
+	@ApiOperation(value = "유저 본인의 정보를 불러온다", notes = "보려는 정보가 본인의 것이면 정보를 반환한다")
+	public ResponseEntity<Map<String, Object>> getUserInfo(@PathVariable("userid") int userid,
+			@ApiParam(value = "인증할 회원의 아이디.", required = true) HttpServletRequest request) {
+		// logger.debug("userid : {} ", userid);
+		Map<String, Object> result = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+//		System.out.println(userid);
+
+		// 유효한 토큰에 자기 정보 요청 맞을경우
+		try {
+			// 로그인 사용자 정보.
+			User userInfo = authService.getUser(userid);
+			result.put("userInfo", userInfo);
+			result.put("message", SUCCESS);
+			status = HttpStatus.ACCEPTED;
+		} catch (Exception e) {
+			logger.error("정보조회 실패 : {}", e);
+			result.put("message", e.getMessage());
+			status = HttpStatus.ACCEPTED;
 		}
 
 		return new ResponseEntity<Map<String, Object>>(result, status);
@@ -143,7 +220,7 @@ public class AuthController {
 		// 이미 인증된 계정이거나, 존재하지 않는 계정이면 패스
 		if (authService.emailCheck(email) && !user.getUserEmailKey().equals("Y")) {
 
-			Mail mail = authService.sendEmailServiceForSignUp(email, "회원");
+			Mail mail = authService.sendEmailServiceForSignUp(email, user.getUserNickname());
 			System.out.println("메일이 잘 보내지나요");
 			mailService.mailSend(mail);
 			System.out.println("메일이 잘 보내지네요");

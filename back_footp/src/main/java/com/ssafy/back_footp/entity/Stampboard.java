@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,27 +26,27 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Stampboard")
+@Table(name = "stampboard")
 public class Stampboard {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="stampboard_id")
     private Long stampboardId;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name="user_id")
     private User userId;
 	
-	@Column(name = "stampboard_title", length = 255)
+	@Column(name = "stampboard_title")
 	private String stampboardTitle;
 	
-	@Column(name = "stampboard_text", length = 255)
+	@Column(name = "stampboard_text")
 	private String stampboardText;
 	
 	@Column(name = "stampboard_designcode")
 	private Integer stampboardDesigncode;
 	
-	@Column(name = "stampboard_designimgurl", length = 1024)
+	@Column(name = "stampboard_designimgurl")
 	private String stampboardDesignimgurl;
 	
 	@Column(name = "stampboard_writedate")
@@ -55,17 +57,19 @@ public class Stampboard {
 	
 	@Column(name = "stampboard_spamnum")
 	private Integer stampboardSpamnum;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	
+	
+	@ManyToOne
+    @JoinColumn(name="stampboard_message2")
+    private Message stampboardMessage2;
+	
+	
+	@ManyToOne
+    @JoinColumn(name="stampboard_message3")
+    private Message stampboardMessage3;
+	
+	
+	@ManyToOne
     @JoinColumn(name="stampboard_message1")
     private Message stampboardMessage1;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="stampboard_message2")
-	private Message stampboardMessage2;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="stampboard_message3")
-	private Message stampboardMessage3;
-
 }

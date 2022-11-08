@@ -1,10 +1,20 @@
 package com.ssafy.back_footp.controller;
 
 import com.ssafy.back_footp.repository.UserRepository;
+import com.ssafy.back_footp.request.MessagePostContent;
 import com.ssafy.back_footp.request.MessagePostReq;
+import com.ssafy.back_footp.response.messagelikeDTO;
 import com.ssafy.back_footp.service.MessageService;
 import io.swagger.annotations.Api;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +33,10 @@ import com.ssafy.back_footp.service.MessageSpamService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Api(value = "메세지 API", tags = {"Message"})
 @RestController
@@ -65,14 +79,48 @@ public class MessageController {
 		return new ResponseEntity<JSONObject>(result, HttpStatus.OK);
 	}
 
+	@GetMapping("/message/likelist/{userId}")
+	@ApiOperation(value = "유저가 좋아요한 발자국 리스트를 전부 조회한다.")
+	public ResponseEntity<List<messagelikeDTO>> messageLikeList(@RequestParam long userId){
+		
+		List<MessageLike> temps = messageLikeRepository.findAllByUserId(userRepository.findByUserId(userId));
+		
+		List<messagelikeDTO> list = new ArrayList<>();
+		
+		for(MessageLike temp : temps) {
+			messagelikeDTO dto = messagelikeDTO.builder().messagelikeId(temp.getMessagelikeId()).userId(temp.getUserId().getUserId()).messageId(temp.getMessageId().getMessageId()).build();
+			
+			list.add(dto);
+		}
+		
+		return new ResponseEntity<List<messagelikeDTO>>(list,HttpStatus.OK);
+		
+	}
+	
 	@PostMapping("/message")
 	@ApiOperation(value = "메세지 발자국 쓰기", notes = "일반 메세지 발자국을 작성한다.")
-	public ResponseEntity<JSONObject> messageWrite(@RequestBody MessagePostReq messagePostReq){
+	public ResponseEntity<JSONObject> messageWrite(@RequestParam(value="messageFile", required = false) MultipartFile messageFile, @RequestParam("messageContent") String messageContent){
 		JSONObject result = null;
 
 		try {
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse( messageContent );
+			JSONObject jObject = new JSONObject((JSONObject)obj);
+
+			MessagePostContent messagePostContent = new MessagePostContent();
+			messagePostContent.setMessageLatitude((double) jObject.get("messageLatitude"));
+			messagePostContent.setMessageLongitude((double) jObject.get("messageLongitude"));
+			messagePostContent.setMessageText((String) jObject.get("messageText"));
+			messagePostContent.setMessageWritedate(LocalDateTime.now());
+			messagePostContent.setUserId((long) jObject.get("userId"));
+			messagePostContent.setIsOpentoall((boolean) jObject.get("isOpentoall"));
+
+			MessagePostReq messagePostReq = new MessagePostReq();
+			messagePostReq.setMessagePostContent(messagePostContent);
+			messagePostReq.setMessageFile(messageFile);
+
 			messageService.createMessage(messagePostReq);
-			result = messageService.getMessageList(messagePostReq.getUserId(), messagePostReq.getMessageLongitude(), messagePostReq.getMessageLatitude());
+			result = messageService.getMessageList(messagePostReq.getMessagePostContent().getUserId(), messagePostReq.getMessagePostContent().getMessageLongitude(), messagePostReq.getMessagePostContent().getMessageLatitude());
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -101,6 +149,7 @@ public class MessageController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
+	@Transactional
 	@DeleteMapping("unlike/{messageId}/{userId}")
 	@ApiOperation(value = "발자국 좋아요 취소",notes = "유저가 좋아요를 두번 누르면 취소된다")
 	public ResponseEntity<Integer> messageUnlike(@PathVariable long messageId, @PathVariable long userId){
@@ -179,5 +228,32 @@ public class MessageController {
 		
 		
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+	}
+	
+	@GetMapping("/list/hot")
+	@ApiOperation(value = "일반 발자국 리스트(핫)")
+	public ResponseEntity<List<Message>> messageListHot(){
+		
+		List<Message> list = messageRepository.findAllByHot();
+		
+		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	}
+	
+	@GetMapping("/list/like")
+	@ApiOperation(value = "일반 발자국 리스트(좋아요)")
+	public ResponseEntity<List<Message>> messageListLike(){
+		
+		List<Message> list = messageRepository.findAllByOrderByMessageLikenumDesc();
+		
+		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	}
+	
+	@GetMapping("/list/new")
+	@ApiOperation(value = "일반 발자국 리스트(신규)")
+	public ResponseEntity<List<Message>> messageListNew(){
+		
+		List<Message> list = messageRepository.findAllByOrderByMessageWritedateDesc();
+		
+		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
 	}
 }

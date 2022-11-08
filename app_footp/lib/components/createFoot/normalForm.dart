@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_this
+
 import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/main.dart';
 import 'package:app_footp/myLocation.dart';
@@ -7,8 +9,10 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as DIO;
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
 // import 'package:get/get.dart';
 // import 'package:get/get.dart';
 
@@ -19,37 +23,20 @@ class NormalForm extends StatefulWidget {
   State<NormalForm> createState() => _NormalFormState();
 }
 
-Future<dynamic> patchFootData(dynamic input) async {
-  print("일반 게시글을 작성합니다.");
-  var dio = new Dio();
-  try {
-    dio.options.contentType = 'multipart/form-data';
-
-    print("############data: $input");
-
-    // var response = await dio.patch(
-    //   baseUri + '/users/profileimage',
-    //   data: input,
-    // );
-    print('성공적으로 업로드했습니다');
-  } catch (e) {
-    print(e);
-  }
-}
-
 enum OpenRange { all, me }
 
 class _NormalFormState extends State<NormalForm> {
+  CreateMarker createMarker = Get.put(CreateMarker());
   OpenRange _openRange = OpenRange.all;
   String showFileName = "";
-  List<String> allowedFileTypes = ['jpg', 'mp4', 'txt', 'pdf'];
+  List<String> allowedFileTypes = ['jpg', 'm4a', 'mp4'];
   final myText = TextEditingController();
   FilePickerResult? result;
   String? filePath = '';
+  UserData user = Get.put(UserData());
 
   @override
   Widget build(BuildContext context) {
-
     // ModeController modeController1 = Get.put(ModeController());
     // MyPosition myPosition_main = Get.put(MyPosition());
     // CreateMarker createMarker = Get.put(CreateMarker());
@@ -58,10 +45,13 @@ class _NormalFormState extends State<NormalForm> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        SizedBox(height: 40),
         TextField(
           maxLines: 10,
           decoration: InputDecoration(
-            border: const OutlineInputBorder(),
+            border: const OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
             alignLabelWithHint: true,
             hintText: '메세지를 입력하세요',
           ),
@@ -72,10 +62,10 @@ class _NormalFormState extends State<NormalForm> {
           width: 400,
           decoration: BoxDecoration(
             border: Border.all(
-              width: 5,
+              width: 1,
               color: Colors.grey,
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -93,10 +83,14 @@ class _NormalFormState extends State<NormalForm> {
                     String fileName = result.files.first.name;
                     // Uint8List fileBytes = result.files.first.bytes!;
                     debugPrint(fileName);
-                    this.filePath = result.files.first.path;
+                    filePath = result.files.first.path;
                     // var multipartFile = await MultipartFile.fromFile(
                     //   file.path,
                     // );
+                    print('-----------------------------------');
+                    print(filePath);
+                    createMarker.filePath = filePath!;
+                    print('--------------------------------------');
                     setState(() {
                       showFileName = "Now File Name: $fileName";
                     });
@@ -137,94 +131,114 @@ class _NormalFormState extends State<NormalForm> {
                   color: Colors.grey,
                 ),
               ),
+              Container(
+                  child: TextButton(
+                      child: Text(
+                        '파일 삭제',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: (() {
+                        setState(() {
+                          this.filePath = '';
+                          this.showFileName = '';
+                        });
+                      })))
             ],
           ),
         ),
-        Text(
-          '공개 범위',
-          style: TextStyle(fontSize: 15),
-          textAlign: TextAlign.start,
-        ),
-        Row(children: <Widget>[
-          Expanded(
-            child: RadioListTile(
-              title: Text('전체 공개'),
-              value: OpenRange.all,
-              groupValue: _openRange,
-              onChanged: (value) {
-                setState(() {
-                  _openRange = value!;
-                });
-              },
+        Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: Colors.grey,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
-          ),
-          Expanded(
-            child: RadioListTile(
-              title: Text('나만 보기'),
-              value: OpenRange.me,
-              groupValue: _openRange,
-              onChanged: (value) {
-                setState(() {
-                  _openRange = value!;
-                });
-              },
-            ),
-          ),
-        ]),
+            child: Column(
+              children: [
+                SizedBox(height: 10),
+                Text(
+                  '공개 범위',
+                  style: TextStyle(fontSize: 15),
+                  textAlign: TextAlign.start,
+                ),
+                Row(children: <Widget>[
+                  Expanded(
+                    child: RadioListTile(
+                      title: Text('전체 공개'),
+                      value: OpenRange.all,
+                      groupValue: _openRange,
+                      onChanged: (value) {
+                        setState(() {
+                          _openRange = value!;
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile(
+                      title: Text('나만 보기'),
+                      value: OpenRange.me,
+                      groupValue: _openRange,
+                      onChanged: (value) {
+                        setState(() {
+                          _openRange = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ]),
+              ],
+            )),
+        SizedBox(height: 30),
         Container(
             child: IconButton(
-                onPressed: () async {
-                  if (this.filePath == '' && myText.text.trim() == '') {
-                    final snackBar = SnackBar(
-                      content: const Text('내용을 입력하거나 파일을 첨부해주세요!'),
-                      action: SnackBarAction(
-                        label: 'Undo',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  } else if (myText.text.length > 255) {
-                    final snackBar = SnackBar(
-                      content: const Text('내용은 255자 이하로만 작성 가능합니다.!'),
-                      action: SnackBarAction(
-                        label: 'Undo',
-                        onPressed: () {
-                          // Some code to undo the change.
-                        },
-                      ),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  } else {
-                    var formData = FormData.fromMap({
-                      'messageText': myText.text,
-                      'messageFileurl': this.result != null
-                          ? await MultipartFile.fromFile(this.filePath!)
-                          : '',
-                      'messageLongtitude': 37.60251338193296,
-                      'messageLatitude': 127.12306290392186,
-                      'isOpentoall': _openRange == OpenRange.all ? true : false,
-                    });
-                    print(formData.fields);
-                    print(formData.files);
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyNaverMap()));
-                  }
-                },
-                icon: Icon(
-                  Icons.handshake,
-                  size: 24,
-                ))),
-        Container(
-            child: ElevatedButton(
-                child: Text('파일 삭제'),
-                onPressed: (() {
-                  setState(() {
-                    this.filePath = '';
-                    this.showFileName = '';
-                  });
-                })))
+          onPressed: () async {
+            if (this.filePath == '' && myText.text.trim() == '') {
+              final snackBar = SnackBar(
+                content: const Text('내용을 입력하거나 파일을 첨부해주세요!'),
+                action: SnackBarAction(
+                  label: '확인',
+                  onPressed: () {
+                    // Some code to undo the change.
+                  },
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if (myText.text.length > 255) {
+              final snackBar = SnackBar(
+                content: const Text('내용은 255자 이하로만 작성 가능합니다.!'),
+                action: SnackBarAction(
+                  label: '확인',
+                  onPressed: () {
+                    // Some code to undo the change.
+                  },
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else {
+              createMarker.newmarker['messageText'] = myText.text;
+
+              createMarker.newmarker['isOpentoall'] =
+                  _openRange == OpenRange.all ? true : false;
+
+              DIO.MultipartFile? file = this.result != null
+                  ? await DIO.MultipartFile.fromFile(this.filePath!)
+                  : null;
+
+              createMarker.newmarker['userId'] = user.userinfo["userId"];
+
+              createMarker.file = file;
+
+              // print(formData.fields);
+              // print(formData.files);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MyNaverMap()));
+            }
+          },
+          icon: Image.asset('asset/normalfoot.png'),
+          iconSize: 75,
+        )),
       ],
     ));
   }

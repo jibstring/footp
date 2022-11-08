@@ -37,11 +37,6 @@ public class MessageLikeService {
 		return result;
 	}
 	
-	// 발자국이 받은 차단 수를 반환
-	public int spamNum(long mid) {
-		int result = messageSpamRepository.countByMessageId(messageRepository.findById(mid).get());
-		return result;
-	}
 	
 	//좋아요를 누르지 않은 상태에서 누른경우, Table에 추가하기 위해 Create한다.
 	@Transactional

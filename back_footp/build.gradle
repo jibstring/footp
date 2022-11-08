@@ -39,7 +39,15 @@ dependencies {
 	implementation 'mysql:mysql-connector-java'
 	// amazon
 	implementation "software.amazon.awssdk:s3:2.13.0"
-	
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.753'
+	implementation 'com.amazonaws:aws-java-sdk-bom:1.11.1000'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//Thanks for using https://jar-download.com
+
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 		
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'	
@@ -66,7 +74,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 	
-	
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.2'
+
 	
 	
 }

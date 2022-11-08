@@ -1,3 +1,4 @@
+import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:app_footp/components/createFoot/footForm.dart';
 import 'package:app_footp/components/createFoot/normalForm.dart';
@@ -17,6 +18,7 @@ class CreateFoot extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: _title,
+      debugShowCheckedModeBanner: false,
       home: ToggleButtonsSample(title: _title),
     );
   }
@@ -49,6 +51,28 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
     ModeController modeController1 = Get.put(ModeController());
 
     return Scaffold(
+        appBar: AppBar(
+          title: Image.asset('imgs/logo.png', height: 45),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.account_circle,
+                color: Color.fromARGB(255, 153, 181, 229),
+                size: 40,
+              ),
+              padding: const EdgeInsets.only(top: 5, right: 20.0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyPage()),
+                );
+              },
+            ),
+          ],
+        ),
         body: Padding(
             padding: const EdgeInsets.all(40.0),
             child: SingleChildScrollView(

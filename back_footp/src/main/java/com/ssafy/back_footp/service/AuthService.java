@@ -156,4 +156,9 @@ public class AuthService {
 		return null;
 	}
 
+	public User getUser(long userid) {
+		// TODO Auto-generated method stub
+		return userRepository.findByUserId(userid);
+	}
+
 }
