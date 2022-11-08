@@ -9,6 +9,8 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Getter
 @Builder

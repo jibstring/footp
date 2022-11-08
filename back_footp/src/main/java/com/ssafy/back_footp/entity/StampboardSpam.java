@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "StampboardSpam")
+@Table(name = "stampboardspam")
 public class StampboardSpam {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
