@@ -27,7 +27,7 @@ class MainData extends GetxController {
   int _listsize = 0;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
-  String _filter = '';
+  String _filter = 'hot';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
@@ -45,10 +45,18 @@ class MainData extends GetxController {
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
 
+  set fixFilter(String filter){
+    _filter=filter;
+  }
+
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
     _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
+    print("#########apii#########");
+    print(_mainDataUrl);
+
+
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
     for (int i = 0; i < _listsize; i++) {
