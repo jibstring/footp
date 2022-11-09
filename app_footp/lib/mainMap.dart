@@ -28,6 +28,8 @@ class MainData extends GetxController {
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   dynamic _mainDataUrl;
+  // late NaverMapController mycontroller;
+  // late LatLngBounds _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
 
@@ -116,9 +118,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
   List<Marker> markers = [];
-
-  // late NaverMapController mycontroller;
-  // late LatLngBounds _mapEdge;
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -318,8 +317,15 @@ class _MyHomePageState extends State<MyHomePage> {
         // print(
         //     "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
 
-        maindata.getURL(
-            '1', location.longitude.toString(), location.latitude.toString());
+        if (!user.isLogin()) {
+          print(user.userinfo["userId"]);
+          maindata.getURL(
+              "1", location.longitude.toString(), location.latitude.toString());
+        } else {
+          print(user.userinfo["userId"]);
+          maindata.getURL(user.userinfo["userId"].toString(),
+              location.longitude.toString(), location.latitude.toString());
+        }
         markers = maindata.markers;
 
         // 이 부분은 2차 배포때 수정할 예정
