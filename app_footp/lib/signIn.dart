@@ -39,8 +39,7 @@ class _SignInState extends State<SignIn> {
 
     if (response_login.data['message'] == 'fail') {
       _showDialog('로그인 실패');
-    } 
-    else {
+    } else {
       user.login(response_login.data["Authorization"]); //토큰 저장
       String temp = user.Token;
       Map<String, dynamic>? decoded_payload = user.decoding_payload(temp);
@@ -48,7 +47,7 @@ class _SignInState extends State<SignIn> {
 
       print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@라라라$temp");
       print(
-        "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
+          "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
 
       final snackBar = SnackBar(
         content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),

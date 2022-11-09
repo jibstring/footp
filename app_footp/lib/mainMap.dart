@@ -46,7 +46,7 @@ class MainData extends GetxController {
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '/${userid}/${lngR}/${lngL}/${latD}/${latU}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/sort/new$apiKey');
+    _mainDataUrl = Uri.parse('$baseURL/foot/list/new$apiKey');
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
     for (int i = 0; i < _listsize; i++) {
@@ -69,6 +69,9 @@ class MainData extends GetxController {
 
   void createMarker(int idx) {
     int like = dataList["message"][idx]["messageLikenum"];
+    if (like >= 95) {
+      like = 94;
+    }
 
     Marker marker = Marker(
         markerId: dataList["message"][idx]["messageId"].toString(),
@@ -322,7 +325,6 @@ class _MyHomePageState extends State<MyHomePage> {
         //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
         if (maindata.mapEdge != null) {
           if (!user.isLogin()) {
-            print(user.userinfo["userId"]);
             // User ID는 null, 추후 수정
             maindata.getURL(
                 "1",
@@ -331,7 +333,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 maindata.mapEdge.southwest.latitude.toString(),
                 maindata.mapEdge.northeast.latitude.toString());
           } else {
-            print(user.userinfo["userId"]);
             maindata.getURL(
                 user.userinfo["userId"].toString(),
                 maindata.mapEdge.northeast.longitude.toString(),
