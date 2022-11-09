@@ -1,7 +1,6 @@
 package com.ssafy.back_footp.repository;
 
 import com.ssafy.back_footp.entity.Message;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
