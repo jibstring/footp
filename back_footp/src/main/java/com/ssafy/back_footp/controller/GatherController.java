@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.controller;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,9 +74,10 @@ public class GatherController {
 			gatherPostContent.setUserId((long) jObject.get("userId"));
 			gatherPostContent.setGatherText((String) jObject.get("gatherText"));
 			gatherPostContent.setGatherWritedate(LocalDateTime.now());
-			gatherPostContent.setGatherFinishdate(gatherPostContent.getGatherFinishdate());
+			gatherPostContent.setGatherFinishdate(LocalDateTime.parse((String) jObject.get("gatherFinishdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 			gatherPostContent.setGatherLongitude((double) jObject.get("gatherLongitude"));
-			gatherPostContent.setGatherDesigncode(gatherPostContent.getGatherDesigncode());
+			gatherPostContent.setGatherLatitude((double) jObject.get("gatherLatitude"));
+			gatherPostContent.setGatherDesigncode(Integer.parseInt(String.valueOf(jObject.get("gatherDesigncode"))));
 
 			GatherPostReq gatherPostReq = new GatherPostReq();
 			gatherPostReq.setGatherPostContent(gatherPostContent);
