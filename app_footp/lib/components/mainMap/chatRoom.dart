@@ -44,8 +44,10 @@ class _ChatRoomState extends State<ChatRoom> {
       Chat chat = Chat(widget.userId, "이벤트 목록에서 실시간 채팅에 참여해보세요.", widget.userNickName, ".");
       widget.chatList.add(chat);
     }else {
+      if(stomp.isConnect){
         print('스톰프 시작');
-        stomp.sub(widget.eventId);
+      }
+        // stomp.sub(widget.eventId);
         // Chat chat = Chat(widget.userId, "이벤트 목록에서 실시간 채팅에 참여해보세요.", widget.userNickName, ".");
         // widget.chatList.add(chat);
     }// end of if 소켓 연결
@@ -54,7 +56,9 @@ class _ChatRoomState extends State<ChatRoom> {
 
   @override
   Widget build(BuildContext context) {
-    
+    if(stomp.stompClient.isActive) {
+      stomp.sub(widget.eventId);
+    }
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
