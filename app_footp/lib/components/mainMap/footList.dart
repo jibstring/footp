@@ -20,7 +20,8 @@ class FootList extends StatefulWidget {
 class _FootListState extends State<FootList> {
   int _selectedIndex = 0;
   final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
-  var _selectedValue = "HOT";
+  final _filterList=['hot','like','new'];
+  var _selectedValue = "hot";
 
   Map<String, dynamic> jsonData = {};
   List<dynamic> footData = [];
@@ -98,7 +99,7 @@ class _FootListState extends State<FootList> {
                           // 필터
                           DropdownButton(
                             value: _selectedValue,
-                            items: _valueList.map(
+                            items: _filterList.map(
                               (value) {
                                 return DropdownMenuItem(
                                     value: value, child: Text(value));
@@ -107,6 +108,8 @@ class _FootListState extends State<FootList> {
                             onChanged: (value) {
                               setState(() {
                                 _selectedValue = value!;
+                                maindata.fixFilter=_selectedValue;
+                                //=String(_filter:selectedValue);
                               });
                             },
                           ),
