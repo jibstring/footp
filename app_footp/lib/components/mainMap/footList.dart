@@ -33,8 +33,8 @@ class _FootListState extends State<FootList> {
   void readFile() {
     try {
       jsonData = maindata.dataList;
-      print("리드파일안에 제이슨!");
-      print(jsonData);
+      // print("리드파일안에 제이슨!");
+      // print(jsonData);
     } catch (e) {
       jsonData = {};
     }

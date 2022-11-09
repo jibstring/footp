@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:app_footp/mainMap.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
-//import 'package:video_player/video_player.dart';
+import 'package:video_player/video_player.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:app_footp/signIn.dart';
+import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
@@ -25,14 +28,17 @@ class _NormalFootState extends State<NormalFoot> {
   int heartnum = 0;
 
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
-  final controller = Get.put(UserData());
+  UserData user = Get.put(UserData());
 
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
     heartCheck();
+
     // print("메시지 정보보보보");
     // print(widget.normalmsg);
+
+    AudioPlayer player = new AudioPlayer();
 
     return GestureDetector(
         onTap: () {
@@ -80,20 +86,24 @@ class _NormalFootState extends State<NormalFoot> {
                   child: (widget.normalmsg["messageFileurl"] != 'empty')
                       ? Row(
                           children: [
-                            SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: (() {
-                                int flag = fileCheck(
-                                    widget.normalmsg["messageFileurl"]);
-                                if (flag == 0) {
-                                  Image.network(
-                                      widget.normalmsg["messageFileurl"]);
-                                } else if (flag == 1) {
-                                  //VideoPlayerController.network(widget.normalmsg["messageFileurl"]);
-                                } else if (flag == 2) {}
-                              })(),
-                            ),
+                            fileCheck(widget.normalmsg["messageFileurl"]) != -1
+                                ? SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: (() {
+                                      int flag = fileCheck(
+                                          widget.normalmsg["messageFileurl"]);
+                                      if (flag == 0) {
+                                        Image.network(
+                                            widget.normalmsg["messageFileurl"]);
+                                      } else if (flag == 1) {
+                                        //VideoPlayerController.network(widget.normalmsg["messageFileurl"]);
+                                      } else if (flag == 2) {
+                                        //player.play(widget.normalmsg["messageFileurl"]);
+                                      }
+                                    })(),
+                                  )
+                                : Text(""),
                             Container(
                                 padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
                                 width: width,
@@ -127,12 +137,20 @@ class _NormalFootState extends State<NormalFoot> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return ReportModal(widget.normalmsg["messageId"],
-                                controller.userinfo["userId"]);
-                          });
+                      if (!user.isLogin()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignIn()),
+                        );
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ReportModal(widget.normalmsg["messageId"],
+                                  user.userinfo["userId"]);
+                            });
+                      }
                     },
                     icon: Icon(Icons.more_horiz, size: 30),
                   ),
@@ -146,7 +164,15 @@ class _NormalFootState extends State<NormalFoot> {
                             height: 30,
                           ),
                           onTap: () {
-                            heartChange();
+                            if (!user.isLogin()) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignIn()),
+                              );
+                            } else {
+                              heartChange();
+                            }
                           }),
                       SizedBox(width: 10),
                       SizedBox(
@@ -178,7 +204,7 @@ class _NormalFootState extends State<NormalFoot> {
       return 0;
     } else if (file.endsWith('mp4')) {
       return 1;
-    } else if (file.endsWith('m4a')) {
+    } else if (file.endsWith('mp3')) {
       return 2;
     }
     return -1;
@@ -191,7 +217,7 @@ class _NormalFootState extends State<NormalFoot> {
         "/" +
         widget.normalmsg["messageId"].toString() +
         "/" +
-        '${controller.userinfo["userId"]}'.toString());
+        '${user.userinfo["userId"]}'.toString());
 
     print("하트하트하트하트");
     print(uri);
@@ -208,7 +234,6 @@ class _NormalFootState extends State<NormalFoot> {
       var decodedData = jsonDecode(response.body);
       print(decodedData);
     } else {
-      print('실패패패패패패ㅐ퍂');
       print(response.statusCode);
     }
   }
