@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 import com.ssafy.back_footp.entity.Stampboard;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.entity.UserJoinedStampboard;
+import com.ssafy.back_footp.repository.StampboardLikeRepository;
 import com.ssafy.back_footp.repository.StampboardRepository;
 import com.ssafy.back_footp.repository.UserJoinedStampboardRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.response.stampboardDTO;
+import com.ssafy.back_footp.response.userjoinedstampboardDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,16 +37,19 @@ public class UserJoinedStampboardService {
 	StampboardRepository stampboardRepository;
 
 	@Autowired
+	StampboardLikeRepository stampboardLikeRepository;
+	
+	@Autowired
 	UserRepository userRepository;
 
 	// 내가 진행중인 스탬푸 (스탬푸는 동시에 여러개 진행할 수 없다)
-	public stampboardDTO playingStamp(long userId) {
+	public userjoinedstampboardDTO playingStamp(long userId) {
 
 		UserJoinedStampboard temp = userJoinedStampboardRepository.findById(userRepository.findByUserId(userId).getUserIsplaying()).get();
 		
 		Stampboard stampboard = stampboardRepository.findById(temp.getStampboardId().getStampboardId()).get();
 		
-		stampboardDTO result = stampboardDTO.builder().stampboard_id(temp.getStampboardId().getStampboardId())
+		userjoinedstampboardDTO result = userjoinedstampboardDTO.builder().stampboard_id(temp.getStampboardId().getStampboardId())
 				.user_id(temp.getUserId().getUserId()).stampboard_title(stampboard.getStampboardTitle())
 				.stampboard_text(stampboard.getStampboardText())
 				.stampboard_designcode(stampboard.getStampboardDesigncode())
@@ -57,23 +62,25 @@ public class UserJoinedStampboardService {
 				.stampboard_message3(stampboard.getStampboardMessage3().getMessageId())
 				.UserjoinedStampboard_cleardate1(temp.getUserjoinedstampboardCleardate1())
 				.UserjoinedStampboard_cleardate2(temp.getUserjoinedstampboardCleardate2())
-				.UserjoinedStampboard_cleardate3(temp.getUserjoinedstampboardCleardate3()).build();
+				.UserjoinedStampboard_cleardate3(temp.getUserjoinedstampboardCleardate3())
+				.isMylike(stampboardLikeRepository.existsByUserId(userRepository.findByUserId(userId)))
+				.build();
 
 		return result;
 	}
 
 	// 내가 완료한 스탬푸 목록들 반환
-	public List<stampboardDTO> clearedStamp(long userId) {
+	public List<userjoinedstampboardDTO> clearedStamp(long userId) {
 
 		List<UserJoinedStampboard> list = userJoinedStampboardRepository
 				.clearedStamp(userRepository.findByUserId(userId));
 
-		List<stampboardDTO> result = new ArrayList<>();
+		List<userjoinedstampboardDTO> result = new ArrayList<>();
 		for (UserJoinedStampboard temp : list) {
 
 			Stampboard stampboard = stampboardRepository.findById(temp.getStampboardId().getStampboardId()).get();
 
-			stampboardDTO DTO = stampboardDTO.builder().stampboard_id(temp.getStampboardId().getStampboardId())
+			userjoinedstampboardDTO DTO = userjoinedstampboardDTO.builder().stampboard_id(temp.getStampboardId().getStampboardId())
 					.user_id(temp.getUserId().getUserId()).stampboard_title(stampboard.getStampboardTitle())
 					.stampboard_text(stampboard.getStampboardText())
 					.stampboard_designcode(stampboard.getStampboardDesigncode())
@@ -86,7 +93,9 @@ public class UserJoinedStampboardService {
 					.stampboard_message3(stampboard.getStampboardMessage3().getMessageId())
 					.UserjoinedStampboard_cleardate1(temp.getUserjoinedstampboardCleardate1())
 					.UserjoinedStampboard_cleardate2(temp.getUserjoinedstampboardCleardate2())
-					.UserjoinedStampboard_cleardate3(temp.getUserjoinedstampboardCleardate3()).build();
+					.UserjoinedStampboard_cleardate3(temp.getUserjoinedstampboardCleardate3())
+					.isMylike(stampboardLikeRepository.existsByUserId(userRepository.findByUserId(userId)))
+					.build();
 
 			result.add(DTO);
 		}

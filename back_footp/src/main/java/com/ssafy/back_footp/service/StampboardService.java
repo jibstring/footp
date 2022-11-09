@@ -15,6 +15,7 @@ import com.ssafy.back_footp.repository.MessageRepository;
 import com.ssafy.back_footp.repository.StampboardLikeRepository;
 import com.ssafy.back_footp.repository.StampboardRepository;
 import com.ssafy.back_footp.repository.StampboardSpamRepository;
+import com.ssafy.back_footp.repository.UserJoinedStampboardRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.StampboardReq;
 import com.ssafy.back_footp.response.myStampDTO;
@@ -42,6 +43,9 @@ public class StampboardService {
 
 	@Autowired
 	MessageRepository messageRepository;
+
+	@Autowired
+	UserJoinedStampboardRepository userJoinedStampboardRepository;
 
 	// 스탬푸 생성
 	@Transactional
@@ -79,12 +83,12 @@ public class StampboardService {
 			myStampDTO dto = myStampDTO.builder().stampboard_id(temp.getStampboardId())
 					.stampboard_title(temp.getStampboardTitle()).stampboard_text(temp.getStampboardText())
 					.stampboard_spamnum(temp.getStampboardSpamnum()).stampboard_likenum(temp.getStampboardLikenum())
-					.stampboard_designcode(temp.getStampboardDesigncode()).stampboard_designurl(temp.getStampboardDesignimgurl())
+					.stampboard_designcode(temp.getStampboardDesigncode())
+					.stampboard_designurl(temp.getStampboardDesignimgurl())
 					.stampboard_message1(temp.getStampboardMessage1().getMessageId())
 					.stampboard_message2(temp.getStampboardMessage2().getMessageId())
-					.stampboard_message3(temp.getStampboardMessage3().getMessageId())
-					.build();
-			
+					.stampboard_message3(temp.getStampboardMessage3().getMessageId()).build();
+
 			list.add(dto);
 		}
 
@@ -109,33 +113,129 @@ public class StampboardService {
 
 	// 좋아요 순으로 정렬
 
-	public List<Stampboard> sortLike() {
+	public List<stampboardDTO> sortLike(long uid) {
 
-		List<Stampboard> list = stampboardRepository.findAllByOrderByStampboardLikenumDesc();
+		List<Stampboard> temps = stampboardRepository.findAllByOrderByStampboardLikenumDesc();
+
+		List<stampboardDTO> list = new ArrayList<>();
+
+		for (Stampboard temp : temps) {
+
+			stampboardDTO dto = stampboardDTO.builder().stampboard_id(temp.getStampboardId())
+					.user_id(temp.getUserId().getUserId()).stampboard_title(temp.getStampboardTitle())
+					.stampboard_text(temp.getStampboardText()).stampboard_designcode(temp.getStampboardDesigncode())
+					.stampboard_designurl(temp.getStampboardDesignimgurl())
+					.stampboard_writedate(temp.getStampboardWritedate()).stampboard_likenum(temp.getStampboardLikenum())
+					.stampboard_spamnum(temp.getStampboardSpamnum())
+					.stampboard_message1(temp.getStampboardMessage1().getMessageId())
+					.stampboard_message2(temp.getStampboardMessage2().getMessageId())
+					.stampboard_message3(temp.getStampboardMessage3().getMessageId())
+					.isMylike(stampboardLikeRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyclear(userJoinedStampboardRepository
+							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+					.build();
+
+			list.add(dto);
+		}
 
 		return list;
 	}
 
 	// 최신순으로 정렬
-	public List<Stampboard> sortNew() {
+	public List<stampboardDTO> sortNew(long uid) {
 
-		List<Stampboard> list = stampboardRepository.findAllByOrderByStampboardWritedateDesc();
+		List<Stampboard> temps = stampboardRepository.findAllByOrderByStampboardWritedateDesc();
+
+		List<stampboardDTO> list = new ArrayList<>();
+
+		for (Stampboard temp : temps) {
+
+			stampboardDTO dto = stampboardDTO.builder().stampboard_id(temp.getStampboardId())
+					.user_id(temp.getUserId().getUserId()).stampboard_title(temp.getStampboardTitle())
+					.stampboard_text(temp.getStampboardText()).stampboard_designcode(temp.getStampboardDesigncode())
+					.stampboard_designurl(temp.getStampboardDesignimgurl())
+					.stampboard_writedate(temp.getStampboardWritedate()).stampboard_likenum(temp.getStampboardLikenum())
+					.stampboard_spamnum(temp.getStampboardSpamnum())
+					.stampboard_message1(temp.getStampboardMessage1().getMessageId())
+					.stampboard_message2(temp.getStampboardMessage2().getMessageId())
+					.stampboard_message3(temp.getStampboardMessage3().getMessageId())
+					.isMylike(stampboardLikeRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyclear(userJoinedStampboardRepository
+							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+					.build();
+
+			list.add(dto);
+		}
 
 		return list;
 	}
 
 	// 검색 결과 좋아요순
-	public List<Stampboard> sortSearchLike(String text) {
-		List<Stampboard> list = stampboardRepository
+	public List<stampboardDTO> sortSearchLike(String text, long uid) {
+		List<Stampboard> temps = stampboardRepository
 				.findByStampboardTextContainingIgnoreCaseOrderByStampboardLikenumDesc(text);
+
+		List<stampboardDTO> list = new ArrayList<>();
+
+		for (Stampboard temp : temps) {
+
+			stampboardDTO dto = stampboardDTO.builder().stampboard_id(temp.getStampboardId())
+					.user_id(temp.getUserId().getUserId()).stampboard_title(temp.getStampboardTitle())
+					.stampboard_text(temp.getStampboardText()).stampboard_designcode(temp.getStampboardDesigncode())
+					.stampboard_designurl(temp.getStampboardDesignimgurl())
+					.stampboard_writedate(temp.getStampboardWritedate()).stampboard_likenum(temp.getStampboardLikenum())
+					.stampboard_spamnum(temp.getStampboardSpamnum())
+					.stampboard_message1(temp.getStampboardMessage1().getMessageId())
+					.stampboard_message2(temp.getStampboardMessage2().getMessageId())
+					.stampboard_message3(temp.getStampboardMessage3().getMessageId())
+					.isMylike(stampboardLikeRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyclear(userJoinedStampboardRepository
+							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+					.build();
+
+			list.add(dto);
+		}
 
 		return list;
 	}
 
 	// 검색 결과 최신순
-	public List<Stampboard> sortSearchNew(String text) {
-		List<Stampboard> list = stampboardRepository
+	public List<stampboardDTO> sortSearchNew(String text, long uid) {
+		List<Stampboard> temps = stampboardRepository
 				.findByStampboardTextContainingIgnoreCaseOrderByStampboardWritedateDesc(text);
+
+		List<stampboardDTO> list = new ArrayList<>();
+
+		for (Stampboard temp : temps) {
+
+			stampboardDTO dto = stampboardDTO.builder().stampboard_id(temp.getStampboardId())
+					.user_id(temp.getUserId().getUserId()).stampboard_title(temp.getStampboardTitle())
+					.stampboard_text(temp.getStampboardText()).stampboard_designcode(temp.getStampboardDesigncode())
+					.stampboard_designurl(temp.getStampboardDesignimgurl())
+					.stampboard_writedate(temp.getStampboardWritedate()).stampboard_likenum(temp.getStampboardLikenum())
+					.stampboard_spamnum(temp.getStampboardSpamnum())
+					.stampboard_message1(temp.getStampboardMessage1().getMessageId())
+					.stampboard_message2(temp.getStampboardMessage2().getMessageId())
+					.stampboard_message3(temp.getStampboardMessage3().getMessageId())
+					.isMylike(stampboardLikeRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
+							temp))
+					.isMyclear(userJoinedStampboardRepository
+							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+					.build();
+
+			list.add(dto);
+		}
 
 		return list;
 	}

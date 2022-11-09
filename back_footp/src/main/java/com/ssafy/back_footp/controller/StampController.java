@@ -22,6 +22,9 @@ import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.request.StampboardReq;
 import com.ssafy.back_footp.response.myStampDTO;
 import com.ssafy.back_footp.response.stampboardDTO;
+import com.ssafy.back_footp.response.stamplikeDTO;
+import com.ssafy.back_footp.response.stampspamDTO;
+import com.ssafy.back_footp.response.userjoinedstampboardDTO;
 import com.ssafy.back_footp.service.StampboardLikeService;
 import com.ssafy.back_footp.service.StampboardService;
 import com.ssafy.back_footp.service.StampboardSpamService;
@@ -71,20 +74,20 @@ public class StampController {
 	
 	@GetMapping("/likelist/{userId}")
 	@ApiOperation(value = "유저의 좋아요 리스트 반환")
-	public ResponseEntity<List<StampboardLike>> likeList(@PathVariable long userId){
+	public ResponseEntity<List<stamplikeDTO>> likeList(@PathVariable long userId){
 		
-		List<StampboardLike> list = stampboardLikeService.likeList(userId);
+		List<stamplikeDTO> list = stampboardLikeService.likeList(userId);
 		
-		return new ResponseEntity<List<StampboardLike>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<stamplikeDTO>>(list,HttpStatus.OK);
 	}
 	
 	@GetMapping("spamlist/{userId}")
 	@ApiOperation(value = "유저의 신고 리스트 반환")
-	public ResponseEntity<List<StampboardSpam>> spamList(@PathVariable long userId){
+	public ResponseEntity<List<stampspamDTO>> spamList(@PathVariable long userId){
 		
-		List<StampboardSpam> list = stampboardSpamService.spamList(userId);
+		List<stampspamDTO> list = stampboardSpamService.spamList(userId);
 		
-		return new ResponseEntity<List<StampboardSpam>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<stampspamDTO>>(list,HttpStatus.OK);
 	}
 	
 	@PostMapping("/like/{userId}/{stampboardId}")
@@ -110,28 +113,28 @@ public class StampController {
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
 	
-	@GetMapping("/sort/like")
+	@GetMapping("/sort/like/{userId}")
 	@ApiOperation(value = "스탬프 좋아요 순으로 정렬")
-	public ResponseEntity<List<Stampboard>> sortLike(){
-		List<Stampboard> list = stampboardService.sortLike();
+	public ResponseEntity<List<stampboardDTO>> sortLike(@PathVariable long userId){
+		List<stampboardDTO> list = stampboardService.sortLike(userId);
 		
-		return new ResponseEntity<List<Stampboard>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<stampboardDTO>>(list,HttpStatus.OK);
 	}
 	
-	@GetMapping("/sort/new")
+	@GetMapping("/sort/new/{userId}")
 	@ApiOperation(value = "스탬프 최신 순으로 정렬")
-	public ResponseEntity<List<Stampboard>> sortNew(){
-		List<Stampboard> list = stampboardService.sortNew();
+	public ResponseEntity<List<stampboardDTO>> sortNew(@PathVariable long userId){
+		List<stampboardDTO> list = stampboardService.sortNew(userId);
 		
-		return new ResponseEntity<List<Stampboard>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<stampboardDTO>>(list,HttpStatus.OK);
 	}
 	
-	@GetMapping("/search/like/{text}")
+	@GetMapping("/search/like/{text}/{userId}")
 	@ApiOperation(value = "스탬프 검색을 통해 나온 결과 조회")
-	public ResponseEntity<List<Stampboard>> searchNew(@PathVariable String text){
-		List<Stampboard> list = stampboardService.sortSearchNew(text);
+	public ResponseEntity<List<stampboardDTO>> searchNew(@PathVariable String text,@PathVariable long userId){
+		List<stampboardDTO> list = stampboardService.sortSearchNew(text,userId);
 		
-		return new ResponseEntity<List<Stampboard>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<stampboardDTO>>(list,HttpStatus.OK);
 	}
 	
 	@GetMapping("/mystamp/{userId}")
@@ -145,11 +148,11 @@ public class StampController {
 	
 	@GetMapping("/joinList/{userId}")
 	@ApiOperation(value = "내가 진행중인 스탬푸 조회")
-	public ResponseEntity<stampboardDTO> playingStamp(@PathVariable long userId){
+	public ResponseEntity<userjoinedstampboardDTO> playingStamp(@PathVariable long userId){
 		
-		stampboardDTO result = userJoinedStampboardService.playingStamp(userId);
+		userjoinedstampboardDTO result = userJoinedStampboardService.playingStamp(userId);
 		
-		return new ResponseEntity<stampboardDTO>(result,HttpStatus.OK);
+		return new ResponseEntity<userjoinedstampboardDTO>(result,HttpStatus.OK);
 	}
 	
 	@PostMapping("/join/{userId}/{stampboardId}")
@@ -164,10 +167,10 @@ public class StampController {
 	
 	@GetMapping("/clearList/{userId}")
 	@ApiOperation(value = "내가 완료한 스탬푸 조회")
-	public ResponseEntity<List<stampboardDTO>> myClearStamp(@PathVariable long userId){
+	public ResponseEntity<List<userjoinedstampboardDTO>> myClearStamp(@PathVariable long userId){
 		
-		List<stampboardDTO> list = userJoinedStampboardService.clearedStamp(userId);
+		List<userjoinedstampboardDTO> list = userJoinedStampboardService.clearedStamp(userId);
 		
-		return new ResponseEntity<List<stampboardDTO>>(list,HttpStatus.OK);
+		return new ResponseEntity<List<userjoinedstampboardDTO>>(list,HttpStatus.OK);
 	}
 }
