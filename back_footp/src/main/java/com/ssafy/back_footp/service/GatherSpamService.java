@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EventSpamService {
+public class GatherSpamService {
 
 	@Autowired
 	private GatherSpamRepository eventSpamRepository;
@@ -25,7 +25,7 @@ public class EventSpamService {
 
 	// 발자국의 id를 받아와 해당 발자국이 받은 신고 수를 반환한다.
 	public int spamNum(long eid) {
-		int result = eventSpamRepository.countByEventId(gatherRepository.findById(eid).get());
+		int result = eventSpamRepository.countByGatherId(gatherRepository.findById(eid).get());
 		return result;
 	}
 
@@ -35,8 +35,8 @@ public class EventSpamService {
 		GatherSpam savedSpam = eventSpamRepository.save(gatherSpam);
 
 		// Likenum 증가
-		Gather evt = gatherRepository.findById(gatherSpam.getGatherId().getEventId()).get();
-		evt.setEventSpamnum(evt.getEventSpamnum()+1);
+		Gather evt = gatherRepository.findById(gatherSpam.getGatherId().getGatherId()).get();
+		evt.setGatherSpamnum(evt.getGatherSpamnum()+1);
 		gatherRepository.save(evt);
 
 		return savedSpam;

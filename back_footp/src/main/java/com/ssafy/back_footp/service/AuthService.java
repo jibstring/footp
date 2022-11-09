@@ -62,11 +62,6 @@ public class AuthService {
 		return userRepository.findByUserEmailAndUserPassword(email, EncryptionUtils.encryptSHA256(password));
 	}
 
-	@Transactional
-	public void deleteUser(long uid) {
-		userRepository.deleteByUserId(uid);
-	}
-
 	public boolean emailCheck(String email) {
 		return userRepository.existsByUserEmail(email);
 	}

@@ -1,6 +1,7 @@
 package com.ssafy.back_footp.service;
 
 import com.ssafy.back_footp.entity.Message;
+import com.ssafy.back_footp.entity.Stampboard;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.*;
 import com.ssafy.back_footp.request.MypostUpdateReq;
@@ -28,9 +29,23 @@ public class UserService {
     @Autowired
     MessageLikeRepository messageLikeRepository;
     @Autowired
+    MessageSpamRepository messageSpamRepository;
+    @Autowired
     GatherRepository gatherRepository;
     @Autowired
     GatherLikeRepository gatherLikeRepository;
+    @Autowired
+    GatherSpamRepository gatherSpamRepository;
+    @Autowired
+    StampboardRepository stampboardRepository;
+    @Autowired
+    StampboardSpamRepository stampboardSpamRepository;
+    @Autowired
+    StampboardLikeRepository stampboardLikeRepository;
+    @Autowired
+    UserJoinedStampboardRepository userJoinedStampboardRepository;
+    @Autowired
+    UserJoinedGatherRepository userJoinedGatherRepository;
     @Autowired
     UserRepository userRepository;
 
@@ -65,6 +80,7 @@ public class UserService {
                 Gather.getGatherFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
                 Gather.getGatherPoint().getX(),
                 Gather.getGatherPoint().getY(),
+                gatherLikeRepository.findByGatherIdAndUserId(Gather, userRepository.findById(userId).get()) != null,
                 Gather.getGatherLikenum(),
                 Gather.getGatherSpamnum(),
                 Gather.getGatherDesigncode()
@@ -107,6 +123,38 @@ public class UserService {
         usr.setUserNickname(nicknameUpdateReq.getUserNickname());
 //        usr = User.builder().userPassword(nicknameUpdateReq.getUserNickname()).build();
         userRepository.save(usr);
+
+        return "success";
+    }
+
+    public String deleteUser(long uid){
+        User usr = userRepository.findById(uid).get();
+
+        // 스탬프 이용 내역 삭제
+        stampboardSpamRepository.deleteAllByUserId(usr);
+        stampboardLikeRepository.deleteAllByUserId(usr);
+        userJoinedStampboardRepository.deleteAllByUserId(usr);
+
+        // 이 유저가 작성한 스탬프를 서비스에서 삭제
+        List<Stampboard> sblist = stampboardRepository.findAllByUserId(usr);
+        for(Stampboard sb : sblist){
+            stampboardSpamRepository.deleteAllByStampboardId(sb);
+            stampboardLikeRepository.deleteAllByStampboardId(sb);
+            userJoinedStampboardRepository.deleteAllByStampboardId(sb);
+        }
+
+        // 확성기 삭제
+        gatherLikeRepository.deleteAllByUserId(usr);
+        gatherSpamRepository.deleteAllByUserId(usr);
+        gatherRepository.deleteAllByUserId(usr);
+
+        // 메세지 삭제
+        messageLikeRepository.deleteAllByUserId(usr);
+        messageSpamRepository.deleteAllByUserId(usr);
+        messageRepository.deleteAllByUserId(usr);
+
+        // 유저 삭제
+        userRepository.deleteByUserId(usr);
 
         return "success";
     }

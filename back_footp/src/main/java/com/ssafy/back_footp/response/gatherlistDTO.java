@@ -21,6 +21,7 @@ public class gatherlistDTO implements Serializable {
     private String gatherFinishdate;
     private double gatherLongitude;
     private double gatherLatitude;
+    private Boolean isMylike;
     private int gatherLikenum;
     private int gatherSpamnum;
     private int gatherDesigncode;

@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EventLikeService {
+public class GatherLikeService {
 
 	@Autowired
 	private GatherLikeRepository gatherLikeRepository;
@@ -27,7 +27,7 @@ public class EventLikeService {
 	
 	// 발자국의 id를 받아와 해당 발자국이 받은 좋아요 수를 반환한다.
 		public int likeNum(long eid) {
-			int result = gatherLikeRepository.countByEventId(gatherRepository.findById(eid).get());
+			int result = gatherLikeRepository.countByGatherId(gatherRepository.findById(eid).get());
 			return result;
 		}
 		
@@ -37,8 +37,8 @@ public class EventLikeService {
 			GatherLike savedLike = gatherLikeRepository.save(gatherLike);
 
 			// Likenum 증가
-			Gather evt = gatherRepository.findById(gatherLike.getGatherId().getEventId()).get();
-			evt.setEventLikenum(evt.getEventLikenum()+1);
+			Gather evt = gatherRepository.findById(gatherLike.getGatherId().getGatherId()).get();
+			evt.setGatherLikenum(evt.getGatherLikenum()+1);
 			gatherRepository.save(evt);
 
 			return savedLike;
@@ -50,9 +50,9 @@ public class EventLikeService {
 
 			// Likenum 감소
 			Gather evt = gatherRepository.findById(eid).get();
-			evt.setEventLikenum(evt.getEventLikenum()-1);
+			evt.setGatherLikenum(evt.getGatherLikenum()-1);
 			gatherRepository.save(evt);
 
-			gatherLikeRepository.deleteByEventIdAndUserId(gatherRepository.findById(eid).get(), userRepository.findById(uid).get());
+			gatherLikeRepository.deleteByGatherIdAndUserId(gatherRepository.findById(eid).get(), userRepository.findById(uid).get());
 		}
 }

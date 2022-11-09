@@ -28,6 +28,9 @@ public class Gather {
     @JoinColumn(name = "user_id")
     private User userId;
 
+    @Column(name = "user_nickname")
+    private String userNickname;
+
     @Column(name = "gather_text")
     private String gatherText;
 

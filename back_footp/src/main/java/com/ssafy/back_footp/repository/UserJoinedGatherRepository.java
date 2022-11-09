@@ -12,5 +12,6 @@ import java.util.Optional;
 @Repository
 public interface UserJoinedGatherRepository extends JpaRepository<UserJoinedGather, Long>{
 
-	
+    @Transactional
+    public void deleteAllByUserId(User uid);
 }
