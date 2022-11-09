@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
-//import 'package:video_player/video_player.dart';
+import 'package:video_player/video_player.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
@@ -30,9 +30,10 @@ class _NormalFootState extends State<NormalFoot> {
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
     heartCheck();
+    //VideoPlayerController _controller;
     // print("메시지 정보보보보");
     // print(widget.normalmsg);
-    
+    AudioPlayer player = new AudioPlayer();
 
     return Card(
         child: Container(
@@ -87,7 +88,7 @@ class _NormalFootState extends State<NormalFoot> {
                               //VideoPlayerController.network(widget.normalmsg["messageFileurl"]);
                             }
                             else if(flag==2){
-
+                              //player.play(widget.normalmsg["messageFileurl"]);
                             }
                             
                           })(),
