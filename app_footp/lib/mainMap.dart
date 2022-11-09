@@ -49,6 +49,9 @@ class MainData extends GetxController {
     _mainDataUrl = Uri.parse('$baseURL/foot/list/new$apiKey');
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
+
+    print("!!!!에이피아이키!!!!!!");
+    print(_apiKey);
     for (int i = 0; i < _listsize; i++) {
       createMarker(i);
     }
@@ -59,6 +62,9 @@ class MainData extends GetxController {
     http.Response response = await http.get(_mainDataUrl);
     if (response.statusCode == 200) {
       _dataList = jsonDecode(utf8.decode(response.bodyBytes));
+
+      print("~~~~~메인맵 데이타리스트~~~~~");
+      print(_dataList);
       update();
       return _dataList;
     } else {
