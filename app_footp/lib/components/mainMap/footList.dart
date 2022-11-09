@@ -23,7 +23,7 @@ class _FootListState extends State<FootList> {
   var _selectedValue = "HOT";
 
   Map<String, dynamic> jsonData = {};
-  List<dynamic> footData=[];
+  List<dynamic> footData = [];
   //var footData = List<Map<String,dynamic>>.filled(100,0);
 
   int eventlen = 0;
@@ -33,8 +33,8 @@ class _FootListState extends State<FootList> {
   void readFile() {
     try {
       jsonData = maindata.dataList;
-      print("리드파일안에 제이슨!");
-      print(jsonData);
+      // print("리드파일안에 제이슨!");
+      // print(jsonData);
     } catch (e) {
       jsonData = {};
     }
@@ -60,14 +60,13 @@ class _FootListState extends State<FootList> {
     //     footData[i]=jsonData["event"][i];
     //   }
     // }
-    
+
     for (int i = 0; i < messagelen; i++) {
       //jsonData["message"][i]["check"] = 1;
-      if(footData.length<=i){
+      if (footData.length <= i) {
         footData.add(jsonData["message"][i]);
-      }
-      else{
-        footData[i]=jsonData["message"][i];
+      } else {
+        footData[i] = jsonData["message"][i];
       }
     }
     // print("@@@@@@@@@@풋리스트 풋데이터@@@@@@@@@");
@@ -86,7 +85,7 @@ class _FootListState extends State<FootList> {
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: eventlen + messagelen+1,
+                itemCount: eventlen + messagelen + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return Container(

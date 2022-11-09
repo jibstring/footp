@@ -46,12 +46,9 @@ class MainData extends GetxController {
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '/${userid}/${lngR}/${lngL}/${latD}/${latU}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/sort/new$apiKey');
+    _mainDataUrl = Uri.parse('$baseURL/foot/list/new$apiKey');
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
-
-    print("!!!!에이피아이키!!!!!!");
-    print(_apiKey);
     for (int i = 0; i < _listsize; i++) {
       createMarker(i);
     }
@@ -62,9 +59,6 @@ class MainData extends GetxController {
     http.Response response = await http.get(_mainDataUrl);
     if (response.statusCode == 200) {
       _dataList = jsonDecode(utf8.decode(response.bodyBytes));
-
-      print("~~~~~메인맵 데이타리스트~~~~~");
-      print(_dataList);
       update();
       return _dataList;
     } else {
@@ -75,6 +69,9 @@ class MainData extends GetxController {
 
   void createMarker(int idx) {
     int like = dataList["message"][idx]["messageLikenum"];
+    if (like >= 95) {
+      like = 94;
+    }
 
     Marker marker = Marker(
         markerId: dataList["message"][idx]["messageId"].toString(),
@@ -100,6 +97,13 @@ class MainData extends GetxController {
         _mapEdge = value;
       });
     });
+    update();
+  }
+
+  void moveMapToMessage(double lat, double lng) {
+    CameraPosition cameraPosition =
+        CameraPosition(target: LatLng(lat, lng), zoom: 20.0);
+    _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
     update();
   }
 }
@@ -328,7 +332,6 @@ class _MyHomePageState extends State<MyHomePage> {
         //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
         if (maindata.mapEdge != null) {
           if (!user.isLogin()) {
-            print(user.userinfo["userId"]);
             // User ID는 null, 추후 수정
             maindata.getURL(
                 "1",
@@ -337,7 +340,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 maindata.mapEdge.southwest.latitude.toString(),
                 maindata.mapEdge.northeast.latitude.toString());
           } else {
-            print(user.userinfo["userId"]);
             maindata.getURL(
                 user.userinfo["userId"].toString(),
                 maindata.mapEdge.northeast.longitude.toString(),
