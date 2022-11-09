@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class myStampDTO implements Serializable{
+public class userjoinedstampboardDTO implements Serializable{
 	
 	Long stampboard_id;
 	Long user_id;
@@ -28,5 +28,10 @@ public class myStampDTO implements Serializable{
 	Long stampboard_message1;
 	Long stampboard_message2;
 	Long stampboard_message3;
+	Boolean isMylike;
+	
+	LocalDateTime UserjoinedStampboard_cleardate1;
+	LocalDateTime UserjoinedStampboard_cleardate2;
+	LocalDateTime UserjoinedStampboard_cleardate3;
 
 }

@@ -29,6 +29,10 @@ public interface StampboardLikeRepository extends JpaRepository<StampboardLike, 
 
 	
 	public int countByStampboardId(Stampboard sid);
+
+	public Boolean existsByUserId(User uid);
+
+	public Boolean existsByUserIdAndStampboardId(User uid, Stampboard sid);
 	
 	
 }

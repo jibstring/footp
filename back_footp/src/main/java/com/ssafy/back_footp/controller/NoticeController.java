@@ -1,9 +1,6 @@
 package com.ssafy.back_footp.controller;
 
 import com.ssafy.back_footp.entity.*;
-import com.ssafy.back_footp.repository.EventLikeRepository;
-import com.ssafy.back_footp.repository.EventSpamRepository;
-import com.ssafy.back_footp.request.EventPostReq;
 import com.ssafy.back_footp.service.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

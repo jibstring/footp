@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -13,11 +12,11 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="eventlike")
-public class EventLike {
+@Table(name="userjoinedgather")
+public class UserJoinedGather {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="eventlike_id")
-    private Long eventlikeId;
+    @Column(name="userjoinedgather_id")
+    private Long userjoinedgatherId;
 
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,6 +25,6 @@ public class EventLike {
 
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="event_id")
-    private Event eventId;
+    @JoinColumn(name="gather_id")
+    private Gather gatherId;
 }

@@ -24,5 +24,7 @@ public interface StampboardSpamRepository extends JpaRepository<StampboardSpam, 
 
 	public int countByStampboardId(Stampboard sid);
 
-	public List<StampboardSpam> findAllByUserId(User findByUserId);
+	public List<StampboardSpam> findAllByUserId(User uid);
+
+	public Boolean existsByUserIdAndStampboardId(User uid, Stampboard sid);
 }

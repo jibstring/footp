@@ -1,21 +1,12 @@
 package com.ssafy.back_footp.service;
 
-import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.entity.User;
-import com.ssafy.back_footp.repository.*;
-import com.ssafy.back_footp.request.MypostUpdateReq;
-import com.ssafy.back_footp.request.NicknameUpdateReq;
-import com.ssafy.back_footp.request.PasswordUpdateReq;
-import com.ssafy.back_footp.response.eventlistDTO;
-import com.ssafy.back_footp.response.messagelistDTO;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.entity.Mail;
-import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.security.EncryptionUtils;
 
@@ -24,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -72,11 +60,6 @@ public class AuthService {
 	// 로그인 (입력받은 비밀번호를 암호화하여 DB와 비교)
 	public User login(String email, String password) {
 		return userRepository.findByUserEmailAndUserPassword(email, EncryptionUtils.encryptSHA256(password));
-	}
-
-	@Transactional
-	public void deleteUser(long uid) {
-		userRepository.deleteByUserId(uid);
 	}
 
 	public boolean emailCheck(String email) {
