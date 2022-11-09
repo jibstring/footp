@@ -323,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
               "1", location.longitude.toString(), location.latitude.toString());
         } else {
           print(user.userinfo["userId"]);
-          maindata.getURL("${user.userinfo["userId"]}",
+          maindata.getURL(user.userinfo["userId"].toString(),
               location.longitude.toString(), location.latitude.toString());
         }
         markers = maindata.markers;
