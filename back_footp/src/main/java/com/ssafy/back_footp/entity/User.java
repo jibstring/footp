@@ -42,20 +42,26 @@ public class User {
 	@Column(name = "user_emailkey")
 	private String userEmailKey;
 
+	@Column(name = "user_pwfindkey")
+	private String userPwfindkey;
+
+	@Column(name = "user_pwfindtime")
+	private LocalDateTime userPwfindtime;
+
 	@Column(name = "user_social")
 	private Long userSocial;
 
 	@Column(name = "user_socialtoken")
 	private String userSocialToken;
-	
-	@Column(name = "user_pwfindkey")
-	private String userPwfindkey;
-	
-	@Column(name = "user_pwfindtime")
-	private LocalDateTime userPwfindtime;
 
-	@Column(name = "user_cash", nullable = false)
+	@Column(name = "user_cash")
 	private Integer userCash;
+
+	@Column(name = "user_gatherregion")
+	private String userGatherregion;
+
+	@Column(name = "user_gatheralarm", columnDefinition = "TINYINT", length = 1)
+	private boolean userGatheralarm;
 	
 	@Column(name = "user_isplaying")
 	private Long userIsplaying;
