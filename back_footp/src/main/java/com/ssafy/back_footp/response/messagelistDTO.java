@@ -25,6 +25,7 @@ public class messagelistDTO implements Serializable{
     private double messageLatitude;
     private Boolean isOpentoall;
     private Boolean isMylike;
+    private Boolean isMyspam;
     private int messageLikenum;
     private int messageSpamnum;
     private String messageWritedate;

@@ -3,7 +3,6 @@ package com.ssafy.back_footp.controller;
 import java.util.List;
 
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -165,6 +164,15 @@ public class StampController {
 		
 	}
 	
+	@PostMapping("/clear/{userId}/{messageId}")
+	@ApiOperation(value = "스탬푸 찍기(가까운 거리에서 스탬프 클릭)")
+	public ResponseEntity<Integer> clearStamp(@PathVariable long userId, @PathVariable long messageId){
+		
+		int result = userJoinedStampboardService.clearStamp(userId, messageId);
+		
+		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+	}
+	
 	@GetMapping("/clearList/{userId}")
 	@ApiOperation(value = "내가 완료한 스탬푸 조회")
 	public ResponseEntity<List<userjoinedstampboardDTO>> myClearStamp(@PathVariable long userId){
@@ -172,5 +180,16 @@ public class StampController {
 		List<userjoinedstampboardDTO> list = userJoinedStampboardService.clearedStamp(userId);
 		
 		return new ResponseEntity<List<userjoinedstampboardDTO>>(list,HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/leave/{userId}")
+	@ApiOperation(value = "진행중인 스탬푸 취소")
+	@Transactional
+	public ResponseEntity<Integer> deleteMyStamp(@PathVariable long userId){
+		
+		int result = userJoinedStampboardService.deleteStamp(userId);
+		
+		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+		
 	}
 }

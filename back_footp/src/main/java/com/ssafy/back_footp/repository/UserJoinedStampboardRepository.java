@@ -26,5 +26,9 @@ public interface UserJoinedStampboardRepository extends JpaRepository<UserJoined
 	@Query(value = cleared, nativeQuery = true)
 	List<UserJoinedStampboard> clearedStamp(@Param("userId") User userId);
 
-	Boolean existsByUserIdAndStampboardId(User findByUserId, Stampboard temp);
+	public static final String isclear = "SELECT CASE WHEN EXISTS (SELECT * FROM userjoinedstampboard WHERE user_id =:userId AND stampboard_id =:stampboardId AND userjoinedstampboard_isclear1 = TRUE AND userjoinedstampboard_isclear2 = TRUE AND userjoinedstampboard_isclear3 = TRUE) THEN 'true' ELSE 'false' END";
+	@Query(value = isclear, nativeQuery = true)
+	Boolean isclearStamp(@Param("userId") User userId, @Param("stampboardId") Stampboard stampboardId);
+	
+	Boolean existsByUserIdAndStampboardId(User findByUserId, Stampboard temp);	
 }

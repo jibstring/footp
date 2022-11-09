@@ -33,6 +33,8 @@ public class UserService {
     @Autowired
     MessageLikeRepository messageLikeRepository;
     @Autowired
+    MessageSpamRepository messageSpamRepository;
+    @Autowired
     EventRepository eventRepository;
     @Autowired
     EventLikeRepository eventLikeRepository;
@@ -55,6 +57,7 @@ public class UserService {
                                 Message.getMessagePoint().getY(),
                                 Message.isOpentoall(),
                                 messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
+                                messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 Message.getMessageLikenum(),
                                 Message.getMessageSpamnum(),
                                 Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))

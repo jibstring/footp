@@ -135,7 +135,7 @@ public class StampboardService {
 					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
 							temp))
 					.isMyclear(userJoinedStampboardRepository
-							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+							.isclearStamp(userRepository.findByUserId(uid), temp))
 					.build();
 
 			list.add(dto);
@@ -167,7 +167,7 @@ public class StampboardService {
 					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
 							temp))
 					.isMyclear(userJoinedStampboardRepository
-							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+							.isclearStamp(userRepository.findByUserId(uid), temp))
 					.build();
 
 			list.add(dto);
@@ -199,7 +199,7 @@ public class StampboardService {
 					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
 							temp))
 					.isMyclear(userJoinedStampboardRepository
-							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+							.isclearStamp(userRepository.findByUserId(uid), temp))
 					.build();
 
 			list.add(dto);
@@ -231,7 +231,7 @@ public class StampboardService {
 					.isMyspam(stampboardSpamRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid),
 							temp))
 					.isMyclear(userJoinedStampboardRepository
-							.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), temp))
+							.isclearStamp(userRepository.findByUserId(uid), temp))
 					.build();
 
 			list.add(dto);
