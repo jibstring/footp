@@ -62,8 +62,8 @@ public class UserService {
                                 Message.getMessageFileurl(),
                                 Message.getMessagePoint().getX(),
                                 Message.getMessagePoint().getY(),
-                                Message.isOpentoall(),
-                                Message.isBlurred(),
+                                Message.getIsOpentoall(),
+                                Message.getIsBlurred(),
                                 messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 Message.getMessageLikenum(),
@@ -96,7 +96,7 @@ public class UserService {
 
     public String updateMessage(MypostUpdateReq mypostUpdateReq){
         Message msg = messageRepository.findById(mypostUpdateReq.getMessageId()).get();
-        msg.setOpentoall(mypostUpdateReq.isType());
+        msg.setIsOpentoall(mypostUpdateReq.isType());
 //        msg = Message.builder().isOpentoall((mypostUpdateReq.isType())).build();
         messageRepository.save(msg);
 

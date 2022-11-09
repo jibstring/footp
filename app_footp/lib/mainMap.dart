@@ -27,6 +27,7 @@ class MainData extends GetxController {
   int _listsize = 0;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
+  String _filter = 'hot';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
@@ -37,21 +38,27 @@ class MainData extends GetxController {
   int get listsize => _listsize;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
+  String get filter => _filter;
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
 
+  set fixFilter(String filter){
+    _filter=filter;
+  }
+
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
-    _apiKey = '/${userid}/${lngR}/${lngL}/${latD}/${latU}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/sort/new$apiKey');
+    _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
+    _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
+    print("#########apii#########");
+    print(_mainDataUrl);
+
+
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
-
-    print("!!!!에이피아이키!!!!!!");
-    print(_apiKey);
     for (int i = 0; i < _listsize; i++) {
       createMarker(i);
     }
@@ -62,9 +69,6 @@ class MainData extends GetxController {
     http.Response response = await http.get(_mainDataUrl);
     if (response.statusCode == 200) {
       _dataList = jsonDecode(utf8.decode(response.bodyBytes));
-
-      print("~~~~~메인맵 데이타리스트~~~~~");
-      print(_dataList);
       update();
       return _dataList;
     } else {
@@ -75,6 +79,9 @@ class MainData extends GetxController {
 
   void createMarker(int idx) {
     int like = dataList["message"][idx]["messageLikenum"];
+    if (like >= 95) {
+      like = 94;
+    }
 
     Marker marker = Marker(
         markerId: dataList["message"][idx]["messageId"].toString(),
@@ -94,12 +101,19 @@ class MainData extends GetxController {
     update();
   }
 
-  void getMapEdge() async {
+  void getMapEdge() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
       });
     });
+    update();
+  }
+
+  void moveMapToMessage(double lat, double lng) {
+    CameraPosition cameraPosition =
+        CameraPosition(target: LatLng(lat, lng), zoom: 20.0);
+    _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
     update();
   }
 }
@@ -308,8 +322,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     _getImage();
-    location.getCurrentLocation();
-    maindata.getMapEdge();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
       setState(() {
@@ -328,7 +340,6 @@ class _MyHomePageState extends State<MyHomePage> {
         //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
         if (maindata.mapEdge != null) {
           if (!user.isLogin()) {
-            print(user.userinfo["userId"]);
             // User ID는 null, 추후 수정
             maindata.getURL(
                 "1",
@@ -337,7 +348,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 maindata.mapEdge.southwest.latitude.toString(),
                 maindata.mapEdge.northeast.latitude.toString());
           } else {
-            print(user.userinfo["userId"]);
             maindata.getURL(
                 user.userinfo["userId"].toString(),
                 maindata.mapEdge.northeast.longitude.toString(),

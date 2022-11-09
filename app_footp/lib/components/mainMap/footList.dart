@@ -20,10 +20,11 @@ class FootList extends StatefulWidget {
 class _FootListState extends State<FootList> {
   int _selectedIndex = 0;
   final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
-  var _selectedValue = "HOT";
+  final _filterList=['hot','like','new'];
+  var _selectedValue = "hot";
 
   Map<String, dynamic> jsonData = {};
-  List<dynamic> footData=[];
+  List<dynamic> footData = [];
   //var footData = List<Map<String,dynamic>>.filled(100,0);
 
   int eventlen = 0;
@@ -33,8 +34,8 @@ class _FootListState extends State<FootList> {
   void readFile() {
     try {
       jsonData = maindata.dataList;
-      print("리드파일안에 제이슨!");
-      print(jsonData);
+      // print("리드파일안에 제이슨!");
+      // print(jsonData);
     } catch (e) {
       jsonData = {};
     }
@@ -60,14 +61,13 @@ class _FootListState extends State<FootList> {
     //     footData[i]=jsonData["event"][i];
     //   }
     // }
-    
+
     for (int i = 0; i < messagelen; i++) {
       //jsonData["message"][i]["check"] = 1;
-      if(footData.length<=i){
+      if (footData.length <= i) {
         footData.add(jsonData["message"][i]);
-      }
-      else{
-        footData[i]=jsonData["message"][i];
+      } else {
+        footData[i] = jsonData["message"][i];
       }
     }
     // print("@@@@@@@@@@풋리스트 풋데이터@@@@@@@@@");
@@ -86,7 +86,7 @@ class _FootListState extends State<FootList> {
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: eventlen + messagelen+1,
+                itemCount: eventlen + messagelen + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return Container(
@@ -99,7 +99,7 @@ class _FootListState extends State<FootList> {
                           // 필터
                           DropdownButton(
                             value: _selectedValue,
-                            items: _valueList.map(
+                            items: _filterList.map(
                               (value) {
                                 return DropdownMenuItem(
                                     value: value, child: Text(value));
@@ -108,6 +108,8 @@ class _FootListState extends State<FootList> {
                             onChanged: (value) {
                               setState(() {
                                 _selectedValue = value!;
+                                maindata.fixFilter=_selectedValue;
+                                //=String(_filter:selectedValue);
                               });
                             },
                           ),
