@@ -39,8 +39,7 @@ class _SignInState extends State<SignIn> {
 
     if (response_login.data['message'] == 'fail') {
       _showDialog('로그인 실패');
-    } 
-    else {
+    } else {
       user.login(response_login.data["Authorization"]); //토큰 저장
       String temp = user.Token;
       Map<String, dynamic>? decoded_payload = user.decoding_payload(temp);
@@ -48,7 +47,7 @@ class _SignInState extends State<SignIn> {
 
       print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@라라라$temp");
       print(
-        "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
+          "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@decoded_payload@@@@@@@@@@${decoded_payload?["userid"]}");
 
       final snackBar = SnackBar(
         content: Text('로그인 성공!', style: TextStyle(color: Colors.green)),
@@ -64,7 +63,7 @@ class _SignInState extends State<SignIn> {
       var url = Uri.parse(
           'http://k7a108.p.ssafy.io:8080/auth/info/${decoded_payload?["userid"]}');
       print(url);
-      var response = await http.get(url);
+      var response = await http.post(url);
       var qqqqq = json.decode(response.body);
       //user.userinfoSet(response.body);
       user.userinfoSet(qqqqq["userInfo"]);
