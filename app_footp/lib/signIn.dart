@@ -63,7 +63,7 @@ class _SignInState extends State<SignIn> {
       var url = Uri.parse(
           'http://k7a108.p.ssafy.io:8080/auth/info/${decoded_payload?["userid"]}');
       print(url);
-      var response = await http.get(url);
+      var response = await http.post(url);
       var qqqqq = json.decode(response.body);
       //user.userinfoSet(response.body);
       user.userinfoSet(qqqqq["userInfo"]);
