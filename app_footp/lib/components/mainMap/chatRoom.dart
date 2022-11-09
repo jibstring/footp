@@ -27,18 +27,18 @@ class _ChatRoomState extends State<ChatRoom> {
 
   //채팅 메시지를 만드는 함수(자신의 메시지는 파란색, 다른사람의 메시지는 검정색)
   Text mkText(Chat chat) {
-    if(chat.userId == widget.userId) {
+    if (chat.userId == widget.userId) {
       return Text(
         chat.userNickName + " " + chat.time + "\n" + chat.msg,
         style: TextStyle(color: Colors.blue[900]),
-      );  
-    }else {
+      );
+    } else {
       return Text(
         chat.userNickName + " " + chat.time + "\n" + chat.msg,
         style: TextStyle(color: Colors.black),
       );
     }
-  }// end of function mkText
+  } // end of function mkText
 
   @override
   Widget build(BuildContext context) {

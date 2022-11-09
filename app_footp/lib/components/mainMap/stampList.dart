@@ -14,13 +14,11 @@ class StampList extends StatefulWidget {
 class _StampListState extends State<StampList> {
   @override
   Widget build(BuildContext context) {
-    
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
       maxChildSize: 0.9,
       snap: true,
-      snapSizes: [0.65],
       builder: (BuildContext context, ScrollController scrollController) {
         // return Container(
         //   color: Colors.red[100],
@@ -32,8 +30,7 @@ class _StampListState extends State<StampList> {
         //     },
         //   ),
         // );
-        return Text(
-          "스탬푸페이지");
+        return Text("스탬푸페이지");
       },
     );
   }

@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
+import 'package:app_footp/signIn.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
@@ -27,6 +28,8 @@ class MainData extends GetxController {
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   dynamic _mainDataUrl;
+  // late NaverMapController mycontroller;
+  // late LatLngBounds _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
 
@@ -111,12 +114,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
+  UserData user = Get.put(UserData());
 
   int _selectedIndex = 0;
   List<Marker> markers = [];
-
-  // late NaverMapController mycontroller;
-  // late LatLngBounds _mapEdge;
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -143,12 +144,19 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromARGB(255, 153, 181, 229),
               size: 40,
             ),
-            padding: const EdgeInsets.only(top: 5, right: 20.0),
+            padding: const EdgeInsets.only(top: 5.0, right: 20.0),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyPage()),
-              );
+              if (!user.isLogin()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyPage()),
+                );
+              }
             },
           ),
         ],
@@ -183,12 +191,23 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromARGB(255, 153, 181, 229),
               size: 55,
             ),
-            padding: EdgeInsets.fromLTRB(0, 0, 50, 300),
+            padding: EdgeInsets.only(
+                right: 50.0,
+                bottom: (MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.35),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CreateFoot()),
-              );
+              if (!user.isLogin()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateFoot()),
+                );
+              }
             },
           ),
         ),
@@ -224,6 +243,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onMapCreated(NaverMapController controller) {
+    // if (!user.isLogin()) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => const SignIn()),
+    //   );
+    // }
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
     // mycontroller = controller;
@@ -292,8 +317,15 @@ class _MyHomePageState extends State<MyHomePage> {
         // print(
         //     "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
 
-        maindata.getURL(
-            '1', location.longitude.toString(), location.latitude.toString());
+        if (!user.isLogin()) {
+          print(user.userinfo["userId"]);
+          maindata.getURL(
+              "1", location.longitude.toString(), location.latitude.toString());
+        } else {
+          print(user.userinfo["userId"]);
+          maindata.getURL(user.userinfo["userId"].toString(),
+              location.longitude.toString(), location.latitude.toString());
+        }
         markers = maindata.markers;
 
         // 이 부분은 2차 배포때 수정할 예정

@@ -8,16 +8,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.back_footp.entity.Stampboard;
+import com.ssafy.back_footp.entity.User;
 
 @Repository
 public interface StampboardRepository extends JpaRepository<Stampboard, Long>{
+	
+	public List<Stampboard> findAllByUserIdOrderByStampboardWritedateDesc(User uid);
 
-	public List<Stampboard> findAllByOrderByStampboardLikenum();
+	public List<Stampboard> findAllByOrderByStampboardLikenumDesc();
 	public List<Stampboard> findAllByOrderByStampboardWritedateDesc();
 	
 	@Transactional
-	public void deleteByStampboardId(long sid);
+	public void deleteByStampboardIdAndUserId(long sid, User uid);
 	
 	// 이름으로 검색했을 때 결과
-	public List<Stampboard> findByStampboardTextContainingIgnoreCase(String text);
+	public List<Stampboard> findByStampboardTextContainingIgnoreCaseOrderByStampboardLikenumDesc(String text);
+	public List<Stampboard> findByStampboardTextContainingIgnoreCaseOrderByStampboardWritedateDesc(String text);
 }

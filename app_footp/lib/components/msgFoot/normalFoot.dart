@@ -36,14 +36,10 @@ class _NormalFootState extends State<NormalFoot> {
 
         if(heartInfo=="like"){
           response=await http.post(
-          uri
-        );
-
-        }
-        else{
+          uri );
+        }else{
           response=await http.delete(
-          uri
-          );
+          uri);
         }
 
         if(response.statusCode==200){
@@ -91,6 +87,8 @@ class _NormalFootState extends State<NormalFoot> {
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
     heartCheck();
+    print("메시지 정보보보보");
+    print(widget.normalmsg);
 
     return Card(
         child: Container(
@@ -103,19 +101,25 @@ class _NormalFootState extends State<NormalFoot> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.normalmsg["userNickname"],
-                style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey),
+              SizedBox(
+                width:MediaQuery.of(context).size.width*0.5,
+                child: Text(
+                  widget.normalmsg["userNickname"],
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
               ),
-              Text(
-                widget.normalmsg["messageWritedate"],
-                style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey),
+              SizedBox(
+                width:MediaQuery.of(context).size.width*0.33,
+                child: Text(
+                  widget.normalmsg["messageWritedate"],
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
               ),
             ],
           ),
