@@ -69,8 +69,8 @@ public class MessageService {
 				Message.getMessageFileurl(),
 				Message.getMessagePoint().getX(),
 				Message.getMessagePoint().getY(),
-				Message.isOpentoall(),
-				Message.isBlurred(),
+				Message.getIsOpentoall(),
+				Message.getIsBlurred(),
 				messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findByUserId(userId)),
 				messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
 				Message.getMessageLikenum(),
@@ -99,8 +99,8 @@ public class MessageService {
 		//System.out.println(userRepository.findByUserId(messageInfo.getUserId()).getUserNickname());
 //		message.setMessagePoint((Point) new WKTReader().read(String.format("POINT(%s %s)", messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
 		message.setMessagePoint(gf.createPoint(new Coordinate(messageInfo.getMessageLongitude(), messageInfo.getMessageLatitude())));
-		message.setBlurred(messageInfo.getIsBlurred());
-		message.setOpentoall(messageInfo.getIsOpentoall());
+		message.setIsBlurred(messageInfo.getIsBlurred());
+		message.setIsOpentoall(messageInfo.getIsOpentoall());
 		message.setMessageLikenum(0);
 		message.setMessageSpamnum(0);
 		message.setMessageWritedate(LocalDateTime.now());
