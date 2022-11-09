@@ -27,6 +27,7 @@ import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.jwt.JwtService;
 import com.ssafy.back_footp.repository.UserRepository;
+import com.ssafy.back_footp.request.UserSignInReq;
 import com.ssafy.back_footp.request.UserSignUpReq;
 import com.ssafy.back_footp.security.EncryptionUtils;
 import com.ssafy.back_footp.service.MailService;
@@ -92,7 +93,7 @@ public class AuthController {
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인")
 	public ResponseEntity<Map<String, Object>> signIn(
-			@RequestBody @ApiParam(value = "이메일, 비밀번호로 로그인", required = true) User user) throws Exception {
+			@RequestBody @ApiParam(value = "이메일, 비밀번호로 로그인", required = true) UserSignInReq user) throws Exception {
 		Map<String, Object> result = new HashMap<>();
 
 		HttpStatus status = null;
