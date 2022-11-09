@@ -27,6 +27,7 @@ class MainData extends GetxController {
   int _listsize = 0;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
+  String _filter = 'hot';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
@@ -37,16 +38,25 @@ class MainData extends GetxController {
   int get listsize => _listsize;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
+  String get filter => _filter;
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
 
+  set fixFilter(String filter){
+    _filter=filter;
+  }
+
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
-    _apiKey = '/${userid}/${lngR}/${lngL}/${latD}/${latU}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/list/new$apiKey');
+    _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
+    _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
+    print("#########apii#########");
+    print(_mainDataUrl);
+
+
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
     for (int i = 0; i < _listsize; i++) {
@@ -91,7 +101,7 @@ class MainData extends GetxController {
     update();
   }
 
-  void getMapEdge() async {
+  void getMapEdge() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
@@ -312,8 +322,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState() {
     _getImage();
-    location.getCurrentLocation();
-    maindata.getMapEdge();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
       setState(() {
