@@ -46,7 +46,7 @@ class MainData extends GetxController {
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '/${userid}/${lngR}/${lngL}/${latD}/${latU}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/sort/new$apiKey');
+    _mainDataUrl = Uri.parse('$baseURL/foot/list/new$apiKey');
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
 
@@ -63,8 +63,8 @@ class MainData extends GetxController {
     if (response.statusCode == 200) {
       _dataList = jsonDecode(utf8.decode(response.bodyBytes));
 
-      print("~~~~~메인맵 데이타리스트~~~~~");
-      print(_dataList);
+      // print("~~~~~메인맵 데이타리스트~~~~~");
+      // print(_dataList);
       update();
       return _dataList;
     } else {
