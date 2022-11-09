@@ -41,6 +41,12 @@ public class MessageService {
 	@Autowired
 	MessageLikeRepository messageLikeRepository;
 	@Autowired
+	MessageSpamRepository messageSpamRepository;
+	@Autowired
+	EventRepository eventRepository;
+	@Autowired
+	EventLikeRepository eventLikeRepository;
+	@Autowired
 	UserRepository userRepository;
 
 
@@ -60,19 +66,18 @@ public class MessageService {
 
 		messages.forEach(Message->
 				messagelist.add(new messagelistDTO(
-						Message.getMessageId(),
-						Message.getUserId().getUserNickname(),
-						Message.getMessageText(),
-						Message.getMessageBlurredtext(),
-						Message.getMessageFileurl(),
-						Message.getMessagePoint().getX(),
-						Message.getMessagePoint().getY(),
-						Message.isOpentoall(),
-						Message.isBlurred(),
-						messageLikeRepository.findByMessageIdAndUserId(Message, userRepository.findById(userId).get()) != null,
-						Message.getMessageLikenum(),
-						Message.getMessageSpamnum(),
-						Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+				Message.getMessageId(),
+				Message.getUserId().getUserNickname(),
+				Message.getMessageText(),
+				Message.getMessageFileurl(),
+				Message.getMessagePoint().getX(),
+				Message.getMessagePoint().getY(),
+				Message.isOpentoall(),
+				messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findByUserId(userId)),
+				messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
+				Message.getMessageLikenum(),
+				Message.getMessageSpamnum(),
+				Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
 		);
 
 		JSONObject jsonObject = new JSONObject();

@@ -31,4 +31,6 @@ public interface MessageSpamRepository extends JpaRepository<MessageSpam, Long> 
 	@Transactional
 	public void deleteAllByUserId(User userId);
 
+	public Boolean existsByMessageIdAndUserId(Message messageId, User userId);
+
 }

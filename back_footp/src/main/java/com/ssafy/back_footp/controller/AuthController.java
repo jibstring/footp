@@ -164,7 +164,7 @@ public class AuthController {
 
 	}
 
-	@GetMapping("/info/{userid}")
+	@PostMapping("/info/{userid}")
 	@ApiOperation(value = "유저 본인의 정보를 불러온다", notes = "보려는 정보가 본인의 것이면 정보를 반환한다")
 	public ResponseEntity<Map<String, Object>> getUserInfo(@PathVariable("userid") int userid,
 			@ApiParam(value = "인증할 회원의 아이디.", required = true) HttpServletRequest request) {
