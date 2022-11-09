@@ -28,8 +28,8 @@ class MainData extends GetxController {
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   dynamic _mainDataUrl;
-  // late NaverMapController mycontroller;
-  // late LatLngBounds _mapEdge;
+  dynamic _mycontroller;
+  dynamic _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
 
@@ -38,12 +38,15 @@ class MainData extends GetxController {
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   dynamic get mainDataUrl => _mainDataUrl;
+  dynamic get mycontroller => _mycontroller;
+  dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
 
-  void getURL(String userid, String lat, String lng) async {
-    _apiKey = '/${userid}/${lat}/${lng}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/main$apiKey');
+  void getURL(
+      String userid, String lngR, String lngL, String latD, String latU) async {
+    _apiKey = '/${userid}/${lngR}/${lngL}/${latD}/${latU}';
+    _mainDataUrl = Uri.parse('$baseURL/foot/sort/new$apiKey');
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
     for (int i = 0; i < _listsize; i++) {
@@ -68,20 +71,29 @@ class MainData extends GetxController {
     int like = dataList["message"][idx]["messageLikenum"];
 
     Marker marker = Marker(
-      markerId: dataList["message"][idx]["messageId"].toString(),
-      position: LatLng(dataList["message"][idx]["messageLatitude"],
-          dataList["message"][idx]["messageLongitude"]),
-      icon: ((dataList["message"][idx]["messageId"] % 2) == 0
-          ? _footImage[0]
-          : _footImage[3]),
-      width: 5 * (6 + like),
-      height: 5 * (6 + like),
-      onMarkerTab: (marker, iconSize) {
-        print("Hi ${dataList["message"][idx]["messageId"]}");
-      },
-    );
+        markerId: dataList["message"][idx]["messageId"].toString(),
+        position: LatLng(dataList["message"][idx]["messageLatitude"],
+            dataList["message"][idx]["messageLongitude"]),
+        icon: ((dataList["message"][idx]["messageId"] % 2) == 0
+            ? _footImage[0]
+            : _footImage[3]),
+        width: 5 * (6 + like),
+        height: 5 * (6 + like),
+        onMarkerTab: (marker, iconSize) {
+          print("Hi ${dataList["message"][idx]["messageId"]}");
+        },
+        infoWindow: dataList["message"][idx]["messageText"]);
 
     _markers.add(marker);
+    update();
+  }
+
+  void getMapEdge() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _mycontroller.getVisibleRegion().then((value) {
+        _mapEdge = value;
+      });
+    });
     update();
   }
 }
@@ -169,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 0.65,
             child: NaverMap(
                 onMapCreated: _onMapCreated,
-                // onCameraIdle: _getMapEdge,
+                onCameraIdle: maindata.getMapEdge,
                 minZoom: 5.0,
                 locationButtonEnable: true,
                 initLocationTrackingMode: LocationTrackingMode.Follow,
@@ -251,16 +263,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
-    // mycontroller = controller;
+    maindata._mycontroller = controller;
   }
-
-  // void _getMapEdge() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     mycontroller.getVisibleRegion().then((value) {
-  //       _mapEdge = value;
-  //     });
-  //   });
-  // }
 
   void _getImage() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -299,10 +303,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     _getImage();
     location.getCurrentLocation();
+    maindata.getMapEdge();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
       setState(() {
         location.getCurrentLocation();
+        maindata.getMapEdge();
         // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
         // double aLat = 37.5015;
         // double aLng = 127.0395;
@@ -314,19 +320,27 @@ class _MyHomePageState extends State<MyHomePage> {
         //             sin(vect.radians(aLat))));
         // print(
         //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
-        // print(
-        //     "${_mapEdge.northeast.latitude} / ${_mapEdge.northeast.longitude} / ${_mapEdge.southwest.latitude} / ${_mapEdge.southwest.longitude}");
-
-        if (!user.isLogin()) {
-          print(user.userinfo["userId"]);
-          maindata.getURL(
-              "1", location.longitude.toString(), location.latitude.toString());
-        } else {
-          print(user.userinfo["userId"]);
-          maindata.getURL(user.userinfo["userId"].toString(),
-              location.longitude.toString(), location.latitude.toString());
+        if (maindata.mapEdge != null) {
+          if (!user.isLogin()) {
+            print(user.userinfo["userId"]);
+            // User ID는 null, 추후 수정
+            maindata.getURL(
+                "1",
+                maindata.mapEdge.northeast.longitude.toString(),
+                maindata.mapEdge.southwest.longitude.toString(),
+                maindata.mapEdge.southwest.latitude.toString(),
+                maindata.mapEdge.northeast.latitude.toString());
+          } else {
+            print(user.userinfo["userId"]);
+            maindata.getURL(
+                user.userinfo["userId"].toString(),
+                maindata.mapEdge.northeast.longitude.toString(),
+                maindata.mapEdge.southwest.longitude.toString(),
+                maindata.mapEdge.southwest.latitude.toString(),
+                maindata.mapEdge.northeast.latitude.toString());
+          }
+          markers = maindata.markers;
         }
-        markers = maindata.markers;
 
         // 이 부분은 2차 배포때 수정할 예정
         // maindata.getURL(
