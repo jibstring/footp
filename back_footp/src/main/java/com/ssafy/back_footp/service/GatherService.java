@@ -59,6 +59,8 @@ public class GatherService {
 			gathers = gatherRepository.findAllInScreenOrderByGatherWritedate(lon_r, lon_l, lat_d, lat_u);
 		else if(sortstr.equals("like"))
 			gathers = gatherRepository.findAllInScreenOrderByGatherLikenum(lon_r, lon_l, lat_d, lat_u);
+		else if(sortstr.equals("hot"))
+			gathers = gatherRepository.findAllInScreenOrderByGatherLikenum(lon_r, lon_l, lat_d, lat_u);
 
 		gathers.forEach(Gather->gatherlist.add(new gatherlistDTO(
 				Gather.getGatherId(),

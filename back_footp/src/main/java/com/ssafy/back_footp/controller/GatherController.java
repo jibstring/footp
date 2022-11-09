@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
-@RequestMapping("/Gather")
+@RequestMapping("/gather")
 public class GatherController {
 	
 	//Autowire 하는곳
@@ -261,8 +261,31 @@ public class GatherController {
 		
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
-	
-	
-	
+
+
+	// 화면에 들어오는 확성기만 조회
+	@GetMapping("/list/hot/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
+	@ApiOperation(value = "확성기 리스트(핫)")
+	public ResponseEntity<JSONObject> gatherListHotInScreen(@PathVariable long userId, @PathVariable double lon_r, @PathVariable double lon_l, @PathVariable double lat_d, @PathVariable double lat_u){
+
+		JSONObject result = gatherService.getGatherList("hot", userId, lon_r, lon_l, lat_d, lat_u);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/list/like/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
+	@ApiOperation(value = "확성기 리스트(좋아요)")
+	public ResponseEntity<JSONObject> gatherListLikeInScreen(@PathVariable long userId, @PathVariable double lon_r, @PathVariable double lon_l, @PathVariable double lat_d, @PathVariable double lat_u){
+
+		JSONObject result = gatherService.getGatherList("like", userId, lon_r, lon_l, lat_d, lat_u);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/list/new/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
+	@ApiOperation(value = "확성기 리스트(신규)")
+	public ResponseEntity<JSONObject> gatherListNewInScreen(@PathVariable long userId, @PathVariable double lon_r, @PathVariable double lon_l, @PathVariable double lat_d, @PathVariable double lat_u){
+
+		JSONObject result = gatherService.getGatherList("new", userId, lon_r, lon_l, lat_d, lat_u);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
 }
