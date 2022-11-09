@@ -25,7 +25,7 @@ public interface UserJoinedStampboardRepository extends JpaRepository<UserJoined
 	@Transactional
 	public void deleteAllByStampboardId(Stampboard sid);
 
-	public static final String playing = "SELECT * FROM userjoinedstampboard WHERE user_id =:userId AND userjoinedstampboard_isclear3 != TRUE";
+	public static final String playing = "SELECT * FROM userjoinedstampboard WHERE user_id =:userId AND (userjoinedstampboard_isclear1 != TRUE OR userjoinedstampboard_isclear2 != TRUE OR userjoinedstampboard_isclear3 != TRUE)";
 	@Query(value = playing, nativeQuery = true)
 	UserJoinedStampboard playingStamp(@Param("userId") User userId);
 	

@@ -104,6 +104,7 @@ class MainData extends GetxController {
     CameraPosition cameraPosition =
         CameraPosition(target: LatLng(lat, lng), zoom: 20.0);
     _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
+    update();
   }
 }
 

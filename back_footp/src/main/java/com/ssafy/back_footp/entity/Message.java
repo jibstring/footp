@@ -47,10 +47,10 @@ public class Message {
     private Point messagePoint;
 
     @Column(name="is_opentoall", columnDefinition = "TINYINT", length = 1)
-    private boolean isOpentoall;
+    private Boolean isOpentoall;
 
     @Column(name="is_blurred", columnDefinition = "TINYINT", length = 1)
-    private boolean isBlurred;
+    private Boolean isBlurred;
 
     @Column(name="message_likenum")
     private int messageLikenum;
