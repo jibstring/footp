@@ -43,10 +43,6 @@ public class MessageService {
 	@Autowired
 	MessageSpamRepository messageSpamRepository;
 	@Autowired
-	EventRepository eventRepository;
-	@Autowired
-	EventLikeRepository eventLikeRepository;
-	@Autowired
 	UserRepository userRepository;
 
 
@@ -69,10 +65,12 @@ public class MessageService {
 				Message.getMessageId(),
 				Message.getUserId().getUserNickname(),
 				Message.getMessageText(),
+				Message.getMessageBlurredtext(),
 				Message.getMessageFileurl(),
 				Message.getMessagePoint().getX(),
 				Message.getMessagePoint().getY(),
 				Message.isOpentoall(),
+				Message.isBlurred(),
 				messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findByUserId(userId)),
 				messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
 				Message.getMessageLikenum(),

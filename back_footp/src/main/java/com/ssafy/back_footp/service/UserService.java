@@ -31,8 +31,6 @@ public class UserService {
     @Autowired
     MessageSpamRepository messageSpamRepository;
     @Autowired
-    EventRepository eventRepository;
-    @Autowired
     GatherRepository gatherRepository;
     @Autowired
     GatherLikeRepository gatherLikeRepository;
@@ -65,6 +63,7 @@ public class UserService {
                                 Message.getMessagePoint().getX(),
                                 Message.getMessagePoint().getY(),
                                 Message.isOpentoall(),
+                                Message.isBlurred(),
                                 messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 Message.getMessageLikenum(),
