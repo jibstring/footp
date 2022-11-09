@@ -217,33 +217,33 @@ public class MessageController {
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
 
-	// 화면 상관없이 모든 메세지 조회
-	@GetMapping("/list/hot")
-	@ApiOperation(value = "일반 발자국 리스트(핫)")
-	public ResponseEntity<List<Message>> messageListHot(){
-		
-		List<Message> list = messageRepository.findAllByHot();
-		
-		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
-	}
-	
-	@GetMapping("/list/like")
-	@ApiOperation(value = "일반 발자국 리스트(좋아요)")
-	public ResponseEntity<List<Message>> messageListLike(){
-		
-		List<Message> list = messageRepository.findAllByOrderByMessageLikenumDesc();
-		
-		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
-	}
-	
-	@GetMapping("/list/new")
-	@ApiOperation(value = "일반 발자국 리스트(신규)")
-	public ResponseEntity<List<Message>> messageListNew(){
-		
-		List<Message> list = messageRepository.findAllByOrderByMessageWritedateDesc();
-		
-		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
-	}
+//	// 화면 상관없이 모든 메세지 조회
+//	@GetMapping("/list/hot")
+//	@ApiOperation(value = "일반 발자국 리스트(핫)")
+//	public ResponseEntity<List<Message>> messageListHot(){
+//		
+//		List<Message> list = messageRepository.findAllByHot();
+//		
+//		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+//	}
+//	
+//	@GetMapping("/list/like")
+//	@ApiOperation(value = "일반 발자국 리스트(좋아요)")
+//	public ResponseEntity<List<Message>> messageListLike(){
+//		
+//		List<Message> list = messageRepository.findAllByOrderByMessageLikenumDesc();
+//		
+//		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+//	}
+//	
+//	@GetMapping("/list/new")
+//	@ApiOperation(value = "일반 발자국 리스트(신규)")
+//	public ResponseEntity<List<Message>> messageListNew(){
+//		
+//		List<Message> list = messageRepository.findAllByOrderByMessageWritedateDesc();
+//		
+//		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+//	}
 
 	// 화면에 들어오는 메세지만 조회
 	@GetMapping("/list/hot/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
