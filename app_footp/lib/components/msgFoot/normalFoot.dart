@@ -9,11 +9,14 @@ import 'package:http/http.dart' as http;
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/mainMap.dart';
+import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+
+footlist.ListMaker listmaker = footlist.listmaker;
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -30,7 +33,7 @@ class _NormalFootState extends State<NormalFoot> {
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
 
-  bool click_play=false;
+  bool click_play = false;
 
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.62;
@@ -42,13 +45,13 @@ class _NormalFootState extends State<NormalFoot> {
 
     VideoPlayerController _videocontroller;
 
-    
-
     AudioPlayer player = new AudioPlayer();
     return GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
+          listmaker.listcontroller.reset();
+          listmaker.refresh();
         },
         child: Card(
             child: Container(
@@ -74,8 +77,8 @@ class _NormalFootState extends State<NormalFoot> {
                   Container(
                     alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * 0.33,
-                    child: Text(changeDate(
-                      widget.normalmsg["messageWritedate"]),
+                    child: Text(
+                      changeDate(widget.normalmsg["messageWritedate"]),
                       style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -105,32 +108,40 @@ class _NormalFootState extends State<NormalFoot> {
                                             widget.normalmsg["messageFileurl"]);
                                       } else if (flag == 1) {
                                         //비디오
-                                        _videocontroller = VideoPlayerController.network(widget.normalmsg["messageFileurl"].toString());
+                                        _videocontroller =
+                                            VideoPlayerController.network(widget
+                                                .normalmsg["messageFileurl"]
+                                                .toString());
                                         return AspectRatio(
-                                          aspectRatio: _videocontroller.value.aspectRatio,
-                                          child: VideoPlayer(_videocontroller),);
+                                          aspectRatio: _videocontroller
+                                              .value.aspectRatio,
+                                          child: VideoPlayer(_videocontroller),
+                                        );
                                       } else if (flag == 2) {
                                         //오디오
-                                        return click_play==false?
-                                        IconButton(
-                                          icon: Icon(Icons.play_arrow,
-                                            size: 30),
-                                          onPressed: (){
-                                            print("재생!!");
-                                            click_play=true;
-                                            player.play(UrlSource(widget.normalmsg["messageFileurl"]));
-                                            print(click_play);
-                                          } ,)
-                                          :
-                                          IconButton(
-                                          icon: Icon(Icons.pause,
-                                            size: 30),
-                                          onPressed: (){
-                                            player.stop();
-                                            print("멈춰!!");
-                                            click_play=false;
-                                            print(click_play);
-                                            } ,);
+                                        return click_play == false
+                                            ? IconButton(
+                                                icon: Icon(Icons.play_arrow,
+                                                    size: 30),
+                                                onPressed: () {
+                                                  print("재생!!");
+                                                  click_play = true;
+                                                  player.play(UrlSource(
+                                                      widget.normalmsg[
+                                                          "messageFileurl"]));
+                                                  print(click_play);
+                                                },
+                                              )
+                                            : IconButton(
+                                                icon:
+                                                    Icon(Icons.pause, size: 30),
+                                                onPressed: () {
+                                                  player.stop();
+                                                  print("멈춰!!");
+                                                  click_play = false;
+                                                  print(click_play);
+                                                },
+                                              );
                                       }
                                     })(),
                                   )
@@ -240,14 +251,12 @@ class _NormalFootState extends State<NormalFoot> {
     return -1;
   }
 
-  String changeDate(String date){
-    String newDate="";
+  String changeDate(String date) {
+    String newDate = "";
 
-    newDate=date.replaceAll('T', "  ");
+    newDate = date.replaceAll('T', "  ");
 
     return newDate;
-
-
   }
 
   void heartRequest(context, var heartInfo) async {
