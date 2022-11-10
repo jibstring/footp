@@ -1,3 +1,4 @@
+import 'package:app_footp/createStamp.dart';
 import 'package:app_footp/signUp.dart';
 import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: mainMap(),
+      home: CreateStamp(),
     );
   }
 }
