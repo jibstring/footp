@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
+import 'package:just_audio/just_audio.dart';
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
 
@@ -31,8 +33,11 @@ class _NormalFootState extends State<NormalFoot> {
   UserData user = Get.put(UserData());
 
   bool click_play=false;
+  final _player=AudioPlayer();
 
   Widget build(BuildContext context) {
+    VideoPlayerController _videocontroller;
+
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
     heartCheck();
@@ -40,12 +45,10 @@ class _NormalFootState extends State<NormalFoot> {
     // print("메시지 정보보보보");
     // print(widget.normalmsg);
 
-    VideoPlayerController _videocontroller;
-
+    //AudioPlayer player = new AudioPlayer();
     
-
-    AudioPlayer player = new AudioPlayer();
     return GestureDetector(
+  
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
@@ -105,10 +108,12 @@ class _NormalFootState extends State<NormalFoot> {
                                             widget.normalmsg["messageFileurl"]);
                                       } else if (flag == 1) {
                                         //비디오
+                                        print("비디오");
                                         _videocontroller = VideoPlayerController.network(widget.normalmsg["messageFileurl"].toString());
-                                        return AspectRatio(
+                                        return Container(
+                                          child: AspectRatio(
                                           aspectRatio: _videocontroller.value.aspectRatio,
-                                          child: VideoPlayer(_videocontroller),);
+                                          child: VideoPlayer(_videocontroller),));
                                       } else if (flag == 2) {
                                         //오디오
                                         return click_play==false?
@@ -116,9 +121,12 @@ class _NormalFootState extends State<NormalFoot> {
                                           icon: Icon(Icons.play_arrow,
                                             size: 30),
                                           onPressed: (){
-                                            print("재생!!");
+                                            _player.stop();
+                                            // print("재생!!");
                                             click_play=true;
-                                            player.play(UrlSource(widget.normalmsg["messageFileurl"]));
+                                            _player.setUrl(widget.normalmsg["messageFileurl"]);
+                                            _player.play();
+                                            
                                             print(click_play);
                                           } ,)
                                           :
@@ -126,8 +134,8 @@ class _NormalFootState extends State<NormalFoot> {
                                           icon: Icon(Icons.pause,
                                             size: 30),
                                           onPressed: (){
-                                            player.stop();
-                                            print("멈춰!!");
+                                            _player.stop();
+                                            // print("멈춰!!");
                                             click_play=false;
                                             print(click_play);
                                             } ,);
