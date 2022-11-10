@@ -16,7 +16,7 @@ public class GatherCustomRepositoryImpl implements GatherCustomRepository {
     public List<Gather> findAllInScreenOrderByGatherWritedate(double lon_r, double lon_l, double lat_d, double lat_u){
 
         String polygonstr = "POLYGON(("+lon_l+" "+lat_u+", "+lon_r+" "+lat_u+", "+lon_r+" "+lat_d+", "+lon_l+" "+lat_d+", "+lon_l+" "+lat_u+"))";
-        String sql = "SELECT * from gather WHERE ST_CONTAINS(ST_GEOMFROMTEXT('"+polygonstr+"'), gather_point)  order by gather_writedate";
+        String sql = "SELECT * from gather WHERE ST_CONTAINS(ST_GEOMFROMTEXT('"+polygonstr+"'), gather_point)  order by gather_writedate desc";
 
         System.out.println(sql);
 

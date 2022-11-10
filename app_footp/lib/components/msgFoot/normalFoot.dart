@@ -4,16 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:video_player/video_player.dart';
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
+import 'package:just_audio/just_audio.dart';
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/mainMap.dart';
+import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
+
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+
+footlist.ListMaker listmaker = footlist.listmaker;
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -30,7 +35,12 @@ class _NormalFootState extends State<NormalFoot> {
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
 
+  bool click_play=false;
+  final _player=AudioPlayer();
+
   Widget build(BuildContext context) {
+    VideoPlayerController _videocontroller;
+
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
     heartCheck();
@@ -38,12 +48,15 @@ class _NormalFootState extends State<NormalFoot> {
     // print("메시지 정보보보보");
     // print(widget.normalmsg);
 
-    AudioPlayer player = new AudioPlayer();
-
+    //AudioPlayer player = new AudioPlayer();
+    
     return GestureDetector(
+  
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
+          listmaker.listcontroller.reset();
+          listmaker.refresh();
         },
         child: Card(
             child: Container(
@@ -57,7 +70,7 @@ class _NormalFootState extends State<NormalFoot> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       widget.normalmsg["userNickname"],
                       style: const TextStyle(
@@ -66,10 +79,11 @@ class _NormalFootState extends State<NormalFoot> {
                           color: Colors.grey),
                     ),
                   ),
-                  SizedBox(
+                  Container(
+                    alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * 0.33,
                     child: Text(
-                      widget.normalmsg["messageWritedate"],
+                      changeDate(widget.normalmsg["messageWritedate"]),
                       style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -94,12 +108,42 @@ class _NormalFootState extends State<NormalFoot> {
                                       int flag = fileCheck(
                                           widget.normalmsg["messageFileurl"]);
                                       if (flag == 0) {
-                                        Image.network(
+                                        //이미지
+                                        return Image.network(
                                             widget.normalmsg["messageFileurl"]);
                                       } else if (flag == 1) {
-                                        //VideoPlayerController.network(widget.normalmsg["messageFileurl"]);
+                                        //비디오
+                                        print("비디오");
+                                        _videocontroller = VideoPlayerController.network(widget.normalmsg["messageFileurl"].toString());
+                                        return Container(
+                                          child: AspectRatio(
+                                          aspectRatio: _videocontroller.value.aspectRatio,
+                                          child: VideoPlayer(_videocontroller),));
                                       } else if (flag == 2) {
-                                        //player.play(widget.normalmsg["messageFileurl"]);
+                                        //오디오
+                                        return click_play==false?
+                                        IconButton(
+                                          icon: Icon(Icons.play_arrow,
+                                            size: 30),
+                                          onPressed: (){
+                                            _player.stop();
+                                            // print("재생!!");
+                                            click_play=true;
+                                            _player.setUrl(widget.normalmsg["messageFileurl"]);
+                                            _player.play();
+                                            
+                                            print(click_play);
+                                          } ,)
+                                          :
+                                          IconButton(
+                                          icon: Icon(Icons.pause,
+                                            size: 30),
+                                          onPressed: (){
+                                            _player.stop();
+                                            // print("멈춰!!");
+                                            click_play=false;
+                                            print(click_play);
+                                            } ,);
                                       }
                                     })(),
                                   )
@@ -196,9 +240,8 @@ class _NormalFootState extends State<NormalFoot> {
 
   int fileCheck(String file) {
     //이미지 0 영상 1 음성 2
-
-    print("########파일체크크#####");
-    print(file);
+    // print("########파일체크크#####");
+    // print(file);
 
     if (file.endsWith('jpg')) {
       return 0;
@@ -208,6 +251,14 @@ class _NormalFootState extends State<NormalFoot> {
       return 2;
     }
     return -1;
+  }
+
+  String changeDate(String date) {
+    String newDate = "";
+
+    newDate = date.replaceAll('T', "  ");
+
+    return newDate;
   }
 
   void heartRequest(context, var heartInfo) async {
