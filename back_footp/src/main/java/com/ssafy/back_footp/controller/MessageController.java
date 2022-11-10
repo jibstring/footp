@@ -19,6 +19,7 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.back_footp.entity.Message;
@@ -102,7 +103,8 @@ public class MessageController {
 			messagePostContent.setMessageWritedate(LocalDateTime.now());
 			messagePostContent.setUserId((long) jObject.get("userId"));
 			messagePostContent.setIsOpentoall((boolean) jObject.get("isOpentoall"));
-
+			messagePostContent.setIsBlurred((boolean) jObject.get("isBlurred"));
+			messagePostContent.setMessageBlurredtext((String) jObject.get("messageBlurredtext"));
 			MessagePostReq messagePostReq = new MessagePostReq();
 			messagePostReq.setMessagePostContent(messagePostContent);
 			messagePostReq.setMessageFile(messageFile);
