@@ -10,12 +10,15 @@ import 'package:just_audio/just_audio.dart';
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/mainMap.dart';
+import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+
+footlist.ListMaker listmaker = footlist.listmaker;
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -52,6 +55,8 @@ class _NormalFootState extends State<NormalFoot> {
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
+          listmaker.listcontroller.reset();
+          listmaker.refresh();
         },
         child: Card(
             child: Container(
@@ -77,8 +82,8 @@ class _NormalFootState extends State<NormalFoot> {
                   Container(
                     alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * 0.33,
-                    child: Text(changeDate(
-                      widget.normalmsg["messageWritedate"]),
+                    child: Text(
+                      changeDate(widget.normalmsg["messageWritedate"]),
                       style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -248,14 +253,12 @@ class _NormalFootState extends State<NormalFoot> {
     return -1;
   }
 
-  String changeDate(String date){
-    String newDate="";
+  String changeDate(String date) {
+    String newDate = "";
 
-    newDate=date.replaceAll('T', "  ");
+    newDate = date.replaceAll('T', "  ");
 
     return newDate;
-
-
   }
 
   void heartRequest(context, var heartInfo) async {
