@@ -2,6 +2,7 @@ import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:dio/dio.dart';
 
 class CreateStamp extends StatelessWidget {
   const CreateStamp({super.key});
@@ -24,8 +25,23 @@ class CreateStampForm extends StatefulWidget {
 }
 
 class _CreateStampFormState extends State<CreateStampForm> {
-  final _valueList = [1, 2];
-  int _selectedValue = 1;
+  final _valueList = [2, 3, 4, 5, 6, 7, 8];
+  int _selectedValue = 2;
+  List _myFootList = [];
+  TextEditingController stampBoardTitle = TextEditingController();
+  TextEditingController stampBoardText = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadMyFoot();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +75,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
               // 제목
               Container(
                 child: TextField(
+                  controller: stampBoardTitle,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(
                         borderRadius:
@@ -68,6 +85,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 ),
               ),
               SizedBox(height: 20),
+
               // 스탬프지 선택
               DropdownButton(
                 value: _selectedValue,
@@ -88,7 +106,8 @@ class _CreateStampFormState extends State<CreateStampForm> {
 
               // 스탬프 템플릿
               Container(
-                child: Image.asset('asset/templates/$_selectedValue.jpg'),
+                child: Image.network(
+                    'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
               ),
 
               // 나의 게시글 목록
@@ -98,66 +117,27 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 Text('나의 글 목록'),
                 Container(
                   height: 200,
-                  child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                        // mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Container(
-                              height: 50,
-                              color: Colors.amber[600],
-                              child: const Center(child: Text('11111'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[500],
-                              child: const Center(child: Text('22222'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[400],
-                              child: const Center(child: Text('33333'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[600],
-                              child: const Center(child: Text('11111'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[500],
-                              child: const Center(child: Text('22222'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[400],
-                              child: const Center(child: Text('33333'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[600],
-                              child: const Center(child: Text('11111'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[500],
-                              child: const Center(child: Text('22222'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[400],
-                              child: const Center(child: Text('33333'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[600],
-                              child: const Center(child: Text('11111'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[500],
-                              child: const Center(child: Text('22222'))),
-                          Container(
-                              height: 50,
-                              color: Colors.amber[400],
-                              child: const Center(child: Text('33333'))),
-                        ],
-                      )),
+                  child: ListView.builder(
+                    itemCount: _myFootList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Container(
+                          child: Text(_myFootList[index]['messageText']),
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.orange[50],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(height: 20),
                 Container(
                     child: TextField(
                   maxLines: 5,
+                  controller: stampBoardText,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(
                         borderRadius:
@@ -165,8 +145,29 @@ class _CreateStampFormState extends State<CreateStampForm> {
                       ),
                       hintText: '스탬프에 대해 설명해주세요'),
                 )),
-                ElevatedButton(onPressed: () {}, child: Text('작성'))
+                ElevatedButton(
+                    onPressed: () {
+                      stampCreate();
+                    },
+                    child: Text('작성'))
               ])),
             ]))));
+  }
+
+  void loadMyFoot() async {
+    var dio = Dio();
+    var response =
+        await dio.get('http://k7a108.p.ssafy.io:8080/user/myfoot/25');
+    print("####################################");
+    print(response.data['message']);
+    print("######################################");
+    _myFootList = response.data['message'];
+  }
+
+  void stampCreate() async {
+    // data = {
+    //   ""
+    // }
+    print("create stamp");
   }
 }
