@@ -44,7 +44,7 @@ class _ChatRoomState extends State<ChatRoom> {
     else {
       widget.stompClient = StompClient(
         config: StompConfig.SockJS(
-          url: 'https://k7a108.p.ssafy.io/wss',
+          url: 'http://k7a108.p.ssafy.io/wss',
           beforeConnect: () async{
             print("소켓 연결중");
           },
