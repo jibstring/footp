@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:stomp_dart_client/stomp.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
@@ -157,7 +158,6 @@ class mainMap extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -166,7 +166,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
   UserData user = Get.put(UserData());
-
   int _selectedIndex = 0;
   List<Marker> markers = [];
 
@@ -175,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 실시간 채팅방
-    ChatRoom(0, 0, "unknown"),
+    ChatRoom(1, 2, "unknown"),
     // 스탬프 글목록
     StampList()
   ];
