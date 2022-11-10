@@ -20,10 +20,13 @@ class FootList extends StatefulWidget {
 class _FootListState extends State<FootList> {
   int _selectedIndex = 0;
   final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
-  var _selectedValue = "HOT";
+  final _filterList=['hot','like','new'];
+  var _selectedValue = "hot";
 
   Map<String, dynamic> jsonData = {};
   List<dynamic> footData = [];
+  //var footData = List<Map<String,dynamic>>.filled(100,0);
+
   int eventlen = 0;
   int messagelen = 0;
 
@@ -31,15 +34,17 @@ class _FootListState extends State<FootList> {
   void readFile() {
     try {
       jsonData = maindata.dataList;
+      // print("리드파일안에 제이슨!");
+      // print(jsonData);
     } catch (e) {
       jsonData = {};
     }
 
-    try {
-      eventlen = jsonData["event"].length;
-    } catch (e) {
-      eventlen = 0;
-    }
+    // try {
+    //   eventlen = jsonData["event"].length;
+    // } catch (e) {
+    //   eventlen = 0;
+    // }
 
     try {
       messagelen = jsonData["message"].length;
@@ -47,14 +52,26 @@ class _FootListState extends State<FootList> {
       messagelen = 0;
     }
 
-    for (int i = 0; i < eventlen; i++) {
-      jsonData["event"][i]["check"] = 0; // 이걸로 어떤 메시지인지 파악
-      footData.add(jsonData["event"][i]);
-    }
+    // for (int i = 0; i < eventlen; i++) {
+    //   //jsonData["event"][i]["check"] = 0; // 이걸로 어떤 메시지인지 파악
+    //   if(footData.length<=i){
+    //     footData.add(jsonData["event"][i]);
+    //   }
+    //   else{
+    //     footData[i]=jsonData["event"][i];
+    //   }
+    // }
+
     for (int i = 0; i < messagelen; i++) {
-      jsonData["message"][i]["check"] = 1;
-      footData.add(jsonData["message"][i]);
+      //jsonData["message"][i]["check"] = 1;
+      if (footData.length <= i) {
+        footData.add(jsonData["message"][i]);
+      } else {
+        footData[i] = jsonData["message"][i];
+      }
     }
+    // print("@@@@@@@@@@풋리스트 풋데이터@@@@@@@@@");
+    // print(footData);
   }
 
   Widget build(BuildContext context) {
@@ -69,7 +86,7 @@ class _FootListState extends State<FootList> {
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: eventlen + messagelen + 2,
+                itemCount: eventlen + messagelen + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return Container(
@@ -82,7 +99,7 @@ class _FootListState extends State<FootList> {
                           // 필터
                           DropdownButton(
                             value: _selectedValue,
-                            items: _valueList.map(
+                            items: _filterList.map(
                               (value) {
                                 return DropdownMenuItem(
                                     value: value, child: Text(value));
@@ -91,6 +108,8 @@ class _FootListState extends State<FootList> {
                             onChanged: (value) {
                               setState(() {
                                 _selectedValue = value!;
+                                maindata.fixFilter=_selectedValue;
+                                //=String(_filter:selectedValue);
                               });
                             },
                           ),
@@ -112,12 +131,13 @@ class _FootListState extends State<FootList> {
                         ],
                       ),
                     );
-                  } else if (index == eventlen + messagelen + 1) {
+                  } else if (index == eventlen + messagelen) {
                     return Container(color: Colors.white, height: 60);
                   } else {
-                    return (footData[index]["check"] == 0)
-                        ? EventFoot(footData[index])
-                        : NormalFoot(footData[index]);
+                    return NormalFoot(footData[index]);
+                    // footData[index]["check"] == 0
+                    //     ? EventFoot(footData[index])
+                    //     : NormalFoot(footData[index]);
                   }
                 }));
       },

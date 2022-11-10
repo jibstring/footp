@@ -4,6 +4,7 @@ import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.MessagePostContent;
 import com.ssafy.back_footp.request.MessagePostReq;
 import com.ssafy.back_footp.response.messagelikeDTO;
+import com.ssafy.back_footp.response.messagelistDTO;
 import com.ssafy.back_footp.service.MessageService;
 import io.swagger.annotations.Api;
 
@@ -64,20 +65,6 @@ public class MessageController {
 	@Autowired
 	private UserRepository userRepository;
 
-	@GetMapping("/main/{userId}/{lon}/{lat}")
-	@ApiOperation(value = "메세지 발자국, 이벤트 발자국 조회", notes = "반경 500m 이내의 메세지 발자국과 이벤트 발자국을 조회한다.")
-	public ResponseEntity<JSONObject> messageSearch(@PathVariable long userId, @PathVariable double lon, @PathVariable double lat){
-		JSONObject result = null;
-
-		try {
-			result = messageService.getMessageList(userId, lon, lat);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-
-		return new ResponseEntity<JSONObject>(result, HttpStatus.OK);
-	}
 
 	@GetMapping("/message/likelist/{userId}")
 	@ApiOperation(value = "유저가 좋아요한 발자국 리스트를 전부 조회한다.")
@@ -97,10 +84,10 @@ public class MessageController {
 		
 	}
 	
-	@PostMapping("/message")
+	@PostMapping("/write")
 	@ApiOperation(value = "메세지 발자국 쓰기", notes = "일반 메세지 발자국을 작성한다.")
-	public ResponseEntity<JSONObject> messageWrite(@RequestParam(value="messageFile", required = false) MultipartFile messageFile, @RequestParam("messageContent") String messageContent){
-		JSONObject result = null;
+	public ResponseEntity<String> messageWrite(@RequestParam(value="messageFile", required = false) MultipartFile messageFile, @RequestParam("messageContent") String messageContent){
+		String result = null;
 
 		try {
 			JSONParser parser = new JSONParser();
@@ -108,6 +95,7 @@ public class MessageController {
 			JSONObject jObject = new JSONObject((JSONObject)obj);
 
 			MessagePostContent messagePostContent = new MessagePostContent();
+
 			messagePostContent.setMessageLatitude((double) jObject.get("messageLatitude"));
 			messagePostContent.setMessageLongitude((double) jObject.get("messageLongitude"));
 			messagePostContent.setMessageText((String) jObject.get("messageText"));
@@ -119,14 +107,13 @@ public class MessageController {
 			messagePostReq.setMessagePostContent(messagePostContent);
 			messagePostReq.setMessageFile(messageFile);
 
-			messageService.createMessage(messagePostReq);
-			result = messageService.getMessageList(messagePostReq.getMessagePostContent().getUserId(), messagePostReq.getMessagePostContent().getMessageLongitude(), messagePostReq.getMessagePostContent().getMessageLatitude());
+			result = messageService.createMessage(messagePostReq);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 
-		return new ResponseEntity<JSONObject>(result, HttpStatus.OK);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@PostMapping("/like/{messageId}/{userId}")
@@ -229,31 +216,57 @@ public class MessageController {
 		
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
-	
-	@GetMapping("/list/hot")
+
+//	// 화면 상관없이 모든 메세지 조회
+//	@GetMapping("/list/hot")
+//	@ApiOperation(value = "일반 발자국 리스트(핫)")
+//	public ResponseEntity<List<Message>> messageListHot(){
+//		
+//		List<Message> list = messageRepository.findAllByHot();
+//		
+//		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+//	}
+//	
+//	@GetMapping("/list/like")
+//	@ApiOperation(value = "일반 발자국 리스트(좋아요)")
+//	public ResponseEntity<List<Message>> messageListLike(){
+//		
+//		List<Message> list = messageRepository.findAllByOrderByMessageLikenumDesc();
+//		
+//		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+//	}
+//	
+//	@GetMapping("/list/new")
+//	@ApiOperation(value = "일반 발자국 리스트(신규)")
+//	public ResponseEntity<List<Message>> messageListNew(){
+//		
+//		List<Message> list = messageRepository.findAllByOrderByMessageWritedateDesc();
+//		
+//		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+//	}
+
+	// 화면에 들어오는 메세지만 조회
+	@GetMapping("/list/hot/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
 	@ApiOperation(value = "일반 발자국 리스트(핫)")
-	public ResponseEntity<List<Message>> messageListHot(){
-		
-		List<Message> list = messageRepository.findAllByHot();
-		
-		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	public ResponseEntity<JSONObject> messageListHotInScreen(@PathVariable long userId, @PathVariable double lon_r, @PathVariable double lon_l, @PathVariable double lat_d, @PathVariable double lat_u){
+
+		JSONObject result = messageService.getMessageList("hot", userId, lon_r, lon_l, lat_d, lat_u);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
-	@GetMapping("/list/like")
+
+	@GetMapping("/list/like/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
 	@ApiOperation(value = "일반 발자국 리스트(좋아요)")
-	public ResponseEntity<List<Message>> messageListLike(){
-		
-		List<Message> list = messageRepository.findAllByOrderByMessageLikenumDesc();
-		
-		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	public ResponseEntity<JSONObject> messageListLikeInScreen(@PathVariable long userId, @PathVariable double lon_r, @PathVariable double lon_l, @PathVariable double lat_d, @PathVariable double lat_u){
+
+		JSONObject result = messageService.getMessageList("like", userId, lon_r, lon_l, lat_d, lat_u);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
-	@GetMapping("/list/new")
+
+	@GetMapping("/list/new/{userId}/{lon_r}/{lon_l}/{lat_d}/{lat_u}")
 	@ApiOperation(value = "일반 발자국 리스트(신규)")
-	public ResponseEntity<List<Message>> messageListNew(){
-		
-		List<Message> list = messageRepository.findAllByOrderByMessageWritedateDesc();
-		
-		return new ResponseEntity<List<Message>>(list,HttpStatus.OK);
+	public ResponseEntity<JSONObject> messageListNewInScreen(@PathVariable long userId, @PathVariable double lon_r, @PathVariable double lon_l, @PathVariable double lat_d, @PathVariable double lat_u){
+
+		JSONObject result = messageService.getMessageList("new", userId, lon_r, lon_l, lat_d, lat_u);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }

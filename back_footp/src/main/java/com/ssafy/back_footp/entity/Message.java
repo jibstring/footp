@@ -37,14 +37,20 @@ public class Message {
     @Column(name="message_text", length = 255, nullable = false)
     private String messageText;
 
-    @Column(name="message_fileurl", length = 1024, nullable = false)
+    @Column(name="message_blurredtext", length = 255)
+    private String messageBlurredtext;
+
+    @Column(name="message_fileurl", length = 1024)
     private String messageFileurl;
 
     @Column(name="message_point")
     private Point messagePoint;
 
     @Column(name="is_opentoall", columnDefinition = "TINYINT", length = 1)
-    private boolean isOpentoall;
+    private Boolean isOpentoall;
+
+    @Column(name="is_blurred", columnDefinition = "TINYINT", length = 1)
+    private Boolean isBlurred;
 
     @Column(name="message_likenum")
     private int messageLikenum;

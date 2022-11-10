@@ -1,5 +1,6 @@
 package com.ssafy.back_footp.response;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class myStampDTO {
+public class myStampDTO implements Serializable{
 	
 	Long stampboard_id;
 	Long user_id;

@@ -17,6 +17,8 @@ public interface StampboardRepository extends JpaRepository<Stampboard, Long>{
 
 	public List<Stampboard> findAllByOrderByStampboardLikenumDesc();
 	public List<Stampboard> findAllByOrderByStampboardWritedateDesc();
+	public List<Stampboard> findAllByUserId(User uid);
+	public void deleteByStampboardId(Stampboard sid);
 	
 	@Transactional
 	public void deleteByStampboardIdAndUserId(long sid, User uid);

@@ -19,6 +19,9 @@ public class MessagePostContent {
     @ApiModelProperty(name="메세지 내용", example = "여기 맛있어!")
     String messageText;
 
+    @ApiModelProperty(name="메세지 숨겨진 내용", example = "사실 맛없어")
+    String messageBlurredtext;
+
     @ApiModelProperty(name="메세지 경도", example = "128.71639982661415")
     double messageLongitude;
 
@@ -27,6 +30,9 @@ public class MessagePostContent {
 
     @ApiModelProperty(name="메세지 공개 여부", example = "True")
     Boolean isOpentoall;
+
+    @ApiModelProperty(name="물음표 메세지 여부", example = "True")
+    Boolean isBlurred;
 
     @ApiModelProperty(name="메세지 작성 날짜", example = "2022-11-07T01:11:28.402Z")
     LocalDateTime messageWritedate;

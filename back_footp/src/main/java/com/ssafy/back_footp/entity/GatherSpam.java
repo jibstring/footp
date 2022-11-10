@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -13,11 +12,11 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="eventspam")
-public class EventSpam {
+@Table(name="gatherspam")
+public class GatherSpam {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="eventspam_id")
-    private Long eventspamId;
+    @Column(name="gatherspam_id")
+    private Long gatherspamId;
 
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,6 +25,6 @@ public class EventSpam {
 
     // 단방향 다대일
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="event_id")
-    private Event eventId;
+    @JoinColumn(name="gather_id")
+    private Gather gatherId;
 }

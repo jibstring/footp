@@ -1,28 +1,24 @@
 package com.ssafy.back_footp.service;
 
-import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.entity.Message;
+import com.ssafy.back_footp.entity.Stampboard;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.repository.*;
 import com.ssafy.back_footp.request.MypostUpdateReq;
 import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
-import com.ssafy.back_footp.response.eventlistDTO;
+import com.ssafy.back_footp.response.gatherlistDTO;
 import com.ssafy.back_footp.response.messagelistDTO;
-import com.ssafy.back_footp.security.EncryptionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,13 +29,25 @@ public class UserService {
     @Autowired
     MessageLikeRepository messageLikeRepository;
     @Autowired
-    EventRepository eventRepository;
+    MessageSpamRepository messageSpamRepository;
     @Autowired
-    EventLikeRepository eventLikeRepository;
+    GatherRepository gatherRepository;
+    @Autowired
+    GatherLikeRepository gatherLikeRepository;
+    @Autowired
+    GatherSpamRepository gatherSpamRepository;
+    @Autowired
+    StampboardRepository stampboardRepository;
+    @Autowired
+    StampboardSpamRepository stampboardSpamRepository;
+    @Autowired
+    StampboardLikeRepository stampboardLikeRepository;
+    @Autowired
+    UserJoinedStampboardRepository userJoinedStampboardRepository;
+    @Autowired
+    UserJoinedGatherRepository userJoinedGatherRepository;
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    EventRankingRepository eventRankingRepository;
 
     @Transactional
     public JSONObject getMymessages(long userId) {
@@ -50,47 +58,45 @@ public class UserService {
                                 Message.getMessageId(),
                                 Message.getUserId().getUserNickname(),
                                 Message.getMessageText(),
+                                Message.getMessageBlurredtext(),
                                 Message.getMessageFileurl(),
                                 Message.getMessagePoint().getX(),
                                 Message.getMessagePoint().getY(),
-                                Message.isOpentoall(),
+                                Message.getIsOpentoall(),
+                                Message.getIsBlurred(),
                                 messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
+                                messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
                                 Message.getMessageLikenum(),
                                 Message.getMessageSpamnum(),
                                 Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
         );
 
-        List<eventlistDTO> eventlist = new ArrayList<>();
-        eventRepository.findAllByUserId(userRepository.findById(userId).get()).forEach(Event->eventlist.add(new eventlistDTO(
-                Event.getEventId(),
-                Event.getUserId().getUserNickname(),
-                Event.getEventText(),
-                Event.getEventFileurl(),
-                Event.getEventWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-                Event.getEventFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-                Event.getEventPoint().getX(),
-                Event.getEventPoint().getY(),
-                Event.getEventLikenum(),
-                Event.getEventSpamnum(),
-                Event.isQuiz(),
-                eventLikeRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null,
-                Event.getEventQuestion(),
-                Event.getEventAnswer(),
-                Event.getEventExplain(),
-                Event.getEventExplainurl(),
-                eventRankingRepository.findByEventIdAndUserId(Event, userRepository.findById(userId).get()) != null
+        List<gatherlistDTO> gatherlist = new ArrayList<>();
+        gatherRepository.findAllByUserId(userRepository.findById(userId).get()).forEach(Gather->gatherlist.add(new gatherlistDTO(
+                Gather.getGatherId(),
+                Gather.getUserId().getUserNickname(),
+                Gather.getGatherText(),
+                Gather.getGatherFileurl(),
+                Gather.getGatherWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+                Gather.getGatherFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+                Gather.getGatherPoint().getX(),
+                Gather.getGatherPoint().getY(),
+                gatherLikeRepository.findByGatherIdAndUserId(Gather, userRepository.findById(userId).get()) != null,
+                Gather.getGatherLikenum(),
+                Gather.getGatherSpamnum(),
+                Gather.getGatherDesigncode()
         )));
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", messagelist);
-        jsonObject.put("event", eventlist);
+        jsonObject.put("gather", gatherlist);
 
         return jsonObject;
     }
 
     public String updateMessage(MypostUpdateReq mypostUpdateReq){
         Message msg = messageRepository.findById(mypostUpdateReq.getMessageId()).get();
-        msg.setOpentoall(mypostUpdateReq.isType());
+        msg.setIsOpentoall(mypostUpdateReq.isType());
 //        msg = Message.builder().isOpentoall((mypostUpdateReq.isType())).build();
         messageRepository.save(msg);
 
@@ -118,6 +124,39 @@ public class UserService {
         usr.setUserNickname(nicknameUpdateReq.getUserNickname());
 //        usr = User.builder().userPassword(nicknameUpdateReq.getUserNickname()).build();
         userRepository.save(usr);
+
+        return "success";
+    }
+
+    public String deleteUser(long uid){
+        User usr = userRepository.findById(uid).get();
+
+        // 스탬프 이용 내역 삭제
+        stampboardSpamRepository.deleteAllByUserId(usr);
+        stampboardLikeRepository.deleteAllByUserId(usr);
+        userJoinedStampboardRepository.deleteAllByUserId(usr);
+
+        // 이 유저가 작성한 스탬프를 서비스에서 삭제
+        List<Stampboard> sblist = stampboardRepository.findAllByUserId(usr);
+        for(Stampboard sb : sblist){
+            stampboardSpamRepository.deleteAllByStampboardId(sb);
+            stampboardLikeRepository.deleteAllByStampboardId(sb);
+            userJoinedStampboardRepository.deleteAllByStampboardId(sb);
+        }
+
+        // 확성기 삭제
+        gatherLikeRepository.deleteAllByUserId(usr);
+        gatherSpamRepository.deleteAllByUserId(usr);
+        gatherRepository.deleteAllByUserId(usr);
+        userJoinedGatherRepository.deleteAllByUserId(usr);
+
+        // 메세지 삭제
+        messageLikeRepository.deleteAllByUserId(usr);
+        messageSpamRepository.deleteAllByUserId(usr);
+        messageRepository.deleteAllByUserId(usr);
+
+        // 유저 삭제
+        userRepository.deleteByUserId(usr);
 
         return "success";
     }

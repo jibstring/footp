@@ -20,6 +20,7 @@ public interface ChatBlockRepository extends JpaRepository<ChatBlock, Long>{
 	
 	@Transactional
 	public void deleteByUserBlockingAndUserBlocked(User blocking, User blocked);
-	
+	@Transactional
+	public void deleteAllByUserBlocking(User blocking);
 
 }

@@ -30,9 +30,8 @@ public class stampboardDTO implements Serializable{
 	Long stampboard_message1;
 	Long stampboard_message2;
 	Long stampboard_message3;
-	
-	LocalDateTime UserjoinedStampboard_cleardate1;
-	LocalDateTime UserjoinedStampboard_cleardate2;
-	LocalDateTime UserjoinedStampboard_cleardate3;
+	Boolean isMylike;
+	Boolean isMyspam;
+	Boolean isMyclear;
 
 }
