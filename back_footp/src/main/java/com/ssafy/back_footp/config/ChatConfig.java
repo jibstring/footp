@@ -13,7 +13,7 @@ public class ChatConfig implements WebSocketMessageBrokerConfigurer {
     //Endpoint 구성에 withSockJS() 사용
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/wss").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/wss").setAllowedOriginPatterns("http://localhost:*","https://localhost:*","https://k7a108.p.ssafy.io:8080").withSockJS();
     }
 
     @Override
