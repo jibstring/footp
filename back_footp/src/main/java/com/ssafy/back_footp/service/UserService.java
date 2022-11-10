@@ -9,6 +9,8 @@ import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
 import com.ssafy.back_footp.response.gatherlistDTO;
 import com.ssafy.back_footp.response.messagelistDTO;
+import com.ssafy.back_footp.security.EncryptionUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -112,7 +114,9 @@ public class UserService {
 
     public String updatePassword(PasswordUpdateReq passwordUpdateReq){
         User usr = userRepository.findById(passwordUpdateReq.getUserId()).get();
-        usr.setUserPassword(passwordUpdateReq.getUserPassword());
+        
+        //비밀번호 암호화해서 저장하기 
+        usr.setUserPassword(EncryptionUtils.encryptSHA256(passwordUpdateReq.getUserPassword()));
 //        usr = User.builder().userPassword(passwordUpdateReq.getUserPassword()).build();
         userRepository.save(usr);
 
