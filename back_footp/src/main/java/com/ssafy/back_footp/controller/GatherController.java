@@ -290,4 +290,12 @@ public class GatherController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	// 유저가 확성기에 참가
+	@PostMapping("/join/{gatherId}/{userId}")
+	@ApiOperation(value = "유저가 확성기에 참가")
+	public ResponseEntity<String> joinInGather(@PathVariable long gatherId, @PathVariable long userId){
+		String result = gatherService.joinGather(gatherId, userId);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 }
