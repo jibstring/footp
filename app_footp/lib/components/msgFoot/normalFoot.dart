@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -31,12 +32,31 @@ class NormalFoot extends StatefulWidget {
 class _NormalFootState extends State<NormalFoot> {
   @override
   int heartnum = 0;
+  
+  late VideoPlayerController _videocontroller;
+  
+  late Future<void> _initializeVideoPlayerFuture;
+
 
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
 
   bool click_play=false;
   final _player=AudioPlayer();
+
+    void initState(){
+    _videocontroller=VideoPlayerController.network("");
+
+    _initializeVideoPlayerFuture = _videocontroller.initialize();
+    
+    super.initState();
+  }
+
+  void dispose(){
+    _videocontroller.dispose();
+    super.dispose();
+  }
+
 
   Widget build(BuildContext context) {
     VideoPlayerController _videocontroller;
@@ -115,11 +135,34 @@ class _NormalFootState extends State<NormalFoot> {
                                         //비디오
                                         print("비디오");
                                         _videocontroller = VideoPlayerController.network(widget.normalmsg["messageFileurl"].toString());
-                                        return Container(
-                                          child: AspectRatio(
-                                          aspectRatio: _videocontroller.value.aspectRatio,
-                                          child: VideoPlayer(_videocontroller),));
-                                      } else if (flag == 2) {
+                                        print(widget.normalmsg["messageFileurl"]);
+                                        return 
+                                            FutureBuilder(
+                                          future:_initializeVideoPlayerFuture,
+                                          builder: (context,snapshot){
+                                            if(snapshot.connectionState==ConnectionState.done){
+                                              return AspectRatio(
+                                                aspectRatio: _videocontroller.value.aspectRatio,
+                                                child:InkWell(
+                                                  onTap: (){
+                                                  setState((){
+                                                    if(_videocontroller.value.isPlaying){
+                                                      _videocontroller.pause();
+                                                    }
+                                                    else{
+                                                      _videocontroller.play();
+                                                    }
+                                                    });
+                                                  },
+                                                  child: VideoPlayer(_videocontroller),
+                                                ),
+                                              );
+                                            }else {
+                                              return Center(child: CircularProgressIndicator());
+                                            }
+                                          }
+                                        )                                        ;
+                                        } else if (flag == 2) {
                                         //오디오
                                         return click_play==false?
                                         IconButton(
