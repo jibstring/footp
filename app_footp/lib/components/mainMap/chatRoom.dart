@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:app_footp/custom_class/chat_class/msg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 
@@ -44,7 +45,7 @@ class _ChatRoomState extends State<ChatRoom> {
     else {
       widget.stompClient = StompClient(
         config: StompConfig.SockJS(
-          url: 'http://k7a108.p.ssafy.io/wss',
+          url: 'http://k7a108.p.ssafy.io:8080/wss',
           beforeConnect: () async{
             print("소켓 연결중");
           },
@@ -69,17 +70,25 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   void sendMsg(String str) {
-    if(widget.con && widget.stompClient.connected) {
+    if(widget.con && widget.stompClient.connected && str.trim() != "") {
       widget.stompClient.send(
         destination: '/app/send',
         body: jsonEncode(Msg(widget.eventId, widget.userId, str, widget.userNickName, ""))
+      );
+    }else {
+      Fluttertoast.showToast(msg: str.trim()==""? '빈 메시지는 보낼 수 없습니다.':'채팅방 연결을 확인하세요.',
+        gravity: ToastGravity.CENTER,
+        backgroundColor: Colors.redAccent,
+        fontSize: 20.0,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_SHORT
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if(widget.eventId >= 0) {
+    if(widget.eventId > 0) {
       widget.stompClient.activate();
     }
     final textController = TextEditingController();
