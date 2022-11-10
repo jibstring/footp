@@ -13,12 +13,8 @@ import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
-import 'package:app_footp/custom_class/store_class/store.dart';
-
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
-
-footlist.ListMaker listmaker = footlist.listmaker;
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -35,11 +31,12 @@ class _NormalFootState extends State<NormalFoot> {
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
 
-  bool click_play=false;
-  final _player=AudioPlayer();
+  bool click_play = false;
+  final _player = AudioPlayer();
 
   Widget build(BuildContext context) {
     VideoPlayerController _videocontroller;
+    footlist.ListMaker listmaker = footlist.listmaker;
 
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
@@ -49,13 +46,12 @@ class _NormalFootState extends State<NormalFoot> {
     // print(widget.normalmsg);
 
     //AudioPlayer player = new AudioPlayer();
-    
+
     return GestureDetector(
-  
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
-          listmaker.listcontroller.reset();
+          // listmaker.listcontroller.reset();
           listmaker.refresh();
         },
         child: Card(
@@ -114,36 +110,44 @@ class _NormalFootState extends State<NormalFoot> {
                                       } else if (flag == 1) {
                                         //비디오
                                         print("비디오");
-                                        _videocontroller = VideoPlayerController.network(widget.normalmsg["messageFileurl"].toString());
+                                        _videocontroller =
+                                            VideoPlayerController.network(widget
+                                                .normalmsg["messageFileurl"]
+                                                .toString());
                                         return Container(
-                                          child: AspectRatio(
-                                          aspectRatio: _videocontroller.value.aspectRatio,
-                                          child: VideoPlayer(_videocontroller),));
+                                            child: AspectRatio(
+                                          aspectRatio: _videocontroller
+                                              .value.aspectRatio,
+                                          child: VideoPlayer(_videocontroller),
+                                        ));
                                       } else if (flag == 2) {
                                         //오디오
-                                        return click_play==false?
-                                        IconButton(
-                                          icon: Icon(Icons.play_arrow,
-                                            size: 30),
-                                          onPressed: (){
-                                            _player.stop();
-                                            // print("재생!!");
-                                            click_play=true;
-                                            _player.setUrl(widget.normalmsg["messageFileurl"]);
-                                            _player.play();
-                                            
-                                            print(click_play);
-                                          } ,)
-                                          :
-                                          IconButton(
-                                          icon: Icon(Icons.pause,
-                                            size: 30),
-                                          onPressed: (){
-                                            _player.stop();
-                                            // print("멈춰!!");
-                                            click_play=false;
-                                            print(click_play);
-                                            } ,);
+                                        return click_play == false
+                                            ? IconButton(
+                                                icon: Icon(Icons.play_arrow,
+                                                    size: 30),
+                                                onPressed: () {
+                                                  _player.stop();
+                                                  // print("재생!!");
+                                                  click_play = true;
+                                                  _player.setUrl(
+                                                      widget.normalmsg[
+                                                          "messageFileurl"]);
+                                                  _player.play();
+
+                                                  print(click_play);
+                                                },
+                                              )
+                                            : IconButton(
+                                                icon:
+                                                    Icon(Icons.pause, size: 30),
+                                                onPressed: () {
+                                                  _player.stop();
+                                                  // print("멈춰!!");
+                                                  click_play = false;
+                                                  print(click_play);
+                                                },
+                                              );
                                       }
                                     })(),
                                   )

@@ -59,6 +59,7 @@ class MainData extends GetxController {
 
     markers.clear();
     for (int i = 0; i < _listsize; i++) {
+      // print(dataList["message"][i]);
       createMarker(i);
     }
 
@@ -84,24 +85,26 @@ class MainData extends GetxController {
     if (like >= 95) {
       like = 94;
     }
-    switch (dataList["message"][idx]["messageId"] % 5) {
-      case 0:
-        color = 0;
-        break;
-      case 1:
-        color = 1;
-        break;
-      case 2:
-        color = 2;
-        break;
-      case 3:
-        color = 3;
-        break;
-      case 4:
-        color = 4;
-        break;
-      default:
-        color = 0;
+
+    if (dataList["message"][idx]["isBlurred"] == true) {
+      color = 4;
+    } else {
+      switch (dataList["message"][idx]["messageId"] % 4) {
+        case 0:
+          color = 0;
+          break;
+        case 1:
+          color = 1;
+          break;
+        case 2:
+          color = 2;
+          break;
+        case 3:
+          color = 3;
+          break;
+        default:
+          color = 0;
+      }
     }
 
     Marker marker = Marker(
@@ -131,14 +134,14 @@ class MainData extends GetxController {
 
   void moveMapToMessage(double lat, double lng) {
     CameraPosition cameraPosition =
-        CameraPosition(target: LatLng(lat, lng), zoom: 20.0);
+        CameraPosition(target: LatLng(lat, lng), zoom: 18.0);
     _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
     update();
   }
 }
 
-class mainMap extends StatelessWidget {
-  const mainMap({super.key});
+class MainMap extends StatelessWidget {
+  const MainMap({super.key});
 
   // This widget is the root of your application.
   @override
@@ -322,12 +325,6 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/gray_print.png',
-      ).then((image) {
-        if (mounted) setState(() => maindata.footImage.add(image));
-      });
-
-      OverlayImage.fromAssetImage(
         assetName: 'imgs/orange_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
@@ -335,6 +332,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
       OverlayImage.fromAssetImage(
         assetName: 'imgs/white_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/gray_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
@@ -378,10 +381,6 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             markers = maindata.markers;
           }
-
-          // 이 부분은 2차 배포때 수정할 예정
-          // maindata.getURL(
-          //     '/${_mapEdge.northeast.longitude}/${_mapEdge.southwest.longitude}/${_mapEdge.southwest.latitude}/${_mapEdge.northeast.latitude}');
         });
       }
     });

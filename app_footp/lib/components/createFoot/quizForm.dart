@@ -397,7 +397,7 @@ class _QuizFormState extends State<QuizForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyNaverMap()));
+                                builder: (context) => CreateFootMap()));
                       }
                     } else {
                       if (myText.text == '' && messageFilePath == '') {
@@ -463,7 +463,7 @@ class _QuizFormState extends State<QuizForm> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyNaverMap()));
+                                builder: (context) => CreateFootMap()));
                       }
                     }
                   },
