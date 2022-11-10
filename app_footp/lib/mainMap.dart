@@ -156,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 실시간 채팅방
-    ChatRoom(0, 0, "unknown"),
+    ChatRoom(1, 2, "unknown"),
     // 스탬프 글목록
     StampList()
   ];
