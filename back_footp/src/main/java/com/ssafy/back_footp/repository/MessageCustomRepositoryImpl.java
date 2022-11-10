@@ -17,7 +17,7 @@ public class MessageCustomRepositoryImpl implements MessageCustomRepository {
     public List<Message> findAllInScreenOrderByMessageWritedate(double lon_r, double lon_l, double lat_d, double lat_u){
 
         String polygonstr = "POLYGON(("+lon_l+" "+lat_u+", "+lon_r+" "+lat_u+", "+lon_r+" "+lat_d+", "+lon_l+" "+lat_d+", "+lon_l+" "+lat_u+"))";
-        String sql = "SELECT * from message WHERE ST_CONTAINS(ST_GEOMFROMTEXT('"+polygonstr+"'), message_point)  order by message_writedate";
+        String sql = "SELECT * from message WHERE ST_CONTAINS(ST_GEOMFROMTEXT('"+polygonstr+"'), message_point)  order by message_writedate desc";
 
         System.out.println(sql);
 

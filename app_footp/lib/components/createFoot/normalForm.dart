@@ -23,14 +23,16 @@ class NormalForm extends StatefulWidget {
   State<NormalForm> createState() => _NormalFormState();
 }
 
-enum OpenRange { all, me }
+enum OpenRange { all, me, blur }
 
 class _NormalFormState extends State<NormalForm> {
   CreateMarker createMarker = Get.put(CreateMarker());
   OpenRange _openRange = OpenRange.all;
+  bool _isblurred = false;
   String showFileName = "";
   List<String> allowedFileTypes = ['jpg', 'mp3', 'mp4'];
   final myText = TextEditingController();
+  final myBlurredText = TextEditingController();
   FilePickerResult? result;
   String? filePath = '';
   UserData user = Get.put(UserData());
@@ -46,17 +48,48 @@ class _NormalFormState extends State<NormalForm> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SizedBox(height: 40),
-        TextField(
-          maxLines: 10,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            alignLabelWithHint: true,
-            hintText: '메세지를 입력하세요',
-          ),
-          controller: myText,
-        ),
+        _isblurred
+            ? Container(
+                child: Column(
+                  children: [
+                    TextField(
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        alignLabelWithHint: true,
+                        hintText: '메세지를 입력하세요',
+                      ),
+                      controller: myText,
+                    ),
+                    TextField(
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        alignLabelWithHint: true,
+                        hintText: '멀리서 볼 수 없는 메시지 입니다',
+                      ),
+                      controller: myBlurredText,
+                    ),
+                  ],
+                ),
+              )
+            : TextField(
+                maxLines: 10,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  alignLabelWithHint: true,
+                  hintText: '메세지를 입력하세요',
+                ),
+                controller: myText,
+              ),
         Container(
           height: 200,
           width: 400,
@@ -171,6 +204,7 @@ class _NormalFormState extends State<NormalForm> {
                       onChanged: (value) {
                         setState(() {
                           _openRange = value!;
+                          _isblurred = false;
                         });
                       },
                     ),
@@ -183,6 +217,20 @@ class _NormalFormState extends State<NormalForm> {
                       onChanged: (value) {
                         setState(() {
                           _openRange = value!;
+                          _isblurred = false;
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile(
+                      title: Text('물음표 모드'),
+                      value: OpenRange.blur,
+                      groupValue: _openRange,
+                      onChanged: (value) {
+                        setState(() {
+                          _openRange = value!;
+                          _isblurred = true;
                         });
                       },
                     ),
@@ -219,8 +267,13 @@ class _NormalFormState extends State<NormalForm> {
             } else {
               createMarker.newmarker['messageText'] = myText.text;
 
+              createMarker.newmarker['messageBlurredtext'] = myBlurredText.text;
+
               createMarker.newmarker['isOpentoall'] =
-                  _openRange == OpenRange.all ? true : false;
+                  _openRange == OpenRange.me ? false : true;
+
+              createMarker.newmarker['isBlurred'] =
+                  _openRange == OpenRange.blur ? true : false;
 
               DIO.MultipartFile? file = this.result != null
                   ? await DIO.MultipartFile.fromFile(this.filePath!)
