@@ -43,6 +43,7 @@ public class ChatController {
     @MessageMapping("/send")
     public void send(ChatMessage msg) {
         logger.info("{} 님의 채팅 전송", msg.getUserNickName());
+		System.out.println("send");
         LocalTime now = LocalTime.now(ZoneId.of(("Asia/Seoul")));
         msg.setNow(""+now.getHour() + ':' + now.getMinute());
         sendingOperations.convertAndSend(rootURL + msg.getEventId(), msg);
