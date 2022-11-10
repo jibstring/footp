@@ -1,5 +1,3 @@
-import 'package:stomp_dart_client/stomp_frame.dart';
-
 class Msg {
   var eventId = 0;
   var userId = 0;
