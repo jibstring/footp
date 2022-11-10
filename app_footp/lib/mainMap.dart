@@ -45,23 +45,23 @@ class MainData extends GetxController {
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
 
-  set fixFilter(String filter){
-    _filter=filter;
+  set fixFilter(String filter) {
+    _filter = filter;
   }
 
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
     _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
-    print("#########apii#########");
-    print(_mainDataUrl);
-
 
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
+
+    markers.clear();
     for (int i = 0; i < _listsize; i++) {
       createMarker(i);
     }
+
     update();
   }
 
@@ -79,17 +79,36 @@ class MainData extends GetxController {
 
   void createMarker(int idx) {
     int like = dataList["message"][idx]["messageLikenum"];
+    int color = 0;
+
     if (like >= 95) {
       like = 94;
+    }
+    switch (dataList["message"][idx]["messageId"] % 5) {
+      case 0:
+        color = 0;
+        break;
+      case 1:
+        color = 1;
+        break;
+      case 2:
+        color = 2;
+        break;
+      case 3:
+        color = 3;
+        break;
+      case 4:
+        color = 4;
+        break;
+      default:
+        color = 0;
     }
 
     Marker marker = Marker(
         markerId: dataList["message"][idx]["messageId"].toString(),
         position: LatLng(dataList["message"][idx]["messageLatitude"],
             dataList["message"][idx]["messageLongitude"]),
-        icon: ((dataList["message"][idx]["messageId"] % 2) == 0
-            ? _footImage[0]
-            : _footImage[3]),
+        icon: _footImage[color],
         width: 5 * (6 + like),
         height: 5 * (6 + like),
         onMarkerTab: (marker, iconSize) {
@@ -269,9 +288,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   void _onMapCreated(NaverMapController controller) {
@@ -324,44 +345,45 @@ class _MyHomePageState extends State<MyHomePage> {
     _getImage();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
-      setState(() {
-        location.getCurrentLocation();
-        maindata.getMapEdge();
-        // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
-        // double aLat = 37.5015;
-        // double aLng = 127.0395;
-        // double aDistance = (6371 *
-        //     acos(cos(vect.radians(location.latitude)) *
-        //             cos(vect.radians(aLat)) *
-        //             cos(vect.radians(aLng) - vect.radians(location.longitude)) +
-        //         sin(vect.radians(location.latitude)) *
-        //             sin(vect.radians(aLat))));
-        // print(
-        //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
-        if (maindata.mapEdge != null) {
-          if (!user.isLogin()) {
-            // User ID는 null, 추후 수정
-            maindata.getURL(
-                "1",
-                maindata.mapEdge.northeast.longitude.toString(),
-                maindata.mapEdge.southwest.longitude.toString(),
-                maindata.mapEdge.southwest.latitude.toString(),
-                maindata.mapEdge.northeast.latitude.toString());
-          } else {
-            maindata.getURL(
-                user.userinfo["userId"].toString(),
-                maindata.mapEdge.northeast.longitude.toString(),
-                maindata.mapEdge.southwest.longitude.toString(),
-                maindata.mapEdge.southwest.latitude.toString(),
-                maindata.mapEdge.northeast.latitude.toString());
+      if (mounted) {
+        setState(() {
+          location.getCurrentLocation();
+          // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
+          // double aLat = 37.5015;
+          // double aLng = 127.0395;
+          // double aDistance = (6371 *
+          //     acos(cos(vect.radians(location.latitude)) *
+          //             cos(vect.radians(aLat)) *
+          //             cos(vect.radians(aLng) - vect.radians(location.longitude)) +
+          //         sin(vect.radians(location.latitude)) *
+          //             sin(vect.radians(aLat))));
+          // print(
+          //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
+          if (maindata.mapEdge != null) {
+            if (!user.isLogin()) {
+              // User ID는 null, 추후 수정
+              maindata.getURL(
+                  "1",
+                  maindata.mapEdge.northeast.longitude.toString(),
+                  maindata.mapEdge.southwest.longitude.toString(),
+                  maindata.mapEdge.southwest.latitude.toString(),
+                  maindata.mapEdge.northeast.latitude.toString());
+            } else {
+              maindata.getURL(
+                  user.userinfo["userId"].toString(),
+                  maindata.mapEdge.northeast.longitude.toString(),
+                  maindata.mapEdge.southwest.longitude.toString(),
+                  maindata.mapEdge.southwest.latitude.toString(),
+                  maindata.mapEdge.northeast.latitude.toString());
+            }
+            markers = maindata.markers;
           }
-          markers = maindata.markers;
-        }
 
-        // 이 부분은 2차 배포때 수정할 예정
-        // maindata.getURL(
-        //     '/${_mapEdge.northeast.longitude}/${_mapEdge.southwest.longitude}/${_mapEdge.southwest.latitude}/${_mapEdge.northeast.latitude}');
-      });
+          // 이 부분은 2차 배포때 수정할 예정
+          // maindata.getURL(
+          //     '/${_mapEdge.northeast.longitude}/${_mapEdge.southwest.longitude}/${_mapEdge.southwest.latitude}/${_mapEdge.northeast.latitude}');
+        });
+      }
     });
   }
 

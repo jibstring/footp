@@ -9,11 +9,14 @@ import 'package:http/http.dart' as http;
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/mainMap.dart';
+import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+
+footlist.ListMaker listmaker = footlist.listmaker;
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -44,6 +47,7 @@ class _NormalFootState extends State<NormalFoot> {
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
+          listmaker.listcontroller.reset();
         },
         child: Card(
             child: Container(
