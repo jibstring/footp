@@ -53,8 +53,8 @@ class MainData extends GetxController {
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
     _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
-    print("#########apii#########");
-    print(_mainDataUrl);
+    // print("#########apii#########");
+    // print(_mainDataUrl);
 
 
     _dataList = await getMainData();
