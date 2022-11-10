@@ -125,15 +125,30 @@ class _CreateStampFormState extends State<CreateStampForm> {
                     itemCount: _myFootList.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Container(
-                          child: Text(_myFootList[index]['messageText']),
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.orange[50],
-                          ),
-                        ),
-                      );
+                          padding: const EdgeInsets.all(4.0),
+                          child: Draggable(
+                            feedback: Container(
+                              child: Text(_myFootList[index]['messageText']),
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.orange[50],
+                              ),
+                            ),
+                            childWhenDragging: Container(
+                              child: Text(_myFootList[index]['messageText']),
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.orange[50],
+                              ),
+                            ),
+                            child: Container(
+                              child: Text(_myFootList[index]['messageText']),
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.orange[50],
+                              ),
+                            ),
+                          ));
                     },
                   ),
                 ),
