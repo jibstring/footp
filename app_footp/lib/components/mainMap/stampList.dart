@@ -1,3 +1,4 @@
+import 'package:app_footp/createStamp.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -30,7 +31,15 @@ class _StampListState extends State<StampList> {
         //     },
         //   ),
         // );
-        return Text("스탬푸페이지");
+        return Container(
+            height: 100,
+            child: TextButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CreateStamp()));
+              },
+              child: Text('스탬프 작성하기'),
+            ));
       },
     );
   }
