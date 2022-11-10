@@ -51,6 +51,9 @@ class CreateMarker extends GetxController {
     "messageLongitude": 128.71639982661415,
     "messageText": "test!",
     "userId": 7,
+    "messageWritedate": DateTime.now().toString(),
+    "isBlurred" : false,
+    "messageBlurredtext" : "",
   };
 
   DIO.MultipartFile? file;
