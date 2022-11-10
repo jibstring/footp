@@ -12,6 +12,7 @@ class ChatRoom extends StatefulWidget {
   late StompClient stompClient;
   bool con = false;
   var chatList = List<Msg>.empty(growable: true);    //채팅 리스트
+  final textController = TextEditingController();
   ChatRoom(this.eventId, this.userId, this.userNickName, {Key? key}) : super(key: key);
   @override
   State<ChatRoom> createState() => _ChatRoomState();
@@ -71,10 +72,12 @@ class _ChatRoomState extends State<ChatRoom> {
 
   void sendMsg(String str) {
     if(widget.con && widget.stompClient.connected && str.trim() != "") {
+      widget.textController.text = "";
       widget.stompClient.send(
         destination: '/app/send',
         body: jsonEncode(Msg(widget.eventId, widget.userId, str, widget.userNickName, ""))
       );
+      
     }else {
       Fluttertoast.showToast(msg: str.trim()==""? '빈 메시지는 보낼 수 없습니다.':'채팅방 연결을 확인하세요.',
         gravity: ToastGravity.CENTER,
@@ -91,7 +94,7 @@ class _ChatRoomState extends State<ChatRoom> {
     if(widget.eventId > 0) {
       widget.stompClient.activate();
     }
-    final textController = TextEditingController();
+    
 
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
@@ -118,11 +121,11 @@ class _ChatRoomState extends State<ChatRoom> {
                         child: 
                           TextField(
                             decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
-                            controller: textController,
+                            controller: widget.textController,
                           ),
                       ),
                       IconButton(
-                        onPressed: ()=>sendMsg(textController.text), 
+                        onPressed: ()=>sendMsg(widget.textController.text), 
                         icon: 
                           const Icon(
                             Icons.send,
