@@ -148,6 +148,7 @@ public class UserService {
         gatherLikeRepository.deleteAllByUserId(usr);
         gatherSpamRepository.deleteAllByUserId(usr);
         gatherRepository.deleteAllByUserId(usr);
+        userJoinedGatherRepository.deleteAllByUserId(usr);
 
         // 메세지 삭제
         messageLikeRepository.deleteAllByUserId(usr);

@@ -48,7 +48,7 @@ class _MyNaverMapState extends State<MyNaverMap> {
   }
 
   void _callPOST() async {
-    var url = Uri.parse('http://k7a108.p.ssafy.io:8080/foot/message');
+    var url = Uri.parse('http://k7a108.p.ssafy.io:8080/foot/write');
 
     var data = DIO.FormData.fromMap({
       'messageContent': json.encode(createMarker.newmarker),
@@ -77,7 +77,8 @@ class _MyNaverMapState extends State<MyNaverMap> {
 
     print('############################################');
     print(response.statusCode);
-    print(data);
+    print(response);
+    print(data.fields);
     print(createMarker.filePath);
     print('########################################');
     Fluttertoast.showToast(msg: "발자국을 찍었습니다");
