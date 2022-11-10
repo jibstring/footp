@@ -77,7 +77,8 @@ class _MyNaverMapState extends State<MyNaverMap> {
 
     print('############################################');
     print(response.statusCode);
-    print(data);
+    print(response);
+    print(data.fields);
     print(createMarker.filePath);
     print('########################################');
     Fluttertoast.showToast(msg: "발자국을 찍었습니다");

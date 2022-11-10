@@ -15,6 +15,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.back_footp.entity.Gather;
+import com.ssafy.back_footp.entity.UserJoinedGather;
+import com.ssafy.back_footp.repository.UserJoinedGatherRepository;
 import com.ssafy.back_footp.request.GatherPostContent;
 import com.ssafy.back_footp.request.GatherPostReq;
 import com.ssafy.back_footp.response.gatherlistDTO;
@@ -47,6 +49,8 @@ public class GatherService {
     GatherLikeRepository gatherLikeRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	UserJoinedGatherRepository userJoinedGatherRepository;
 	
 	GeometryFactory gf = new GeometryFactory();
 
@@ -132,7 +136,13 @@ public class GatherService {
 
 		return "success";
 	}
-	
 
+	// 유저가 확성기에 참가
+	public String joinGather(long gid, long uid){
+		UserJoinedGather userJoinedGather = new UserJoinedGather(null, userRepository.findById(uid).get(), gatherRepository.findById(gid).get());
+		userJoinedGatherRepository.save(userJoinedGather);
+
+		return "success";
+	}
 	
 }

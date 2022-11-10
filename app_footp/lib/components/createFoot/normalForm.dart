@@ -30,7 +30,7 @@ class _NormalFormState extends State<NormalForm> {
   OpenRange _openRange = OpenRange.all;
   bool _isblurred = false;
   String showFileName = "";
-  List<String> allowedFileTypes = ['jpg', 'm4a', 'mp4'];
+  List<String> allowedFileTypes = ['jpg', 'mp3', 'mp4'];
   final myText = TextEditingController();
   final myBlurredText = TextEditingController();
   FilePickerResult? result;
