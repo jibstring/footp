@@ -33,6 +33,8 @@ class _NormalFootState extends State<NormalFoot> {
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
 
+  bool click_play = false;
+
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
@@ -41,13 +43,15 @@ class _NormalFootState extends State<NormalFoot> {
     // print("메시지 정보보보보");
     // print(widget.normalmsg);
 
-    AudioPlayer player = new AudioPlayer();
+    VideoPlayerController _videocontroller;
 
+    AudioPlayer player = new AudioPlayer();
     return GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
           listmaker.listcontroller.reset();
+          listmaker.refresh();
         },
         child: Card(
             child: Container(
@@ -61,7 +65,7 @@ class _NormalFootState extends State<NormalFoot> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       widget.normalmsg["userNickname"],
                       style: const TextStyle(
@@ -70,10 +74,11 @@ class _NormalFootState extends State<NormalFoot> {
                           color: Colors.grey),
                     ),
                   ),
-                  SizedBox(
+                  Container(
+                    alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * 0.33,
                     child: Text(
-                      widget.normalmsg["messageWritedate"],
+                      changeDate(widget.normalmsg["messageWritedate"]),
                       style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -98,12 +103,45 @@ class _NormalFootState extends State<NormalFoot> {
                                       int flag = fileCheck(
                                           widget.normalmsg["messageFileurl"]);
                                       if (flag == 0) {
-                                        Image.network(
+                                        //이미지
+                                        return Image.network(
                                             widget.normalmsg["messageFileurl"]);
                                       } else if (flag == 1) {
-                                        //VideoPlayerController.network(widget.normalmsg["messageFileurl"]);
+                                        //비디오
+                                        _videocontroller =
+                                            VideoPlayerController.network(widget
+                                                .normalmsg["messageFileurl"]
+                                                .toString());
+                                        return AspectRatio(
+                                          aspectRatio: _videocontroller
+                                              .value.aspectRatio,
+                                          child: VideoPlayer(_videocontroller),
+                                        );
                                       } else if (flag == 2) {
-                                        //player.play(widget.normalmsg["messageFileurl"]);
+                                        //오디오
+                                        return click_play == false
+                                            ? IconButton(
+                                                icon: Icon(Icons.play_arrow,
+                                                    size: 30),
+                                                onPressed: () {
+                                                  print("재생!!");
+                                                  click_play = true;
+                                                  player.play(UrlSource(
+                                                      widget.normalmsg[
+                                                          "messageFileurl"]));
+                                                  print(click_play);
+                                                },
+                                              )
+                                            : IconButton(
+                                                icon:
+                                                    Icon(Icons.pause, size: 30),
+                                                onPressed: () {
+                                                  player.stop();
+                                                  print("멈춰!!");
+                                                  click_play = false;
+                                                  print(click_play);
+                                                },
+                                              );
                                       }
                                     })(),
                                   )
@@ -200,9 +238,8 @@ class _NormalFootState extends State<NormalFoot> {
 
   int fileCheck(String file) {
     //이미지 0 영상 1 음성 2
-
-    print("########파일체크크#####");
-    print(file);
+    // print("########파일체크크#####");
+    // print(file);
 
     if (file.endsWith('jpg')) {
       return 0;
@@ -212,6 +249,14 @@ class _NormalFootState extends State<NormalFoot> {
       return 2;
     }
     return -1;
+  }
+
+  String changeDate(String date) {
+    String newDate = "";
+
+    newDate = date.replaceAll('T', "  ");
+
+    return newDate;
   }
 
   void heartRequest(context, var heartInfo) async {
