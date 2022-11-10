@@ -1,9 +1,12 @@
 import 'package:app_footp/createStamp.dart';
+import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:get/get.dart';
 
 class StampList extends StatefulWidget {
   const StampList({super.key});
@@ -13,6 +16,8 @@ class StampList extends StatefulWidget {
 }
 
 class _StampListState extends State<StampList> {
+  UserData user = Get.put(UserData());
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -35,8 +40,18 @@ class _StampListState extends State<StampList> {
             height: 100,
             child: TextButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CreateStamp()));
+                if (!user.isLogin()) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignIn()),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateStamp()),
+                  );
+                }
               },
               child: Text('스탬프 작성하기'),
             ));
