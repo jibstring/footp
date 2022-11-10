@@ -1,8 +1,10 @@
+import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 
 class CreateStamp extends StatelessWidget {
   const CreateStamp({super.key});
@@ -25,6 +27,7 @@ class CreateStampForm extends StatefulWidget {
 }
 
 class _CreateStampFormState extends State<CreateStampForm> {
+  UserData user = Get.put(UserData());
   final _valueList = [2, 3, 4, 5, 6, 7, 8];
   int _selectedValue = 2;
   List _myFootList = [];
@@ -106,6 +109,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
 
               // 스탬프 템플릿
               Container(
+                height: 200,
                 child: Image.network(
                     'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
               ),
@@ -156,12 +160,14 @@ class _CreateStampFormState extends State<CreateStampForm> {
 
   void loadMyFoot() async {
     var dio = Dio();
-    var response =
-        await dio.get('http://k7a108.p.ssafy.io:8080/user/myfoot/25');
+    var response = await dio.get(
+        'http://k7a108.p.ssafy.io:8080/user/myfoot/${user.userinfo["userId"]}');
     print("####################################");
     print(response.data['message']);
     print("######################################");
-    _myFootList = response.data['message'];
+    setState(() {
+      _myFootList = response.data['message'];
+    });
   }
 
   void stampCreate() async {
