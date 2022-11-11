@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart' as DIO;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class CreateStamp extends StatelessWidget {
@@ -38,6 +40,13 @@ class _CreateStampFormState extends State<CreateStampForm> {
   int? selectedMessage1;
   int? selectedMessage2;
   int? selectedMessage3;
+  Map validationMessage = {
+    1: '',
+    2: '제목을 입력해주세요.',
+    3: '설명을 입력해주세요.',
+    4: '누락된 장소가 있습니다.',
+    5: '중복된 장소가 있습니다.',
+  };
 
   @override
   void initState() {
@@ -83,6 +92,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
               // 제목
               Container(
                 child: TextField(
+                  maxLength: 30,
                   controller: stampboardTitle,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(
@@ -112,83 +122,98 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 },
               ),
 
-              // 스탬프 템플릿
+              // 스탬프 템플릿 + 내 게시글 끌어다 놓기
               Container(
                 height: 200,
-                child: Image.network(
-                    'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                        'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
+                  ),
+                ),
+                child: Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    DragTarget<int>(
+                      builder: (
+                        BuildContext context,
+                        List<dynamic> accepted,
+                        List<dynamic> rejected,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 252, 196, 192),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          height: 100.0,
+                          width: 100.0,
+                          child: Center(
+                            child: Text('1번 장소: $selectedMessage1'),
+                          ),
+                        );
+                      },
+                      onAccept: (int data) {
+                        setState(() {
+                          selectedMessage1 = data;
+                        });
+                      },
+                    ),
+                    DragTarget<int>(
+                      builder: (
+                        BuildContext context,
+                        List<dynamic> accepted,
+                        List<dynamic> rejected,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 252, 196, 192),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          height: 100.0,
+                          width: 100.0,
+                          child: Center(
+                            child: Text('2번 장소: $selectedMessage2'),
+                          ),
+                        );
+                      },
+                      onAccept: (int data) {
+                        setState(() {
+                          selectedMessage2 = data;
+                        });
+                      },
+                    ),
+                    DragTarget<int>(
+                      builder: (
+                        BuildContext context,
+                        List<dynamic> accepted,
+                        List<dynamic> rejected,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 252, 196, 192),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          height: 100.0,
+                          width: 100.0,
+                          child: Center(
+                            child: Text('3번 장소: $selectedMessage3'),
+                          ),
+                        );
+                      },
+                      onAccept: (int data) {
+                        setState(() {
+                          selectedMessage3 = data;
+                        });
+                      },
+                    ),
+                  ],
+                )),
               ),
-
-              // 게시글 끌어다 놓기
-              Container(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return Container(
-                        height: 100.0,
-                        width: 100.0,
-                        color: Colors.cyan,
-                        child: Center(
-                          child: Text('Value is updated to: $selectedMessage1'),
-                        ),
-                      );
-                    },
-                    onAccept: (int data) {
-                      setState(() {
-                        selectedMessage1 = data;
-                      });
-                    },
-                  ),
-                  DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return Container(
-                        height: 100.0,
-                        width: 100.0,
-                        color: Colors.cyan,
-                        child: Center(
-                          child: Text('Value is updated to: $selectedMessage2'),
-                        ),
-                      );
-                    },
-                    onAccept: (int data) {
-                      setState(() {
-                        selectedMessage2 = data;
-                      });
-                    },
-                  ),
-                  DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return Container(
-                        height: 100.0,
-                        width: 100.0,
-                        color: Colors.cyan,
-                        child: Center(
-                          child: Text('Value is updated to: $selectedMessage3'),
-                        ),
-                      );
-                    },
-                    onAccept: (int data) {
-                      setState(() {
-                        selectedMessage3 = data;
-                      });
-                    },
-                  ),
-                ],
-              )),
 
               // 나의 게시글 목록
               SizedBox(height: 50),
@@ -233,6 +258,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 Container(
                     child: TextField(
                   maxLines: 5,
+                  maxLength: 255,
                   controller: stampboardMessage,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(
@@ -243,7 +269,17 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 )),
                 ElevatedButton(
                     onPressed: () {
-                      stampCreate();
+                      if (createStampValidation() == 1) {
+                        stampCreate();
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: validationMessage[createStampValidation()],
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Colors.redAccent,
+                            fontSize: 20.0,
+                            textColor: Colors.white,
+                            toastLength: Toast.LENGTH_SHORT);
+                      }
                     },
                     child: Text('작성'))
               ])),
@@ -287,5 +323,39 @@ class _CreateStampFormState extends State<CreateStampForm> {
     print(formData.fields);
     print(response);
     print('##############################################');
+    await Fluttertoast.showToast(
+        msg: '새로운 스탬푸 시트가 작성되었습니다.',
+        gravity: ToastGravity.CENTER,
+        backgroundColor: Colors.lightGreenAccent,
+        fontSize: 20.0,
+        textColor: Colors.black,
+        toastLength: Toast.LENGTH_SHORT);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
+  }
+
+  // 유효성 검사
+  int createStampValidation() {
+    /*
+    1: 올바른 형식
+    2: 제목 미입력
+    3: 내용 미입력
+    4: 장소 누락
+    5: 장소 중복 
+    */
+    if (stampboardTitle.text.trim() == '') {
+      return 2;
+    } else if (stampboardMessage.text.trim() == '') {
+      return 3;
+    } else if (selectedMessage1 == null ||
+        selectedMessage2 == null ||
+        selectedMessage3 == null) {
+      return 4;
+    } else if ((selectedMessage1 == selectedMessage2) ||
+        (selectedMessage1 == selectedMessage3) ||
+        (selectedMessage2 == selectedMessage3)) {
+      return 5;
+    } else {
+      return 1;
+    }
   }
 }
