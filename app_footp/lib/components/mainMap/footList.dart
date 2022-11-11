@@ -14,12 +14,14 @@ ListMaker listmaker = Get.put(ListMaker());
 
 class ListMaker extends GetxController {
   int _messagelen = 0;
+  bool _music_on=false;
   Map<String, dynamic> _jsonData = {};
   List<dynamic> _footData = [];
   DraggableScrollableController _listcontroller =
       DraggableScrollableController();
 
   int get messagelen => _messagelen;
+  bool get music_on => _music_on;
   Map<String, dynamic> get jsonData => _jsonData;
   List<dynamic> get footData => _footData;
   DraggableScrollableController get listcontroller => _listcontroller;
@@ -50,6 +52,9 @@ class ListMaker extends GetxController {
   void refresh() {
     maindata.getMapEdge();
     readFile();
+  }
+  set musicCheck(bool check){
+    _music_on=check;
   }
 }
 

@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
 import 'package:video_player/video_player.dart';
 //import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
@@ -44,8 +42,8 @@ class _NormalFootState extends State<NormalFoot> {
   bool click_play=false;
   final _player=AudioPlayer();
 
-    void initState(){
-    _videocontroller=VideoPlayerController.network("");
+  void initState(){
+    _videocontroller=VideoPlayerController.network(widget.normalmsg["messageFileurl"],);
 
     _initializeVideoPlayerFuture = _videocontroller.initialize();
     
@@ -59,7 +57,7 @@ class _NormalFootState extends State<NormalFoot> {
 
 
   Widget build(BuildContext context) {
-    VideoPlayerController _videocontroller;
+    //VideoPlayerController _videocontroller;
 
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
@@ -133,9 +131,8 @@ class _NormalFootState extends State<NormalFoot> {
                                             widget.normalmsg["messageFileurl"]);
                                       } else if (flag == 1) {
                                         //비디오
-                                        print("비디오");
-                                        _videocontroller = VideoPlayerController.network(widget.normalmsg["messageFileurl"].toString());
-                                        print(widget.normalmsg["messageFileurl"]);
+                                        // print("비디오");
+                                        // print(_videocontroller);
                                         return 
                                             FutureBuilder(
                                           future:_initializeVideoPlayerFuture,
@@ -146,15 +143,20 @@ class _NormalFootState extends State<NormalFoot> {
                                                 child:InkWell(
                                                   onTap: (){
                                                   setState((){
+                                                    print(_videocontroller.value.isPlaying);
                                                     if(_videocontroller.value.isPlaying){
+                                                      print("중지");
                                                       _videocontroller.pause();
                                                     }
                                                     else{
+                                                      print("시작");
+                                                      print(_videocontroller);
                                                       _videocontroller.play();
                                                     }
                                                     });
                                                   },
-                                                  child: VideoPlayer(_videocontroller),
+                                                  child: 
+                                                    VideoPlayer(_videocontroller),
                                                 ),
                                               );
                                             }else {
@@ -171,6 +173,7 @@ class _NormalFootState extends State<NormalFoot> {
                                           onPressed: (){
                                             _player.stop();
                                             // print("재생!!");
+                                            
                                             click_play=true;
                                             _player.setUrl(widget.normalmsg["messageFileurl"]);
                                             _player.play();
