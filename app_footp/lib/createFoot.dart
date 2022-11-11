@@ -2,12 +2,12 @@ import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:app_footp/components/createFoot/footForm.dart';
 import 'package:app_footp/components/createFoot/normalForm.dart';
-import 'package:app_footp/components/createFoot/quizForm.dart';
+import 'package:app_footp/components/createFoot/megaPhoneForm.dart';
 import 'package:get/get.dart';
 
 import 'custom_class/store_class/store.dart';
 
-const List<Widget> types = <Widget>[Text('일반'), Text('이벤트')];
+const List<Widget> types = <Widget>[Text('발자국'), Text('확성기')];
 
 class CreateFoot extends StatelessWidget {
   const CreateFoot({super.key});
@@ -106,7 +106,7 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                   Container(
                       child: _selectedTypes[0] == true
                           ? NormalForm()
-                          : QuizForm()),
+                          : megaPhoneForm()),
                 ],
               ),
             )));

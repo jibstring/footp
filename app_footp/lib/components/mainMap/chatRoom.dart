@@ -139,7 +139,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width*0.8,
+                          width: MediaQuery.of(context).size.width*0.7,
                           color: Colors.lightBlueAccent,
                           child: 
                             TextField(
