@@ -55,7 +55,9 @@ public class StampboardService {
 
 		Stampboard st = Stampboard.builder().stampboardTitle(stampboardReq.getStampboardTitle())
 				.stampboardText(stampboardReq.getStampboardText()).stampboardLikenum(0).stampboardSpamnum(0)
+				//Designcode 0 = empty, 1 = food, 2 = dating course, 3 = game, 4 = travel, 5 = custom 
 				.stampboardDesigncode(stampboardReq.getStampboardDesigncode())
+				//code 0일때 url = "empty", 1~3은 우리가 만든 이미지 탬플릿 url, 4는 사용자가 임의로 이미지넣기
 				.stampboardDesignimgurl(stampboardReq.getStampboardDesignimgurl())
 				.stampboardMessage1(messageRepository.findById(stampboardReq.getStampboardMessage1()).get())
 				.stampboardMessage2(messageRepository.findById(stampboardReq.getStampboardMessage2()).get())
