@@ -12,13 +12,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as DIO;
 
-class MyNaverMap extends StatefulWidget {
+class CreateFootMap extends StatefulWidget {
   CreateMarker image = Get.put(CreateMarker());
   @override
-  State<MyNaverMap> createState() => _MyNaverMapState();
+  State<CreateFootMap> createState() => _CreateFootMapState();
 }
 
-class _MyNaverMapState extends State<MyNaverMap> {
+class _CreateFootMapState extends State<CreateFootMap> {
   MapType _mapType = MapType.Basic;
   ModeController modeController2 = Get.put(ModeController());
   MyPosition myPosition_map = Get.put(MyPosition());
@@ -33,11 +33,9 @@ class _MyNaverMapState extends State<MyNaverMap> {
     //   isTapped = !isTapped;
     // });
     print('hello');
-    if(modeController2.mode==0)
-      _callFootPOST();
-    if(modeController2.mode==1)
-      _callMegaPOST();
-    Navigator.push(context, MaterialPageRoute(builder: (context) => mainMap()));
+    if (modeController2.mode == 0) _callFootPOST();
+    if (modeController2.mode == 1) _callMegaPOST();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
   }
 
   @override
