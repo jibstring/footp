@@ -1,11 +1,18 @@
 package com.ssafy.back_footp.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.ssafy.back_footp.request.StampboardPostReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +24,20 @@ import com.ssafy.back_footp.repository.StampboardRepository;
 import com.ssafy.back_footp.repository.StampboardSpamRepository;
 import com.ssafy.back_footp.repository.UserJoinedStampboardRepository;
 import com.ssafy.back_footp.repository.UserRepository;
-import com.ssafy.back_footp.request.StampboardReq;
+import com.ssafy.back_footp.request.StampboardPostContent;
 import com.ssafy.back_footp.response.myStampDTO;
 import com.ssafy.back_footp.response.stampboardDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class StampboardService {
+	@Autowired
+	private AmazonS3Client amazonS3Client;
 
 	@Autowired
 	StampboardLikeRepository stampboardLikeRepository;
@@ -49,24 +59,55 @@ public class StampboardService {
 
 	// 스탬푸 생성
 	@Transactional
-	public Integer createStamp(StampboardReq stampboardReq) {
+	public int createStampboard(StampboardPostReq stampboardPostReq) throws IOException {
+		Stampboard stampboard = new Stampboard();
+		StampboardPostContent stampboardInfo = stampboardPostReq.getStampboardPostContent();
+		User usr = userRepository.findById(stampboardInfo.getUserId()).get();
 
-		User user = userRepository.findByUserId(stampboardReq.getUserId());
-
-		Stampboard st = Stampboard.builder().stampboardTitle(stampboardReq.getStampboardTitle())
-				.stampboardText(stampboardReq.getStampboardText()).stampboardLikenum(0).stampboardSpamnum(0)
-				.stampboardDesigncode(stampboardReq.getStampboardDesigncode())
-				.stampboardDesignimgurl(stampboardReq.getStampboardDesignimgurl())
-				.stampboardMessage1(messageRepository.findById(stampboardReq.getStampboardMessage1()).get())
-				.stampboardMessage2(messageRepository.findById(stampboardReq.getStampboardMessage2()).get())
-				.stampboardMessage3(messageRepository.findById(stampboardReq.getStampboardMessage3()).get())
-				.userId(userRepository.findByUserId(stampboardReq.getUserId())).stampboardWritedate(LocalDateTime.now())
+		stampboard = Stampboard.builder()
+				.stampboardTitle(stampboardInfo.getStampboardTitle())
+				.stampboardText(stampboardInfo.getStampboardText())
+				.stampboardLikenum(0)
+				.stampboardSpamnum(0)
+				.stampboardDesignimgurl("empty")
+				.stampboardDesigncode(stampboardInfo.getStampboardDesigncode())
+				.stampboardMessage1(messageRepository.findById(stampboardInfo.getStampboardMessage1()).get())
+				.stampboardMessage2(messageRepository.findById(stampboardInfo.getStampboardMessage2()).get())
+				.stampboardMessage3(messageRepository.findById(stampboardInfo.getStampboardMessage3()).get())
+				.userId(userRepository.findByUserId(stampboardInfo.getUserId()))
+				.stampboardWritedate(LocalDateTime.now())
 				.build();
 
-		stampboardRepository.save(st);
+		// file upload
+		if(stampboardInfo.getStampboardDesigncode() == 1){
+			MultipartFile mfile = stampboardPostReq.getStampboardFile();
+			String originalName = UUID.randomUUID()+mfile.getOriginalFilename(); // 파일 이름
+			long size = mfile.getSize(); // 파일 크기
+			String S3Bucket = "footp-bucket"; // Bucket 이름
+			ObjectMetadata objectMetaData = new ObjectMetadata();
+			objectMetaData.setContentType(mfile.getContentType());
+			objectMetaData.setContentLength(size);
 
-		user.setUserStampcreatenum(user.getUserStampcreatenum() + 1);
-		userRepository.save(user);
+			// S3에 업로드
+			amazonS3Client.putObject(
+					new PutObjectRequest(S3Bucket+"/stampboard", originalName, mfile.getInputStream(), objectMetaData)
+							.withCannedAcl(CannedAccessControlList.PublicRead)
+			);
+
+			String imagePath = amazonS3Client.getUrl(S3Bucket+"/stampboard", originalName).toString(); // 접근가능한 URL 가져오기
+
+			stampboard.setStampboardDesignimgurl(imagePath);
+		}
+		else if(stampboardInfo.getStampboardDesigncode() > 1){
+			String imagePath = "https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame"+stampboardInfo.getStampboardDesigncode()+".png"; // 접근가능한 URL 가져오기
+			stampboard.setStampboardDesignimgurl(imagePath);
+		}
+
+		// save
+		stampboardRepository.save(stampboard);
+
+		usr.setUserStampcreatenum(usr.getUserStampcreatenum()==null?0:usr.getUserStampcreatenum() + 1);
+		userRepository.save(usr);
 
 		return 1;
 	}

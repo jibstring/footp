@@ -85,7 +85,7 @@ public class MessageService {
 	}
 
 	@Transactional
-	public String createMessage(MessagePostReq messagePostReq) throws ParseException, IOException {
+	public String createMessage(MessagePostReq messagePostReq) throws IOException {
 		Message message = new Message();
 
 		// messege content
