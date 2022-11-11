@@ -39,11 +39,12 @@ class _ChatRoomState extends State<ChatRoom> {
     if(widget.eventId <= 0) { //이벤트 아이디가 유효하지 않은 경우
       // widget.chatList.clear();
       print("유효하지 않은 이벤트");
+      widget.chatList.clear();
       Msg msg= Msg(widget.eventId, widget.userId, "이벤트 목록에서 실시간 채팅에 참여해보세요.", widget.userNickName, ".");
       widget.chatList.add(msg);
       setState(() {});
     }
-    else {
+    else if(!widget.con){
       widget.stompClient = StompClient(
         config: StompConfig.SockJS(
           url: 'http://k7a108.p.ssafy.io:8080/wss',
@@ -52,6 +53,8 @@ class _ChatRoomState extends State<ChatRoom> {
           },
           onConnect: (p0) async{
             print("연결완료");
+            widget.chatList.clear();
+            widget.chatList.add(Msg(widget.eventId, widget.userId, "채팅방에 입장하였습니다.", widget.userNickName, "."));
             widget.con = true;
             setState(() {});
             widget.stompClient.subscribe(
@@ -70,6 +73,16 @@ class _ChatRoomState extends State<ChatRoom> {
     super.initState();
   }
 
+  void showToast(String str) {
+    Fluttertoast.showToast(msg: str,
+        gravity: ToastGravity.CENTER,
+        backgroundColor: Colors.redAccent,
+        fontSize: 20.0,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_SHORT
+      ); 
+  }
+
   void sendMsg(String str) {
     if(widget.con && widget.stompClient.connected && str.trim() != "") {
       widget.textController.text = "";
@@ -77,16 +90,27 @@ class _ChatRoomState extends State<ChatRoom> {
         destination: '/app/send',
         body: jsonEncode(Msg(widget.eventId, widget.userId, str, widget.userNickName, ""))
       );
-      
     }else {
-      Fluttertoast.showToast(msg: str.trim()==""? '빈 메시지는 보낼 수 없습니다.':'채팅방 연결을 확인하세요.',
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.redAccent,
-        fontSize: 20.0,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_SHORT
-      );
+      showToast(str.trim()==""? '빈 메시지는 보낼 수 없습니다.':'채팅방 연결을 확인하세요.');
     }
+    setState(() {});
+  }
+
+  void exitRoom() {
+    if(widget.con && widget.stompClient.isActive) {
+      widget.stompClient.deactivate();
+      widget.chatList.add(Msg(widget.eventId, widget.userId, "채팅방에서 나왔습니다.", widget.userNickName, "."));
+      widget.con = false;
+      widget.eventId = 0;
+      setState(() {});
+    }else {
+      showToast("채팅방에 연결되어있지 않습니다.");
+    }
+  }
+
+  Color color() {
+    if(widget.con) return Colors.lightGreenAccent;
+    return Colors.white;
   }
 
   @override
@@ -94,7 +118,6 @@ class _ChatRoomState extends State<ChatRoom> {
     if(widget.eventId > 0) {
       widget.stompClient.activate();
     }
-    
 
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
@@ -102,44 +125,54 @@ class _ChatRoomState extends State<ChatRoom> {
       maxChildSize: 1,
       snap: true,
       builder: (BuildContext context, ScrollController scrollController) {
-        return ListView.builder(
-          controller: scrollController,
-          itemCount: widget.chatList.length+1,
-          itemBuilder: (context, index) {
-            if(index == 0) {
-              return Container(
-                height: 40,
-                color: Colors.lightBlue,
-                padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-                child: 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width*0.7,
-                        height: 35,
-                        child: 
-                          TextField(
-                            decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
-                            controller: widget.textController,
-                          ),
-                      ),
-                      IconButton(
-                        onPressed: ()=>sendMsg(widget.textController.text), 
-                        icon: 
-                          const Icon(
-                            Icons.send,
-                            size: 25,
-                          )
-                      ),
-                    ],
-                  )
+        return Container(
+          color: color(),
+          child: 
+            ListView.builder(
+            controller: scrollController,
+            itemCount: widget.chatList.length+1,
+            itemBuilder: (context, index) {
+              if(index == 0) {
+                return Flexible(
+                  child: 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width*0.8,
+                          color: Colors.lightBlueAccent,
+                          child: 
+                            TextField(
+                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
+                              controller: widget.textController,
+                              onSubmitted: (str)=>sendMsg(str),
+                            ),
+                        ),
+                        IconButton(
+                          onPressed: ()=>sendMsg(widget.textController.text), 
+                          icon: 
+                            const Icon(
+                              Icons.send,
+                              size: 25,
+                            )
+                        ),
+                        IconButton(
+                          onPressed: ()=>{exitRoom()}, 
+                          icon: const Icon(
+                            Icons.exit_to_app,
+                            color: Colors.red,
+                            size: 25
+                            )
+                        )
+                      ],
+                    )
+                );
+              }
+              return ListTile(
+                title: mkText(widget.chatList[widget.chatList.length-index]),
               );
-            }
-            return ListTile(
-              title: mkText(widget.chatList[widget.chatList.length-index]),
-            );
-          },          
+            },          
+          ),
         );
       },
     );
