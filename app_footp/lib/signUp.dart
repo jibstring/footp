@@ -309,7 +309,7 @@ class _SignUpState extends State<SignUp> {
     print('#################################');
 
     _showDialog('가입 성공!');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => mainMap()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
   }
 
   Future checknicknameDuplicate(String nickname) async {

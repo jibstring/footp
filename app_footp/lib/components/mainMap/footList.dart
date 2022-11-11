@@ -5,11 +5,58 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:app_footp/components/msgFoot/eventFoot.dart';
+// import 'package:app_footp/components/msgFoot/eventFoot.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/mainMap.dart' as mainmap;
 
 mainmap.MainData maindata = mainmap.maindata;
+ListMaker listmaker = Get.put(ListMaker());
+
+class ListMaker extends GetxController {
+  int _messagelen = 0;
+  bool _music_on=false;
+  Map<String, dynamic> _jsonData = {};
+  List<dynamic> _footData = [];
+  // DraggableScrollableController _listcontroller =
+  //     DraggableScrollableController();
+
+  int get messagelen => _messagelen;
+  bool get music_on => _music_on;
+  Map<String, dynamic> get jsonData => _jsonData;
+  List<dynamic> get footData => _footData;
+  // DraggableScrollableController get listcontroller => _listcontroller;
+
+  void readFile() {
+    //서버 통신으로 받아온 메시지 파싱
+    try {
+      _jsonData = maindata.dataList;
+    } catch (e) {
+      _jsonData = {};
+    }
+
+    try {
+      _messagelen = jsonData["message"].length;
+    } catch (e) {
+      _messagelen = 0;
+    }
+
+    for (int i = 0; i < messagelen; i++) {
+      if (footData.length <= i) {
+        footData.add(jsonData["message"][i]);
+      } else {
+        footData[i] = jsonData["message"][i];
+      }
+    }
+  }
+
+  void refresh() {
+    maindata.getMapEdge();
+    readFile();
+  }
+  set musicCheck(bool check){
+    _music_on=check;
+  }
+}
 
 class FootList extends StatefulWidget {
   const FootList({super.key});
@@ -20,73 +67,23 @@ class FootList extends StatefulWidget {
 class _FootListState extends State<FootList> {
   int _selectedIndex = 0;
   final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
-  final _filterList=['hot','like','new'];
+  final _filterList = ['hot', 'like', 'new'];
   var _selectedValue = "hot";
 
-  Map<String, dynamic> jsonData = {};
-  List<dynamic> footData = [];
-  //var footData = List<Map<String,dynamic>>.filled(100,0);
-
-  int eventlen = 0;
-  int messagelen = 0;
-
-  ///서버 통신으로 받아온 메시지 파싱
-  void readFile() {
-    try {
-      jsonData = maindata.dataList;
-      // print("리드파일안에 제이슨!");
-      // print(jsonData);
-    } catch (e) {
-      jsonData = {};
-    }
-
-    // try {
-    //   eventlen = jsonData["event"].length;
-    // } catch (e) {
-    //   eventlen = 0;
-    // }
-
-    try {
-      messagelen = jsonData["message"].length;
-    } catch (e) {
-      messagelen = 0;
-    }
-
-    // for (int i = 0; i < eventlen; i++) {
-    //   //jsonData["event"][i]["check"] = 0; // 이걸로 어떤 메시지인지 파악
-    //   if(footData.length<=i){
-    //     footData.add(jsonData["event"][i]);
-    //   }
-    //   else{
-    //     footData[i]=jsonData["event"][i];
-    //   }
-    // }
-
-    for (int i = 0; i < messagelen; i++) {
-      //jsonData["message"][i]["check"] = 1;
-      if (footData.length <= i) {
-        footData.add(jsonData["message"][i]);
-      } else {
-        footData[i] = jsonData["message"][i];
-      }
-    }
-    // print("@@@@@@@@@@풋리스트 풋데이터@@@@@@@@@");
-    // print(footData);
-  }
-
   Widget build(BuildContext context) {
-    readFile();
+    listmaker.readFile();
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
       maxChildSize: 1,
       snap: true,
+      // controller: listmaker.listcontroller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: eventlen + messagelen + 1,
+                itemCount: listmaker.messagelen + 2,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return Container(
@@ -106,11 +103,13 @@ class _FootListState extends State<FootList> {
                               },
                             ).toList(),
                             onChanged: (value) {
-                              setState(() {
-                                _selectedValue = value!;
-                                maindata.fixFilter=_selectedValue;
-                                //=String(_filter:selectedValue);
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  _selectedValue = value!;
+                                  maindata.fixFilter = _selectedValue;
+                                  //=String(_filter:selectedValue);
+                                });
+                              }
                             },
                           ),
                           // 새로고침
@@ -119,9 +118,7 @@ class _FootListState extends State<FootList> {
                               Icons.refresh,
                               size: 40,
                             ),
-                            onPressed: () {
-                              readFile();
-                            },
+                            onPressed: listmaker.refresh,
                           ),
                           IconButton(
                             // 검색
@@ -131,10 +128,10 @@ class _FootListState extends State<FootList> {
                         ],
                       ),
                     );
-                  } else if (index == eventlen + messagelen) {
+                  } else if (index > listmaker.messagelen) {
                     return Container(color: Colors.white, height: 60);
                   } else {
-                    return NormalFoot(footData[index]);
+                    return NormalFoot(listmaker.footData[index - 1]);
                     // footData[index]["check"] == 0
                     //     ? EventFoot(footData[index])
                     //     : NormalFoot(footData[index]);
@@ -145,12 +142,14 @@ class _FootListState extends State<FootList> {
   }
 
   void initState() {
-    readFile();
+    listmaker.readFile();
     super.initState();
     Timer.periodic(Duration(seconds: 2), (v) {
-      setState(() {
-        readFile();
-      });
+      if (mounted) {
+        setState(() {
+          listmaker.readFile();
+        });
+      }
     });
   }
 }
