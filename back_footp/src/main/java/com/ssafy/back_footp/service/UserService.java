@@ -106,9 +106,11 @@ public class UserService {
     }
 
     public String deleteMessage(long mid){
-
-        messageRepository.delete(messageRepository.findById(mid).get());
-
+        Message message = messageRepository.findById(mid).get();
+        if(stampboardRepository.existsByStampboardMessage1(message) || stampboardRepository.existsByStampboardMessage2(message) || stampboardRepository.existsByStampboardMessage3(message))
+            return "fail";
+        else
+            messageRepository.delete(message);
         return "success";
     }
 
