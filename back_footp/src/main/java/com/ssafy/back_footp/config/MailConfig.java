@@ -2,6 +2,7 @@ package com.ssafy.back_footp.config;
 
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +11,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class MailConfig {
+	
+	@Value("${MAIL_PASSWORD}")
+	String mailPassword;
 
 	@Bean
 	public JavaMailSender javaMailService() {
@@ -17,7 +21,7 @@ public class MailConfig {
 		
 		javaMailSender.setHost("smtp.gmail.com");
         javaMailSender.setUsername("footp.company@gmail.com");
-        javaMailSender.setPassword("yrdhlktdexkerzwk"); //이제 구글 보안은 이 앱 비밀번호를 사용해서 해야합니다. (2단계 보안 설정 후 앱 비밀번호를 발급받아 사용)
+        javaMailSender.setPassword(mailPassword); //이제 구글 보안은 이 앱 비밀번호를 사용해서 해야합니다. (2단계 보안 설정 후 앱 비밀번호를 발급받아 사용)
 
         javaMailSender.setPort(465);
 
