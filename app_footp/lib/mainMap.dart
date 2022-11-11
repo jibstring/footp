@@ -34,6 +34,7 @@ class MainData extends GetxController {
   dynamic _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
+  Map<int, String> _address = {};
 
   get dataList => _dataList;
   int get listsize => _listsize;
@@ -45,6 +46,7 @@ class MainData extends GetxController {
   dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
+  Map<int, String> get address => _address;
 
   set fixFilter(String filter) {
     _filter = filter;
@@ -61,6 +63,7 @@ class MainData extends GetxController {
     markers.clear();
     for (int i = 0; i < _listsize; i++) {
       // print(dataList["message"][i]);
+      getAddress(i);
       createMarker(i);
     }
 
@@ -79,12 +82,49 @@ class MainData extends GetxController {
     }
   }
 
+  void getAddress(int idx) async {
+    String lat = dataList["message"][idx]["messageLatitude"].toString();
+    String lng = dataList["message"][idx]["messageLongitude"].toString();
+
+    Map<String, String> clientkey = {
+      "X-NCP-APIGW-API-KEY-ID": "9foipum14s",
+      "X-NCP-APIGW-API-KEY": "scvqRxQKoZo5vULsFL1vrE56tqKcOl7u1z16iWz2"
+    };
+
+    http.Response response = await http.get(
+        Uri.parse(
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+        headers: clientkey);
+    if (response.statusCode == 200) {
+      var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsondata["status"]["code"] == 0) {
+        if (jsondata["results"].length > 1) {
+          _address = {
+            dataList["message"][idx]["messageId"]:
+                "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}"
+          };
+        } else {
+          _address = {
+            dataList["message"][idx]["messageId"]:
+                "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"]} ${jsondata["results"][0]["land"]["number1"]} ${jsondata["results"][0]["land"]["number2"]}"
+          };
+        }
+      } else {
+        _address = {dataList["message"][idx]["messageId"]: ""};
+      }
+      update();
+    } else {
+      print(response.statusCode);
+      throw 'getAddress() error';
+    }
+  }
+
   void createMarker(int idx) {
-    int like = dataList["message"][idx]["messageLikenum"];
+    int like = (dataList["message"][idx]["messageLikenum"] / 5).toInt();
     int color = 0;
 
-    if (like >= 95) {
-      like = 94;
+    if (like >= 45) {
+      like = 44;
     }
 
     if (dataList["message"][idx]["isBlurred"] == true) {
@@ -380,6 +420,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             markers = maindata.markers;
           }
+          print(maindata.address);
         });
       }
     });

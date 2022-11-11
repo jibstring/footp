@@ -34,7 +34,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
     // });
     print('hello');
     _callPOST();
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
+    Navigator.pop(context);
   }
 
   @override

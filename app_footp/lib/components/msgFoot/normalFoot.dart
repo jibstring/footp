@@ -51,7 +51,7 @@ class _NormalFootState extends State<NormalFoot> {
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
-          // listmaker.listcontroller.reset();
+          listmaker.listcontroller.reset();
           listmaker.refresh();
         },
         child: Card(
