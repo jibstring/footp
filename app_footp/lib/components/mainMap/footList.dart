@@ -16,13 +16,13 @@ class ListMaker extends GetxController {
   int _messagelen = 0;
   Map<String, dynamic> _jsonData = {};
   List<dynamic> _footData = [];
-  DraggableScrollableController _listcontroller =
-      DraggableScrollableController();
+  // DraggableScrollableController _listcontroller =
+  //     DraggableScrollableController();
 
   int get messagelen => _messagelen;
   Map<String, dynamic> get jsonData => _jsonData;
   List<dynamic> get footData => _footData;
-  DraggableScrollableController get listcontroller => _listcontroller;
+  // DraggableScrollableController get listcontroller => _listcontroller;
 
   void readFile() {
     //서버 통신으로 받아온 메시지 파싱
@@ -72,7 +72,7 @@ class _FootListState extends State<FootList> {
       minChildSize: 0.3,
       maxChildSize: 1,
       snap: true,
-      controller: listmaker.listcontroller,
+      // controller: listmaker.listcontroller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
             color: Colors.white,
