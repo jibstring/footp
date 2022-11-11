@@ -286,7 +286,7 @@ class _NormalFormState extends State<NormalForm> {
               // print(formData.fields);
               // print(formData.files);
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyNaverMap()));
+                  MaterialPageRoute(builder: (context) => CreateFootMap()));
             }
           },
           icon: Image.asset('asset/normalfoot.png'),

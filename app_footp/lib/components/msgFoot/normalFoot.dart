@@ -12,12 +12,8 @@ import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
-import 'package:app_footp/custom_class/store_class/store.dart';
-
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
-
-footlist.ListMaker listmaker = footlist.listmaker;
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -39,8 +35,8 @@ class _NormalFootState extends State<NormalFoot> {
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
 
-  bool click_play=false;
-  final _player=AudioPlayer();
+  bool click_play = false;
+  final _player = AudioPlayer();
 
   void initState(){
     _videocontroller=VideoPlayerController.network(widget.normalmsg["messageFileurl"],);
@@ -67,13 +63,12 @@ class _NormalFootState extends State<NormalFoot> {
     // print(widget.normalmsg);
 
     //AudioPlayer player = new AudioPlayer();
-    
+
     return GestureDetector(
-  
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
-          listmaker.listcontroller.reset();
+          // listmaker.listcontroller.reset();
           listmaker.refresh();
         },
         child: Card(
