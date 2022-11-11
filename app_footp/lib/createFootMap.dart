@@ -79,6 +79,8 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print('############################################');
     print(response.statusCode);
     print(response);
+    print(response.data);
+    print(response.headers);
     print(data.fields);
     print(createMarker.filePath);
     print('########################################');
@@ -127,9 +129,14 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print('***********************************');
     var response = await dio.post(url.toString(), data: data);
 
-    print('############################################');
+    print('############################################확성기');
     print(response.statusCode);
     print(response);
+    print(response.requestOptions);
+    print(response.headers);
+    print(response.extra);
+    print(response.statusMessage);
+    print(response.data);
     print(data.fields);
     print(createMarker.filePath);
     print('########################################');

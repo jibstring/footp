@@ -27,7 +27,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
   CreateMarker createMarker = Get.put(CreateMarker());
   String showFileName = "";
   List<String> allowedFileTypes = ['jpg', 'mp3', 'mp4'];
-  final myText = TextEditingController();
+  final myMegaText = TextEditingController();
   FilePickerResult? result;
   String? filePath = '';
   UserData user = Get.put(UserData());
@@ -52,7 +52,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
             alignLabelWithHint: true,
             hintText: '메세지를 입력하세요',
           ),
-          controller: myText,
+          controller: myMegaText,
         ),
         Container(
           height: 200,
@@ -147,7 +147,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         Container(
             child: IconButton(
           onPressed: () async {
-            if (this.filePath == '' && myText.text.trim() == '') {
+            if (this.filePath == '' && myMegaText.text.trim() == '') {
               final snackBar = SnackBar(
                 content: const Text('내용을 입력하거나 파일을 첨부해주세요!'),
                 action: SnackBarAction(
@@ -158,7 +158,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                 ),
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            } else if (myText.text.length > 255) {
+            } else if (myMegaText.text.length > 255) {
               final snackBar = SnackBar(
                 content: const Text('내용은 255자 이하로만 작성 가능합니다.!'),
                 action: SnackBarAction(
@@ -170,7 +170,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else {
-              createMarker.newmegaphone['gatherText'] = myText.text;
+              createMarker.newmegaphone['gatherText'] = myMegaText.text;
 
               DIO.MultipartFile? file = this.result != null
                   ? await DIO.MultipartFile.fromFile(this.filePath!)
@@ -183,7 +183,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
               // print(formData.fields);
               // print(formData.files);
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyNaverMap()));
+                  MaterialPageRoute(builder: (context) => CreateFootMap()));
             }
           },
           icon: Image.asset('asset/megaphone.png'),

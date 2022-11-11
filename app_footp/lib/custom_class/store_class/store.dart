@@ -62,6 +62,7 @@ class CreateMarker extends GetxController {
     "gatherText": "모집합니다",
     "gatherWritedate": DateTime.now().toString(),
     "gatherFinishdate": "2022-11-03T01:37",
+    "gatherDesigncode" : 1,
     "userId": 1
   };
 
