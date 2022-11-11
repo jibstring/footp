@@ -112,83 +112,98 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 },
               ),
 
-              // 스탬프 템플릿
+              // 스탬프 템플릿 + 내 게시글 끌어다 놓기
               Container(
                 height: 200,
-                child: Image.network(
-                    'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                        'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
+                  ),
+                ),
+                child: Container(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    DragTarget<int>(
+                      builder: (
+                        BuildContext context,
+                        List<dynamic> accepted,
+                        List<dynamic> rejected,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 252, 196, 192),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          height: 100.0,
+                          width: 100.0,
+                          child: Center(
+                            child: Text('1번 장소: $selectedMessage1'),
+                          ),
+                        );
+                      },
+                      onAccept: (int data) {
+                        setState(() {
+                          selectedMessage1 = data;
+                        });
+                      },
+                    ),
+                    DragTarget<int>(
+                      builder: (
+                        BuildContext context,
+                        List<dynamic> accepted,
+                        List<dynamic> rejected,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 252, 196, 192),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          height: 100.0,
+                          width: 100.0,
+                          child: Center(
+                            child: Text('2번 장소: $selectedMessage2'),
+                          ),
+                        );
+                      },
+                      onAccept: (int data) {
+                        setState(() {
+                          selectedMessage2 = data;
+                        });
+                      },
+                    ),
+                    DragTarget<int>(
+                      builder: (
+                        BuildContext context,
+                        List<dynamic> accepted,
+                        List<dynamic> rejected,
+                      ) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 252, 196, 192),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          height: 100.0,
+                          width: 100.0,
+                          child: Center(
+                            child: Text('3번 장소: $selectedMessage3'),
+                          ),
+                        );
+                      },
+                      onAccept: (int data) {
+                        setState(() {
+                          selectedMessage3 = data;
+                        });
+                      },
+                    ),
+                  ],
+                )),
               ),
-
-              // 게시글 끌어다 놓기
-              Container(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return Container(
-                        height: 100.0,
-                        width: 100.0,
-                        color: Colors.cyan,
-                        child: Center(
-                          child: Text('Value is updated to: $selectedMessage1'),
-                        ),
-                      );
-                    },
-                    onAccept: (int data) {
-                      setState(() {
-                        selectedMessage1 = data;
-                      });
-                    },
-                  ),
-                  DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return Container(
-                        height: 100.0,
-                        width: 100.0,
-                        color: Colors.cyan,
-                        child: Center(
-                          child: Text('Value is updated to: $selectedMessage2'),
-                        ),
-                      );
-                    },
-                    onAccept: (int data) {
-                      setState(() {
-                        selectedMessage2 = data;
-                      });
-                    },
-                  ),
-                  DragTarget<int>(
-                    builder: (
-                      BuildContext context,
-                      List<dynamic> accepted,
-                      List<dynamic> rejected,
-                    ) {
-                      return Container(
-                        height: 100.0,
-                        width: 100.0,
-                        color: Colors.cyan,
-                        child: Center(
-                          child: Text('Value is updated to: $selectedMessage3'),
-                        ),
-                      );
-                    },
-                    onAccept: (int data) {
-                      setState(() {
-                        selectedMessage3 = data;
-                      });
-                    },
-                  ),
-                ],
-              )),
 
               // 나의 게시글 목록
               SizedBox(height: 50),
