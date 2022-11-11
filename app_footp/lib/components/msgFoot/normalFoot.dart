@@ -54,6 +54,7 @@ class _NormalFootState extends State<NormalFoot> {
 
   Widget build(BuildContext context) {
     //VideoPlayerController _videocontroller;
+    footlist.ListMaker listmaker = footlist.listmaker;
 
     double width = MediaQuery.of(context).size.width * 0.62;
     widget.normalmsg["isMylike"] ? heartnum = 1 : heartnum = 0;
