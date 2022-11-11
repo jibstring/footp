@@ -65,7 +65,7 @@ class _NormalFootState extends State<NormalFoot> {
 
     //AudioPlayer player = new AudioPlayer();
 
-    return GestureDetector(
+    return  GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
