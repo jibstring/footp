@@ -1,24 +1,21 @@
 package com.ssafy.back_footp.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
+
+import com.ssafy.back_footp.request.MessagePostContent;
+import com.ssafy.back_footp.request.MessagePostReq;
+import com.ssafy.back_footp.request.StampboardPostReq;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.back_footp.entity.Stampboard;
-import com.ssafy.back_footp.entity.StampboardLike;
-import com.ssafy.back_footp.entity.StampboardSpam;
-import com.ssafy.back_footp.entity.User;
-import com.ssafy.back_footp.request.StampboardReq;
+import com.ssafy.back_footp.request.StampboardPostContent;
 import com.ssafy.back_footp.response.myStampDTO;
 import com.ssafy.back_footp.response.stampboardDTO;
 import com.ssafy.back_footp.response.stamplikeDTO;
@@ -31,6 +28,7 @@ import com.ssafy.back_footp.service.UserJoinedStampboardService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -52,11 +50,38 @@ public class StampController {
 	@PostMapping("/create")
 	@ApiOperation(value = "스탬푸 작성")
 	@Transactional
-	public ResponseEntity<Integer> createStamp(@RequestBody StampboardReq stamp){
+	public ResponseEntity<Integer> createStampboard(@RequestParam(value="stampboardFile", required = false) MultipartFile stampboardFile, @RequestParam("stampboardContent") String stampboardContent){
+
+		int result = -1;
+
+		try {
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse( stampboardContent );
+			JSONObject jObject = new JSONObject((JSONObject)obj);
+
+			StampboardPostContent stampboardPostContent = new StampboardPostContent();
+
+			stampboardPostContent.setUserId((long) jObject.get("userId"));
+			stampboardPostContent.setStampboardTitle((String) jObject.get("stampboardTitle"));
+			stampboardPostContent.setStampboardText((String) jObject.get("stampboardText"));
+			stampboardPostContent.setStampboardMessage1((long) jObject.get("stampboardMessage1"));
+			stampboardPostContent.setStampboardMessage2((long) jObject.get("stampboardMessage2"));
+			stampboardPostContent.setStampboardMessage3((long) jObject.get("stampboardMessage3"));
+			stampboardPostContent.setStampboardDesigncode(Integer.parseInt(String.valueOf(jObject.get("stampboardDesigncode"))));
+			stampboardPostContent.setStampboardWritedate(LocalDateTime.now());
+
+			StampboardPostReq stampboardPostReq = new StampboardPostReq();
+			stampboardPostReq.setStampboardPostContent(stampboardPostContent);
+			stampboardPostReq.setStampboardFile(stampboardFile);
+
+			result = stampboardService.createStampboard(stampboardPostReq);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		
-		int result = stampboardService.createStamp(stamp);
-		
-		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete/{userId}/{stampboardId}")
