@@ -139,21 +139,21 @@ class _ChatRoomState extends State<ChatRoom> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width*0.7,
                           color: Colors.lightBlueAccent,
+                          width: MediaQuery.of(context).size.width*0.6,
                           child: 
-                            TextField(
-                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
-                              controller: widget.textController,
-                              onSubmitted: (str)=>sendMsg(str),
-                            ),
+                              TextField(
+                                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
+                                controller: widget.textController,
+                                onSubmitted: (str)=>sendMsg(str),
+                              ),
                         ),
                         IconButton(
-                          onPressed: ()=>sendMsg(widget.textController.text), 
+                          onPressed: ()=>sendMsg(widget.textController.text),
                           icon: 
                             const Icon(
                               Icons.send,
-                              size: 25,
+                              size: 30,
                             )
                         ),
                         IconButton(
@@ -161,7 +161,7 @@ class _ChatRoomState extends State<ChatRoom> {
                           icon: const Icon(
                             Icons.exit_to_app,
                             color: Colors.red,
-                            size: 25
+                            size: 25,
                             )
                         )
                       ],
