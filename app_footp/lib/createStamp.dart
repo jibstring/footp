@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as DIO;
 import 'package:get/get.dart';
 
 class CreateStamp extends StatelessWidget {
@@ -31,8 +33,11 @@ class _CreateStampFormState extends State<CreateStampForm> {
   final _valueList = [2, 3, 4, 5, 6, 7, 8];
   int _selectedValue = 2;
   List _myFootList = [];
-  TextEditingController stampBoardTitle = TextEditingController();
-  TextEditingController stampBoardText = TextEditingController();
+  TextEditingController stampboardTitle = TextEditingController();
+  TextEditingController stampboardMessage = TextEditingController();
+  int? selectedMessage1;
+  int? selectedMessage2;
+  int? selectedMessage3;
 
   @override
   void initState() {
@@ -78,7 +83,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
               // 제목
               Container(
                 child: TextField(
-                  controller: stampBoardTitle,
+                  controller: stampboardTitle,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(
                         borderRadius:
@@ -114,6 +119,77 @@ class _CreateStampFormState extends State<CreateStampForm> {
                     'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
               ),
 
+              // 게시글 끌어다 놓기
+              Container(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  DragTarget<int>(
+                    builder: (
+                      BuildContext context,
+                      List<dynamic> accepted,
+                      List<dynamic> rejected,
+                    ) {
+                      return Container(
+                        height: 100.0,
+                        width: 100.0,
+                        color: Colors.cyan,
+                        child: Center(
+                          child: Text('Value is updated to: $selectedMessage1'),
+                        ),
+                      );
+                    },
+                    onAccept: (int data) {
+                      setState(() {
+                        selectedMessage1 = data;
+                      });
+                    },
+                  ),
+                  DragTarget<int>(
+                    builder: (
+                      BuildContext context,
+                      List<dynamic> accepted,
+                      List<dynamic> rejected,
+                    ) {
+                      return Container(
+                        height: 100.0,
+                        width: 100.0,
+                        color: Colors.cyan,
+                        child: Center(
+                          child: Text('Value is updated to: $selectedMessage2'),
+                        ),
+                      );
+                    },
+                    onAccept: (int data) {
+                      setState(() {
+                        selectedMessage2 = data;
+                      });
+                    },
+                  ),
+                  DragTarget<int>(
+                    builder: (
+                      BuildContext context,
+                      List<dynamic> accepted,
+                      List<dynamic> rejected,
+                    ) {
+                      return Container(
+                        height: 100.0,
+                        width: 100.0,
+                        color: Colors.cyan,
+                        child: Center(
+                          child: Text('Value is updated to: $selectedMessage3'),
+                        ),
+                      );
+                    },
+                    onAccept: (int data) {
+                      setState(() {
+                        selectedMessage3 = data;
+                      });
+                    },
+                  ),
+                ],
+              )),
+
               // 나의 게시글 목록
               SizedBox(height: 50),
               SingleChildScrollView(
@@ -127,6 +203,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                       return Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Draggable(
+                            data: _myFootList[index]['messageId'],
                             feedback: Container(
                               child: Text(_myFootList[index]['messageText']),
                               height: 40,
@@ -138,14 +215,14 @@ class _CreateStampFormState extends State<CreateStampForm> {
                               child: Text(_myFootList[index]['messageText']),
                               height: 40,
                               decoration: BoxDecoration(
-                                color: Colors.orange[50],
+                                color: Colors.orange[100],
                               ),
                             ),
                             child: Container(
                               child: Text(_myFootList[index]['messageText']),
                               height: 40,
                               decoration: BoxDecoration(
-                                color: Colors.orange[50],
+                                color: Colors.orange[200],
                               ),
                             ),
                           ));
@@ -156,7 +233,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                 Container(
                     child: TextField(
                   maxLines: 5,
-                  controller: stampBoardText,
+                  controller: stampboardMessage,
                   decoration: InputDecoration(
                       border: const OutlineInputBorder(
                         borderRadius:
@@ -174,7 +251,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
   }
 
   void loadMyFoot() async {
-    var dio = Dio();
+    var dio = DIO.Dio();
     var response = await dio.get(
         'http://k7a108.p.ssafy.io:8080/user/myfoot/${user.userinfo["userId"]}');
     print("####################################");
@@ -186,9 +263,29 @@ class _CreateStampFormState extends State<CreateStampForm> {
   }
 
   void stampCreate() async {
-    // data = {
-    //   ""
-    // }
-    print("create stamp");
+    var dio = DIO.Dio();
+    var url = Uri.parse('http://k7a108.p.ssafy.io:8080/stamp/create');
+
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.maxRedirects.isFinite;
+    var stampboardContent = {
+      "userId": user.userinfo["userId"],
+      "stampboardTitle": stampboardTitle.text,
+      "stampboardText": stampboardMessage.text,
+      "stampboardMessage1": selectedMessage1,
+      "stampboardMessage2": selectedMessage2,
+      "stampboardMessage3": selectedMessage3,
+      "stampboardDesigncode": _selectedValue,
+    };
+    DIO.FormData formData = DIO.FormData.fromMap({
+      "stampboardContent": json.encode(stampboardContent),
+    });
+
+    var response = await dio.post(url.toString(), data: formData);
+
+    print('################################################');
+    print(formData.fields);
+    print(response);
+    print('##############################################');
   }
 }
