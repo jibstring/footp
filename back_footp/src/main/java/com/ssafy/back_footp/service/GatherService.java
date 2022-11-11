@@ -139,9 +139,18 @@ public class GatherService {
 
 	// 유저가 확성기에 참가
 	public String joinGather(long gid, long uid){
+		if(userJoinedGatherRepository.existsByUserIdAndGatherId(userRepository.findById(uid).get(), gatherRepository.findById(gid).get()) == true)
+			return "fail";
+
 		UserJoinedGather userJoinedGather = new UserJoinedGather(null, userRepository.findById(uid).get(), gatherRepository.findById(gid).get());
 		userJoinedGatherRepository.save(userJoinedGather);
 
+		return "success";
+	}
+
+	// 유저가 확성기 떠나기
+	public String leaveGather(long gid, long uid){
+		userJoinedGatherRepository.deleteByUserIdAndGatherId(userRepository.findById(uid).get(), gatherRepository.findById(gid).get());
 		return "success";
 	}
 	
