@@ -52,8 +52,18 @@ class CreateMarker extends GetxController {
     "messageText": "test!",
     "userId": 7,
     "messageWritedate": DateTime.now().toString(),
-    "isBlurred" : false,
-    "messageBlurredtext" : "",
+    "isBlurred": false,
+    "messageBlurredtext": "",
+  };
+
+  var _newmegaphone = {
+    "gatherLatitude": 37.72479485462167,
+    "gatherLongitude": 128.71639982661415,
+    "gatherText": "모집합니다",
+    "gatherWritedate": DateTime.now().toString(),
+    "gatherFinishdate": "2022-11-03T01:37",
+    "gatherDesigncode" : 1,
+    "userId": 1
   };
 
   DIO.MultipartFile? file;
@@ -61,6 +71,7 @@ class CreateMarker extends GetxController {
   String filePath = '';
 
   Map get newmarker => _newmarker;
+  Map get newmegaphone => _newmegaphone;
 
   Marker _marker = Marker(
       markerId: 'marker1', position: LatLng(0, 0), width: 40, height: 40);
@@ -73,6 +84,8 @@ class CreateMarker extends GetxController {
     temp.position = (LatLng(a, b));
     _newmarker["messageLatitude"] = a;
     _newmarker["messageLongitude"] = b;
+    _newmegaphone["gatherLatitude"] = a;
+    _newmegaphone["gatherLongitude"] = b;
     // _list.add(Marker(markerId: '$a', position: LatLng(a,b)));
     _list.insert(0, temp);
     update();
@@ -86,7 +99,7 @@ class CreateMarker extends GetxController {
           await OverlayImage.fromAssetImage(assetName: "asset/normalfoot.png");
     } else {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/eventfoot.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/megaphone.png");
     }
     update();
   }
