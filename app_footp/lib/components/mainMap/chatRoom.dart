@@ -180,9 +180,9 @@ class _ChatRoomState extends State<ChatRoom> {
               if(index == 0) {
                 String temp = "";
                 if(widget.eventId == 0) {
-                  temp = "채팅방에 연결되어 있지 않습니다.";
+                  temp = "    채팅방에 연결되어 있지 않습니다.";
                 } else {
-                  temp = "${widget.eventId}번 채팅방에 참가중입니다." ;
+                  temp = "    ${widget.eventId}번 채팅방에 참가중입니다." ;
                 }
                 return Container(
                   color: Colors.grey,
@@ -190,12 +190,16 @@ class _ChatRoomState extends State<ChatRoom> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
-                        temp,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.amber,
-                          ),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: 
+                          Text(
+                            temp,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber,
+                              ),
+                          )
                       ),
                       IconButton(
                             onPressed: ()=>{exitAlert()}, 
@@ -209,39 +213,39 @@ class _ChatRoomState extends State<ChatRoom> {
                   )
                 );
               }else if(index == 1) {
-                return Flexible(
-                  child:
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child:
                         Container(
                           color: Colors.lightBlueAccent,
                           width: MediaQuery.of(context).size.width*0.6,
                           height: 50,
                           child: 
-                              TextField(
-                                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
-                                controller: widget.textController,
-                                onSubmitted: (str)=>sendMsg(str),
-                              ),
-                        ),
-                        Container(
-                          color: Colors.orange.shade200,
-                          height: 50,
-                          child:
-                            IconButton(
-                              onPressed: ()=>sendMsg(widget.textController.text),
-                              color: Colors.deepPurple,
-                              icon: 
-                                const Icon(
-                                  Icons.send,
-                                  size: 30,
-                                )
+                            TextField(
+                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
+                              controller: widget.textController,
+                              onSubmitted: (str)=>sendMsg(str),
                             ),
                         )
-                      ],
+                    ),
+                    Container(
+                      color: Colors.orange.shade200,
+                      height: 50,
+                      child:
+                        IconButton(
+                          onPressed: ()=>sendMsg(widget.textController.text),
+                          color: Colors.deepPurple,
+                          icon: 
+                            const Icon(
+                              Icons.send,
+                              size: 30,
+                            )
+                        ),
                     )
+                  ],
                 );
               }else {
                 return ListTile(
