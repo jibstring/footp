@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
+@DynamicInsert
 public class User {
 
 	@Id
@@ -72,13 +75,13 @@ public class User {
 	@Column(name = "user_stampcreatenum")
 	private Integer userStampcreatenum;
 	
-//	@Column(name = "user_autologin")
-//	private Boolean userAutologin;
-//	
-//	@Column(name = "user_sessionkey")
-//	private String userSessionkey;
-//	
-//	@Column(name = "user_sessionlimit")
-//	private LocalDateTime userSessionlimit;
+	@Column(name = "user_autologin")
+	private Boolean userAutologin;
+	
+	@Column(name = "user_sessionkey", nullable = false, columnDefinition = "varchar(50) default 'none'")
+	private String userSessionkey;
+	
+	@Column(name = "user_sessionlimit")
+	private LocalDateTime userSessionlimit;
 	
 }

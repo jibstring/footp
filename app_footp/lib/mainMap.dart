@@ -50,6 +50,10 @@ class MainData extends GetxController {
     _filter = filter;
   }
 
+  set setmycontroller(dynamic mycontroller){
+    _mycontroller=mycontroller;
+  }
+
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
@@ -135,7 +139,7 @@ class MainData extends GetxController {
 
   void moveMapToMessage(double lat, double lng) {
     CameraPosition cameraPosition =
-        CameraPosition(target: LatLng(lat, lng), zoom: 18.0);
+        CameraPosition(target: LatLng(lat, lng), zoom: 21.0);
     _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
     update();
   }

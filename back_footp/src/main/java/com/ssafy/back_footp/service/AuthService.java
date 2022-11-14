@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 @Slf4j
@@ -154,6 +155,14 @@ public class AuthService {
 	public User getUser(long userid) {
 		// TODO Auto-generated method stub
 		return userRepository.findByUserId(userid);
+	}
+	
+	public void KeepLogin(long uid, String sessionId, Date next) {
+		userRepository.keepLogin(uid, sessionId, next);
+	}
+	
+	public User checkUserWithSessionKey(String sessionId) {
+		return userRepository.checkUserWithSessionKey(sessionId);
 	}
 
 }
