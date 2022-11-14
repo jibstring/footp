@@ -14,17 +14,17 @@ ListMaker listmaker = Get.put(ListMaker());
 
 class ListMaker extends GetxController {
   int _messagelen = 0;
-  bool _music_on=false;
+  bool _music_on = false;
   Map<String, dynamic> _jsonData = {};
   List<dynamic> _footData = [];
-  // DraggableScrollableController _listcontroller =
-  //     DraggableScrollableController();
+  DraggableScrollableController _listcontroller =
+      DraggableScrollableController();
 
   int get messagelen => _messagelen;
   bool get music_on => _music_on;
   Map<String, dynamic> get jsonData => _jsonData;
   List<dynamic> get footData => _footData;
-  // DraggableScrollableController get listcontroller => _listcontroller;
+  DraggableScrollableController get listcontroller => _listcontroller;
 
   void readFile() {
     //서버 통신으로 받아온 메시지 파싱
@@ -53,8 +53,9 @@ class ListMaker extends GetxController {
     maindata.getMapEdge();
     readFile();
   }
-  set musicCheck(bool check){
-    _music_on=check;
+
+  set musicCheck(bool check) {
+    _music_on = check;
   }
 }
 
@@ -77,7 +78,7 @@ class _FootListState extends State<FootList> {
       minChildSize: 0.3,
       maxChildSize: 1,
       snap: true,
-      // controller: listmaker.listcontroller,
+      controller: listmaker.listcontroller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
             color: Colors.white,
@@ -144,7 +145,7 @@ class _FootListState extends State<FootList> {
   void initState() {
     listmaker.readFile();
     super.initState();
-    Timer.periodic(Duration(seconds: 2), (v) {
+    Timer.periodic(Duration(seconds: 1), (v) {
       if (mounted) {
         setState(() {
           listmaker.readFile();

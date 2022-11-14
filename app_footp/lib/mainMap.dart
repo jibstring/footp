@@ -50,8 +50,8 @@ class MainData extends GetxController {
     _filter = filter;
   }
 
-  set setmycontroller(dynamic mycontroller){
-    _mycontroller=mycontroller;
+  set setmycontroller(dynamic mycontroller) {
+    _mycontroller = mycontroller;
   }
 
   void getURL(

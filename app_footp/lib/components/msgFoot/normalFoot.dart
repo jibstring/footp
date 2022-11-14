@@ -27,11 +27,10 @@ class NormalFoot extends StatefulWidget {
 class _NormalFootState extends State<NormalFoot> {
   @override
   int heartnum = 0;
-  
-  late VideoPlayerController _videocontroller;
-  
-  late Future<void> _initializeVideoPlayerFuture;
 
+  late VideoPlayerController _videocontroller;
+
+  late Future<void> _initializeVideoPlayerFuture;
 
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
@@ -39,19 +38,20 @@ class _NormalFootState extends State<NormalFoot> {
   bool click_play = false;
   final _player = AudioPlayer();
 
-  void initState(){
-    _videocontroller=VideoPlayerController.network(widget.normalmsg["messageFileurl"],);
+  void initState() {
+    _videocontroller = VideoPlayerController.network(
+      widget.normalmsg["messageFileurl"],
+    );
 
     _initializeVideoPlayerFuture = _videocontroller.initialize();
-    
+
     super.initState();
   }
 
-  void dispose(){
+  void dispose() {
     _videocontroller.dispose();
     super.dispose();
   }
-
 
   Widget build(BuildContext context) {
     //VideoPlayerController _videocontroller;
@@ -67,7 +67,7 @@ class _NormalFootState extends State<NormalFoot> {
 
     //AudioPlayer player = new AudioPlayer();
 
-    return  GestureDetector(
+    return GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
@@ -75,7 +75,7 @@ class _NormalFootState extends State<NormalFoot> {
           listmaker.refresh();
         },
         child: Card(
-          child: Container(
+            child: Container(
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
@@ -131,63 +131,73 @@ class _NormalFootState extends State<NormalFoot> {
                                         //비디오
                                         // print("비디오");
                                         // print(_videocontroller);
-                                        return 
-                                            FutureBuilder(
-                                          future:_initializeVideoPlayerFuture,
-                                          builder: (context,snapshot){
-                                            if(snapshot.connectionState==ConnectionState.done){
-                                              return AspectRatio(
-                                                aspectRatio: _videocontroller.value.aspectRatio,
-                                                child:InkWell(
-                                                  onTap: (){
-                                                  setState((){
-                                                    print(_videocontroller.value.isPlaying);
-                                                    if(_videocontroller.value.isPlaying){
-                                                      print("중지");
-                                                      _videocontroller.pause();
-                                                    }
-                                                    else{
-                                                      print("시작");
-                                                      print(_videocontroller);
-                                                      _videocontroller.play();
-                                                    }
-                                                    });
-                                                  },
-                                                  child: 
-                                                    VideoPlayer(_videocontroller),
-                                                ),
-                                              );
-                                            }else {
-                                              return Center(child: CircularProgressIndicator());
-                                            }
-                                          }
-                                        )                                        ;
-                                        } else if (flag == 2) {
+                                        return FutureBuilder(
+                                            future:
+                                                _initializeVideoPlayerFuture,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                return AspectRatio(
+                                                  aspectRatio: _videocontroller
+                                                      .value.aspectRatio,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        print(_videocontroller
+                                                            .value.isPlaying);
+                                                        if (_videocontroller
+                                                            .value.isPlaying) {
+                                                          print("중지");
+                                                          _videocontroller
+                                                              .pause();
+                                                        } else {
+                                                          print("시작");
+                                                          print(
+                                                              _videocontroller);
+                                                          _videocontroller
+                                                              .play();
+                                                        }
+                                                      });
+                                                    },
+                                                    child: VideoPlayer(
+                                                        _videocontroller),
+                                                  ),
+                                                );
+                                              } else {
+                                                return Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              }
+                                            });
+                                      } else if (flag == 2) {
                                         //오디오
-                                        return click_play==false?
-                                        IconButton(
-                                          icon: Icon(Icons.play_arrow,
-                                            size: 30),
-                                          onPressed: (){
-                                            _player.stop();
-                                            // print("재생!!");
-                                            
-                                            click_play=true;
-                                            _player.setUrl(widget.normalmsg["messageFileurl"]);
-                                            _player.play();
-                                            
-                                            print(click_play);
-                                          } ,)
-                                          :
-                                          IconButton(
-                                          icon: Icon(Icons.pause,
-                                            size: 30),
-                                          onPressed: (){
-                                            _player.stop();
-                                            // print("멈춰!!");
-                                            click_play=false;
-                                            print(click_play);
-                                            } ,);
+                                        return click_play == false
+                                            ? IconButton(
+                                                icon: Icon(Icons.play_arrow,
+                                                    size: 30),
+                                                onPressed: () {
+                                                  _player.stop();
+                                                  // print("재생!!");
+
+                                                  click_play = true;
+                                                  _player.setUrl(
+                                                      widget.normalmsg[
+                                                          "messageFileurl"]);
+                                                  _player.play();
+
+                                                  print(click_play);
+                                                },
+                                              )
+                                            : IconButton(
+                                                icon:
+                                                    Icon(Icons.pause, size: 30),
+                                                onPressed: () {
+                                                  _player.stop();
+                                                  // print("멈춰!!");
+                                                  click_play = false;
+                                                  print(click_play);
+                                                },
+                                              );
                                       }
                                     })(),
                                   )
