@@ -14,11 +14,10 @@ import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 import 'package:app_footp/mainMap.dart';
 
-
 class MyFootPage extends StatefulWidget {
   var _jsonData = {};
-  
-  MyFootPage(this._jsonData,{Key? key}) : super(key: key);
+
+  MyFootPage(this._jsonData, {Key? key}) : super(key: key);
   @override
   State<MyFootPage> createState() => MyFootPageState();
 }
@@ -33,7 +32,6 @@ class MyFootPageState extends State<MyFootPage> {
   List<Marker> markers = [];
 
   void readFile() {
-
     // print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
     // print(widget._jsonData);
 
@@ -113,47 +111,45 @@ class MyFootPageState extends State<MyFootPage> {
     _getImage();
     readFile();
     return SizedBox.expand(
-          child: Stack(children: <Widget>[
-        Container(
-            height: (MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top) *
-                0.65,
-            child: NaverMap(
-                onMapCreated: onMapCreated,
-                //onCameraIdle: getMapEdge,
-                minZoom: 5.0,
-                markers: markers,
-                )),
-        DraggableScrollableSheet(
-      initialChildSize: 0.3,
-      minChildSize: 0.3,
-      maxChildSize: 1,
-      snap: true,
-      // controller: listmaker.listcontroller,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-            color: Colors.white,
-            child: ListView.builder(
-                controller: scrollController,
-                itemCount: _messagelen,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index < _messagelen) {
-                    return NormalFoot(_myfootData[index]);
-                  } else {  
-                    return Container(color: Colors.white, height: 60);
-                  }
-                }));
-      },
-    ),
-      ]));
+        child: Stack(children: <Widget>[
+      Container(
+          height: (MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top) *
+              0.65,
+          child: NaverMap(
+            onMapCreated: onMapCreated,
+            //onCameraIdle: getMapEdge,
+            minZoom: 5.0,
+            markers: markers,
+          )),
+      DraggableScrollableSheet(
+        initialChildSize: 0.3,
+        minChildSize: 0.3,
+        maxChildSize: 1,
+        snap: true,
+        // controller: listmaker.listcontroller,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Container(
+              color: Colors.white,
+              child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: _messagelen,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index < _messagelen) {
+                      return NormalFoot(_myfootData[index]);
+                    } else {
+                      return Container(color: Colors.white, height: 60);
+                    }
+                  }));
+        },
+      ),
+    ]));
   }
 
-
   void onMapCreated(NaverMapController controller) {
-
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
-    maindata.setmycontroller =controller;
+    maindata.setmycontroller = controller;
   }
 
   void _getImage() {
