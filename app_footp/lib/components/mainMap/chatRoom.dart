@@ -213,7 +213,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   child:
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
                           color: Colors.lightBlueAccent,
