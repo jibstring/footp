@@ -14,8 +14,17 @@ import 'package:dio/dio.dart' as DIO;
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
-// import 'package:get/get.dart';
-// import 'package:get/get.dart';
+import 'package:scaled_list/scaled_list.dart';
+import 'package:card_swiper/card_swiper.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+
+final List<String> imgList = [
+  "asset/band.png",
+  "asset/band.png",
+  "asset/band.png",
+  "asset/band.png",
+  "asset/band.png",
+];
 
 class megaPhoneForm extends StatefulWidget {
   const megaPhoneForm({super.key});
@@ -34,6 +43,8 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
   UserData user = Get.put(UserData());
   var _timeresult = "종료 시간 설정";
   var _timeresultindex;
+  var _categoryresult = "카테고리 설정";
+  var _categoryindex;
 
   addtime() {
     final today = DateTime.now();
@@ -87,6 +98,67 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
     }
   }
 
+  Future<void> _categorieselect(BuildContext context) async {
+    return showDialog<void>(
+        context: context,
+        // 사용자가 다이얼로그 바깥을 터치하면 닫히지 않음
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.blue[100],
+            title: Text(
+              "카테고리 설정",
+              style: TextStyle(color: Colors.blue[900]),
+            ),
+            content: Container(
+              height: 400,
+              width: 300,
+              child: ScaledList(
+                  unSelectedCardHeightRatio: 0.4,
+                  selectedCardHeightRatio: 0.7,
+                  itemBuilder: (index, selectedIndex) {
+                    final category = categories[index];
+                    _categoryindex = selectedIndex;
+                    _categoryresult = categories[selectedIndex].name;
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: selectedIndex == index ? 100 : 80,
+                          child: Image.asset(category.image),
+                        ),
+                        SizedBox(height: 15),
+                        Text(
+                          category.name,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: selectedIndex == index ? 25 : 20),
+                        )
+                      ],
+                    );
+                  },
+                  itemCount: categories.length,
+                  itemColor: (index) {
+                    return kMixedColors[index % kMixedColors.length];
+                  }),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('확인'),
+                onPressed: () {
+                  // 다이얼로그 닫기
+                  setState(() {
+                    _categoryindex = _categoryindex;
+                    _categoryresult = _categoryresult;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Future<void> _neverSatisfied(BuildContext context) async {
     final _items = [
       "1시간",
@@ -106,12 +178,21 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("시간 설정"),
+            backgroundColor: Colors.blue[100],
+            title: Text(
+              "시간 설정",
+              style: TextStyle(color: Colors.blue[900]),
+            ),
             content: SingleChildScrollView(
               child: Container(
                 height: 150.0,
                 child: CupertinoPicker(
-                  children: _items.map((e) => Text('$e')).toList(),
+                  children: _items
+                      .map((e) => Text(
+                            '$e',
+                            style: TextStyle(color: Colors.blue[900]),
+                          ))
+                      .toList(),
                   itemExtent: 40.0,
                   onSelectedItemChanged: (int value) {
                     result = _items[value];
@@ -131,16 +212,28 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                   Navigator.of(context).pop();
                 },
               ),
-              // TextButton(
-              //     onPressed: () {
-              //       // 다이얼로그 닫기
-              //       Navigator.of(context).pop();
-              //     },
-              //     child: const Text('취소'))
             ],
           );
         });
   }
+
+  final List<Color> kMixedColors = [
+    Color(0xff71A5D7),
+    Color(0xff72CCD4),
+    Color(0xffFBAB57),
+    Color(0xffF8B993),
+    Color(0xff962D17),
+    Color(0xffc657fb),
+    Color(0xfffb8457),
+  ];
+
+  final List<Category> categories = [
+    Category(image: "asset/band.png", name: "공연"),
+    Category(image: "asset/band.png", name: "맛집"),
+    Category(image: "asset/band.png", name: "행사"),
+    Category(image: "asset/band.png", name: "관광"),
+    Category(image: "asset/band.png", name: "친목"),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -153,8 +246,9 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SizedBox(height: 40),
+
         TextField(
-          maxLines: 8,
+          maxLines: 5,
           decoration: InputDecoration(
             border: const OutlineInputBorder(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -253,11 +347,17 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
             ],
           ),
         ),
-        // SizedBox(height: 50),
+        SizedBox(height: 40),
         CupertinoButton(
           child: Text("$_timeresult"),
           onPressed: () {
             _neverSatisfied(context);
+          },
+        ),
+        CupertinoButton(
+          child: Text("$_categoryresult"),
+          onPressed: () {
+            _categorieselect(context);
           },
         ),
         // Text("$_timeresult"),
@@ -297,6 +397,17 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                 ),
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if (_categoryindex == null) {
+              final snackBar = SnackBar(
+                content: const Text('카테고리를 설정해 주세요!'),
+                action: SnackBarAction(
+                  label: '확인',
+                  onPressed: () {
+                    // Some code to undo the change.
+                  },
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else {
               createMarker.newmegaphone['gatherText'] = myMegaText.text;
 
@@ -308,23 +419,16 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
 
               String finishdate = addtime();
 
-              // print(finishdate);
-              // print(finishdate.runtimeType);
-              // print(finishdate.toString());
-              // print(finishdate.toString().runtimeType);
-
               var i = finishdate.lastIndexOf(':');
               finishdate = finishdate.substring(0, i);
               finishdate = finishdate.replaceFirst(' ', 'T');
 
               createMarker.newmegaphone['gatherFinishdate'] = finishdate;
 
-              // createMarker.newmegaphone['gatherFinishdate'] = "2022-11-03T01:37";
+              createMarker.newmegaphone['gatherDesigncode'] = _categoryindex;
 
               createMarker.file = file;
 
-              // print(formData.fields);
-              // print(formData.files);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CreateFootMap()));
             }

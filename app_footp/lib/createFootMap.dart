@@ -132,6 +132,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print('############################################확성기');
     print(response.statusCode);
     print(response);
+    print(response.runtimeType);
     print(response.requestOptions);
     print(response.headers);
     print(response.extra);
@@ -140,7 +141,12 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print(data.fields);
     print(createMarker.filePath);
     print('########################################');
-    Fluttertoast.showToast(msg: "확성기를 설치했습니다");
+    if (response.toString() == "success") {
+      Fluttertoast.showToast(msg: "확성기를 설치했습니다");
+    }
+    else if(response.toString() == "No Cash"){
+      Fluttertoast.showToast(msg: "포인트를 충전하세요");
+    }
 
     // Map marker = {
     //   "isOpentoall": true,
