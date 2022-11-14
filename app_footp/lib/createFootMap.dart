@@ -33,10 +33,9 @@ class _CreateFootMapState extends State<CreateFootMap> {
     //   isTapped = !isTapped;
     // });
     print('hello');
-    Navigator.pop(context);
     if (modeController2.mode == 0) _callFootPOST();
     if (modeController2.mode == 1) _callMegaPOST();
-    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
   }
 
   @override

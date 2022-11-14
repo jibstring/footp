@@ -67,15 +67,15 @@ class _NormalFootState extends State<NormalFoot> {
 
     //AudioPlayer player = new AudioPlayer();
 
-    return  GestureDetector(
+    return GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
-          listmaker.listcontroller.reset();
+          // listmaker.listcontroller.reset();
           listmaker.refresh();
         },
         child: Card(
-          child: Container(
+            child: Container(
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
@@ -204,6 +204,7 @@ class _NormalFootState extends State<NormalFoot> {
                                 : Text(""),
                             Container(
                                 padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                                width: width,
                                 child: Text(
                                   widget.normalmsg["messageText"], //100자로 제한
                                   style: const TextStyle(
@@ -228,21 +229,6 @@ class _NormalFootState extends State<NormalFoot> {
                             )
                           ],
                         )),
-              // 주소
-              Container(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  width: width,
-                  child: Text(
-                    maindata.address[widget.normalmsg["messageId"]] == null
-                        ? ""
-                        : maindata.address[widget.normalmsg["messageId"]]
-                            .toString(),
-                    textAlign: TextAlign.end,
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
-                  )),
               //하단
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
