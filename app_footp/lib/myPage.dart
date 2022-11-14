@@ -187,13 +187,18 @@ class _MyHompageStateState extends State<MyHompageState> {
                         future: post,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return MyFootPage(dataList);
-                          } else {
+                            print("데이터있데에에에에에");
+                            print(dataList["message"].length);
+                            return dataList["message"].length != 0
+                                ? MyFootPage(dataList)
+                                : Text("발자국을 남겨보세요!");
+                          } else if (snapshot.hasError) {
                             return Text(
                               "발자국을 남겨보세요!",
                             );
                           }
-                          return const CircularProgressIndicator();
+                          return SizedBox(
+                              height: 100, child: Text("내 글을 불러오는 중입니다"));
                         },
                       )
                     : Text("스탬프모음집")),
