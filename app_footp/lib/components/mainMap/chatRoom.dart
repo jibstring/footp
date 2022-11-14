@@ -228,7 +228,6 @@ class _ChatRoomState extends State<ChatRoom> {
                         ),
                         Container(
                           color: Colors.orange.shade200,
-                          width: MediaQuery.of(context).size.width*0.2,
                           height: 50,
                           child:
                             IconButton(
