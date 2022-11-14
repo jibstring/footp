@@ -12,36 +12,98 @@ import 'package:geolocator/geolocator.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
+import 'package:app_footp/mainMap.dart';
 
-import 'package:app_footp/signIn.dart';
-import 'package:app_footp/myPage.dart';
-import 'package:app_footp/createFoot.dart';
-import 'package:app_footp/components/mainMap/footList.dart';
-import 'package:app_footp/components/mainMap/stampList.dart';
-import 'package:app_footp/components/mainMap/chatRoom.dart';
-import 'package:app_footp/custom_class/store_class/store.dart';
 
 class MyFootPage extends StatefulWidget {
-  List<Marker> _markers = [];
-  MyFootPage(this._markers,{Key? key}) : super(key: key);
+  var _jsonData = {};
+  
+  MyFootPage(this._jsonData,{Key? key}) : super(key: key);
   @override
-  State<MyFootPage> createState() => _MyFootPageState();
+  State<MyFootPage> createState() => MyFootPageState();
 }
 
-class _MyFootPageState extends State<MyFootPage> {
+class MyFootPageState extends State<MyFootPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
   dynamic _mycontroller;
+  List<dynamic> _myfootData = [];
+  int _messagelen = 0;
+  List<OverlayImage> _footImage = [];
+  List<Marker> markers = [];
 
-//지도 끝점 구하는거
-  // void getMapEdge() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     _mycontroller.getVisibleRegion().then((value) {
-  //       _mapEdge = value;
-  //     });
-  //   });
-  //   // update();
-  // }
+  void readFile() {
+
+    // print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
+    // print(widget._jsonData);
+
+    if( widget._jsonData["message"]==null){
+      _messagelen=0;
+      return;
+    }
+
+    try {
+      _messagelen = widget._jsonData["message"].length;
+    } catch (e) {
+      _messagelen = 0;
+    }
+
+    markers.clear();
+
+    for (int i = 0; i < _messagelen; i++) {
+      if (_myfootData.length <= i) {
+        _myfootData.add(widget._jsonData["message"][i]);
+      } else {
+        _myfootData[i] = widget._jsonData["message"][i];
+      }
+      createMarker(i);
+    }
+  }
+
+  void createMarker(int idx) {
+    int like = widget._jsonData["message"][idx]["messageLikenum"];
+    int color = 0;
+
+    if (like >= 95) {
+      like = 94;
+    }
+
+    if (widget._jsonData["message"][idx]["isBlurred"] == true) {
+      color = 4;
+    } else {
+      switch (widget._jsonData["message"][idx]["messageId"] % 4) {
+        case 0:
+          color = 0;
+          break;
+        case 1:
+          color = 1;
+          break;
+        case 2:
+          color = 2;
+          break;
+        case 3:
+          color = 3;
+          break;
+        default:
+          color = 0;
+      }
+    }
+
+    Marker marker = Marker(
+        markerId: widget._jsonData["message"][idx]["messageId"].toString(),
+        position: LatLng(widget._jsonData["message"][idx]["messageLatitude"],
+            widget._jsonData["message"][idx]["messageLongitude"]),
+        icon: _footImage[color],
+        width: 5 * (6 + like),
+        height: 5 * (6 + like),
+        onMarkerTab: (marker, iconSize) {
+          print("Hi ${widget._jsonData["message"][idx]["messageId"]}");
+        },
+        infoWindow: widget._jsonData["message"][idx]["messageText"]);
+
+    markers.add(marker);
+    // update();
+  }
 
   void moveMapToMessage(double lat, double lng) {
     CameraPosition cameraPosition =
@@ -53,6 +115,8 @@ class _MyFootPageState extends State<MyFootPage> {
   // 목록
   @override
   Widget build(BuildContext context) {
+    _getImage();
+    readFile();
     return SizedBox.expand(
           child: Stack(children: <Widget>[
         Container(
@@ -60,15 +124,15 @@ class _MyFootPageState extends State<MyFootPage> {
                     MediaQuery.of(context).padding.top) *
                 0.65,
             child: NaverMap(
-                onMapCreated: _onMapCreated,
+                onMapCreated: onMapCreated,
                 //onCameraIdle: getMapEdge,
                 minZoom: 5.0,
-                markers: widget._markers,
+                markers: markers,
                 )),
         DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
-      maxChildSize: 0.5,
+      maxChildSize: 1,
       snap: true,
       // controller: listmaker.listcontroller,
       builder: (BuildContext context, ScrollController scrollController) {
@@ -76,11 +140,11 @@ class _MyFootPageState extends State<MyFootPage> {
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: _gatherlistsize+_messagelistsize+1,
+                itemCount: _messagelen,
                 itemBuilder: (BuildContext context, int index) {
-                  if (index < _gatherlistsize+_messagelistsize) {
-                    return NormalFoot(_dataList["message"][index]);
-                  } else {
+                  if (index < _messagelen) {
+                    return NormalFoot(_myfootData[index]);
+                  } else {  
                     return Container(color: Colors.white, height: 60);
                   }
                 }));
@@ -90,15 +154,11 @@ class _MyFootPageState extends State<MyFootPage> {
   }
 
 
-  void _onMapCreated(NaverMapController controller) {
-    // if (!user.isLogin()) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => const SignIn()),
-    //   );
-    // }
+  void onMapCreated(NaverMapController controller) {
+
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
+    //maindata._mycontroller = controller;
   }
 
   void _getImage() {
@@ -134,35 +194,4 @@ class _MyFootPageState extends State<MyFootPage> {
       });
     });
   }
-
-  // void initState() {
-  //   _getImage();
-  //   super.initState();
-  //   Timer.periodic(Duration(seconds: 2), (v) {
-  //     if (mounted) {
-  //       setState(() {
-  //         location.getCurrentLocation();
-  //         // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
-  //         // double aLat = 37.5015;
-  //         // double aLng = 127.0395;
-  //         // double aDistance = (6371 *
-  //         //     acos(cos(vect.radians(location.latitude)) *
-  //         //             cos(vect.radians(aLat)) *
-  //         //             cos(vect.radians(aLng) - vect.radians(location.longitude)) +
-  //         //         sin(vect.radians(location.latitude)) *
-  //         //             sin(vect.radians(aLat))));
-  //         // print(
-  //         //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
-  //         if (_mapEdge != null) {
-  //             getURL(
-  //                 user.userinfo["userId"].toString());
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
-
-  // void setState(VoidCallback fn) {
-  //   super.setState(fn);
-  // }
 }

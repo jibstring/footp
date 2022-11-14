@@ -37,7 +37,8 @@ class _MyHompageStateState extends State<MyHompageState> {
   int _selectedIndex = 0;
   final controller = Get.put(UserData());
 
-  var _dataList;
+  var dataList;
+  var _dataListlen=0;
   int _messagelistsize = 0;
   int _gatherlistsize=0;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
@@ -46,96 +47,26 @@ class _MyHompageStateState extends State<MyHompageState> {
   dynamic _mapEdge;
   List<Marker> markers = [];
   List<OverlayImage> _footImage = [];
+  late Future<Map> post;
 
-  void getURL(
-    String userid) async {
-    _mainDataUrl = Uri.parse(_baseURL+'/user/myfoot/{$userid}');
+  Future <Map> getURL() async {
+    String userid = controller.userinfo["userId"].toString();
+    _mainDataUrl = Uri.parse(_baseURL+'/user/myfoot/'+userid);
     print(_mainDataUrl);
 
-    _dataList = await getMainData();
-    try{
-      _messagelistsize = await _dataList["message"].length;
-    }
-    catch(e){
-      _messagelistsize=0;
-    }
-    try{
-      _gatherlistsize=await _dataList["gather"].length;
-    }
-    catch(e){
-      _gatherlistsize=0;
-    }
-  
-    markers.clear();
-    for (int i = 0; i < _messagelistsize+_gatherlistsize; i++) {
-      print(_dataList["message"][i]);
-      createMarker(i);
-    }
-
-    // update();
-  }
-
-  Future getMainData() async {
     http.Response response = await http.get(_mainDataUrl);
     if (response.statusCode == 200) {
-      _dataList = jsonDecode(utf8.decode(response.bodyBytes));
-      print("데이터리스트트트트ㅡ트트틑");
-      print(_dataList);
+      dataList = jsonDecode(utf8.decode(response.bodyBytes));
+      return dataList;
       // update();
-      return _dataList;
     } else {
       print(response.statusCode);
       throw 'getMainData() error';
     }
   }
 
-  void createMarker(int idx) {
-    int like = _dataList["message"][idx]["messageLikenum"];
-    int color = 0;
-
-    if (like >= 95) {
-      like = 94;
-    }
-
-    if (_dataList["message"][idx]["isBlurred"] == true) {
-      color = 4;
-    } else {
-      switch (_dataList["message"][idx]["messageId"] % 4) {
-        case 0:
-          color = 0;
-          break;
-        case 1:
-          color = 1;
-          break;
-        case 2:
-          color = 2;
-          break;
-        case 3:
-          color = 3;
-          break;
-        default:
-          color = 0;
-      }
-    }
-
-    Marker marker = Marker(
-        markerId: _dataList["message"][idx]["messageId"].toString(),
-        position: LatLng(_dataList["message"][idx]["messageLatitude"],
-            _dataList["message"][idx]["messageLongitude"]),
-        icon: _footImage[color],
-        width: 5 * (6 + like),
-        height: 5 * (6 + like),
-        onMarkerTab: (marker, iconSize) {
-          print("Hi ${_dataList["message"][idx]["messageId"]}");
-        },
-        infoWindow: _dataList["message"][idx]["messageText"]);
-
-    markers.add(marker);
-    // update();
-  }
-
-  
   Widget build(BuildContext context) {
+    post=getURL();
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
@@ -219,7 +150,7 @@ class _MyHompageStateState extends State<MyHompageState> {
                     setState(() {
                       mystampClick=false;
                     myfootClick=true;
-                    getURL(controller.userinfo["userId"].toString());
+                    getURL();
                     });                
                 },
                   child: Text(
@@ -249,17 +180,26 @@ class _MyHompageStateState extends State<MyHompageState> {
               ),
             ],
           ),
-          Container(
-            height:MediaQuery.of(context).size.height*0.5,
-            child: MyFootPage(markers),
-          )
+          Expanded(
+            child: myfootClick==true?FutureBuilder <Map>(
+              future:post,
+              builder: (context,snapshot){
+                if(snapshot.hasData){
+                  return MyFootPage(dataList);
+                }
+                else{
+                  return Text(
+                  "발자국을 남겨보세요!"
+                  ,);
+                }
+                return const CircularProgressIndicator();
+              },
+            ):
+            Text("스탬프모음집")
+          ),
           ],
         ),
       ),
     );
-  }
-  void initState() {
-    getURL(controller.userinfo["userId"].toString());
-    super.initState();
   }
 }
