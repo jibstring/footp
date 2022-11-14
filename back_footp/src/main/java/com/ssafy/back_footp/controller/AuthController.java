@@ -70,6 +70,7 @@ public class AuthController {
 		User userEntity = User.builder().userEmail(user.getUserEmail()).userNickname(user.getUserNickname())
 				.userPassword(EncryptionUtils.encryptSHA256(user.getUserPassword())).userCash(0).userEmailKey("N")
 				.userIsplaying((long)-1).userStampclearnum(0).userStampcreatenum(0).userNickname(user.getUserNickname())
+				.userAutologin(false)
 				.build();
 
 		try {
