@@ -126,6 +126,17 @@ public class StampController {
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
 	}
 	
+	@Transactional
+	@DeleteMapping("/unlike/{userId}/{stampboardId}")
+	@ApiOperation(value = "좋아요 취소")
+	public ResponseEntity<Integer> unlikeStamp(@PathVariable long userId, @PathVariable long stampboardId){
+		int result = 0;
+		
+		result = stampboardLikeService.unlikeStamp(userId, stampboardId);
+		stampboardLikeService.likeNum(stampboardId);
+		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+	}
+	
 	@PostMapping("/spam/{userId}/{stampboardId}")
 	@ApiOperation(value = "신고하기")
 	public ResponseEntity<Integer> spamStamp(@PathVariable long userId, @PathVariable long stampboardId){

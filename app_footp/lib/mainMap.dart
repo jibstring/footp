@@ -54,6 +54,10 @@ class MainData extends GetxController {
     _filter = filter;
   }
 
+  set setmycontroller(dynamic mycontroller){
+    _mycontroller=mycontroller;
+  }
+
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
