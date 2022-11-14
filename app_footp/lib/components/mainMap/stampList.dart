@@ -1,8 +1,10 @@
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
+import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/createStamp.dart';
 import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/src/widgets/container.dart';
@@ -160,11 +162,15 @@ class _StampListState extends State<StampList> {
                           child: Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(
+                                color: Colors.orangeAccent,
+                              ),
                             ),
                             elevation: 2.0,
                             child: Container(
                               child: Column(
                                 children: [
+                                  SizedBox(height: 10),
                                   // 스탬푸 제목
                                   Text(
                                     _stampList[index]['stampboard_title'],
@@ -189,31 +195,100 @@ class _StampListState extends State<StampList> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      // 신고하기
-                                      IconButton(
-                                        onPressed: () {
-                                          if (!user.isLogin()) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const SignIn()),
-                                            );
-                                          } else {
-                                            print('신고하기 모달 띄우기');
-                                            // showDialog(
-                                            //   // context: context,
-                                            //   // builder: (context) {
-                                            //   //   return ReportModal(
-                                            //   //       widget
-                                            //   //           .normalmsg["messageId"],
-                                            //   //       user.userinfo["userId"]);
-                                            //   // },
-                                            // );
-                                          }
-                                        },
-                                        icon: Icon(Icons.more_horiz, size: 30),
+                                      PopupMenuButton(
+                                        icon: Icon(
+                                          Icons.more_horiz,
+                                          size: 30,
+                                        ),
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem<int>(
+                                            value: 0,
+                                            child: TextButton(
+                                              child: Text(
+                                                '삭제하기',
+                                                style: _stampList[index]
+                                                            ["user_id"] !=
+                                                        user.userinfo["userId"]
+                                                    ? null
+                                                    : TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 15),
+                                              ),
+                                              onPressed: _stampList[index]
+                                                          ["user_id"] !=
+                                                      user.userinfo["userId"]
+                                                  ? null
+                                                  : () {
+                                                      deleteStamp(index);
+                                                    },
+                                            ),
+                                          ),
+                                          PopupMenuItem<int>(
+                                            value: 1,
+                                            child: TextButton(
+                                                child: Text(
+                                                  '신고하기',
+                                                  style: _stampList[index]
+                                                          ["isMyspam"]
+                                                      ? null
+                                                      : TextStyle(
+                                                          fontSize: 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                ),
+                                                onPressed: () {
+                                                  if (!user.isLogin()) {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const SignIn()),
+                                                    );
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          content:
+                                                              Text('신고하시겠습니까?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              child: Text('신고',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                  )),
+                                                              onPressed: () {
+                                                                reportStamp(
+                                                                    index);
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    true);
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: Text('취소',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .blue,
+                                                                  )),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                }),
+                                          ),
+                                        ],
                                       ),
+
                                       // 참가하기 버튼
                                       ElevatedButton(
                                         onPressed: () {},
@@ -333,5 +408,54 @@ class _StampListState extends State<StampList> {
         print("좋아요");
       }
     }));
+  }
+
+  void deleteStamp(int index) async {
+    var dio = DIO.Dio();
+
+    var url =
+        'http://k7a108.p.ssafy.io:8080/stamp/delete/${_stampList[index]["user_id"]}/${_stampList[index]["stampboard_id"]}';
+    var response = await dio.delete(
+        'http://k7a108.p.ssafy.io:8080/stamp/delete/${_stampList[index]["user_id"]}/${_stampList[index]["stampboard_id"]}');
+    if (_selectedValue == '좋아요') {
+      loadStampLike();
+    } else {
+      loadStampList();
+    }
+    Navigator.pop(context);
+  }
+
+  void reportStamp(int index) async {
+    var dio = DIO.Dio();
+    var userId = user.userinfo["userId"];
+
+    if (userId == _stampList[index]["user_id"]) {
+      Fluttertoast.showToast(
+          msg: '자신의 스탬푸는 신고할 수 없습니다.',
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.orangeAccent,
+          fontSize: 20.0,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    } else if (_stampList[index]["isMyspam"]) {
+      Fluttertoast.showToast(
+          msg: '이미 신고한 스탬푸입니다.',
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.redAccent,
+          fontSize: 20.0,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    } else {
+      await dio.post(
+          'http://k7a108.p.ssafy.io:8080/stamp/spam/$userId/${_stampList[index]["stampboard_id"]}');
+      Fluttertoast.showToast(
+          msg: '신고가 완료되었습니다.',
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.lightGreenAccent,
+          fontSize: 20.0,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+      _stampList[index]["isMyspam"] = true;
+    }
   }
 }
