@@ -47,6 +47,16 @@ public class StampboardLikeService {
 			return 1;
 		}
 	}
+	
+	//좋아요 취소
+	public Integer unlikeStamp(long uid, long sid) {
+		if(stampboardLikeRepository.existsByUserIdAndStampboardId(userRepository.findByUserId(uid), stampboardRepository.findById(sid).get())){
+			stampboardLikeRepository.deleteByUserIdAndStampboardId(userRepository.findByUserId(uid), stampboardRepository.findById(sid).get());
+			return 1;
+		}else {
+			return 0;
+		}
+	}
 
 	// 유저가 좋아요한 스탬프 리스트 반환
 	public List<stamplikeDTO> likeList(long uid) {
