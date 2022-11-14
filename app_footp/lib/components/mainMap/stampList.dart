@@ -64,6 +64,7 @@ class _StampListState extends State<StampList> {
     //     },
     //   );
     // }
+
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -114,6 +115,28 @@ class _StampListState extends State<StampList> {
                         ),
                         onPressed: () {
                           loadStampList();
+                        },
+                      ),
+                      // 새로운 스탬푸 작성
+                      IconButton(
+                        icon: Icon(
+                          Icons.send,
+                          size: 40,
+                        ),
+                        onPressed: () {
+                          if (!user.isLogin()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignIn()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateStamp()),
+                            );
+                          }
                         },
                       ),
                       IconButton(
@@ -201,18 +224,6 @@ class _StampListState extends State<StampList> {
                                       Row(
                                         children: [
                                           InkWell(
-                                              // child: _stampList[index]
-                                              //         ['isMylike']
-                                              //     ? Image.asset(
-                                              //         heartList[1],
-                                              //         width: 30,
-                                              //         height: 30,
-                                              //       )
-                                              //     : Image.asset(
-                                              //         heartList[0],
-                                              //         width: 30,
-                                              //         height: 30,
-                                              //       ),
                                               child: Image.asset(
                                                 heartList[_stampList[index]
                                                             ['isMylike'] ==
@@ -251,7 +262,8 @@ class _StampListState extends State<StampList> {
                                         ],
                                       )
                                     ],
-                                  )
+                                  ),
+                                  SizedBox(height: 20),
                                 ],
                               ),
                             ),
@@ -268,8 +280,10 @@ class _StampListState extends State<StampList> {
   // 스탬푸 목록 조회(최신순)
   void loadStampList() async {
     var dio = DIO.Dio();
+    int userId = user.isLogin() ? user.userinfo["userId"] : 0;
+
     var response =
-        await dio.get('http://k7a108.p.ssafy.io:8080/stamp/sort/new/1');
+        await dio.get('http://k7a108.p.ssafy.io:8080/stamp/sort/new/$userId');
 
     print('#################################################');
     print(response);
