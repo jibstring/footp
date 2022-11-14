@@ -37,30 +37,51 @@ class _SignUpState extends State<SignUp> {
             child: Center(
                 child: ListView(
               children: <Widget>[
+                SizedBox(height: 30,),
+                //앱로고
+                Container(
+                  height:70,
+                  child: Image.asset("./imgs/logo.png"),
+
+                ),
                 // 앱 이름
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
-                    child: const Text(
-                      'FootP',
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 30),
+                    child: Row(
+                      mainAxisAlignment : MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          '푸',
+                          style: TextStyle(
+                              color: Color.fromARGB(255,255,171,112),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,        
+                              fontFamily: "edu"),
+                        ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        const Text(
+                          '프',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 164, 185, 237),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,        
+                              fontFamily: "edu"),
+                        ),
+                      ],
                     )),
-
-                //회원가입 글자
-                Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(10),
-                    child: const Text(
-                      'Sign up',
-                      style: TextStyle(fontSize: 20),
-                    )),
+                    SizedBox(
+                      height: 50,
+                    ),
 
                 //이메일 입력 창
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.fromLTRB(30, 0, 30,20),
                   child: TextField(
                       onChanged: (value) {
                         setState(() {
@@ -70,15 +91,26 @@ class _SignUpState extends State<SignUp> {
                       controller: emailController,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'User Email',
+                          labelText: '이메일 주소',
                           suffixIcon: _value != true
                               ? Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: ElevatedButton(
+                                    style: ButtonStyle(
+                                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                            backgroundColor:
+                                            MaterialStateProperty.all<Color>(Color.fromARGB(255, 164, 185, 237)),
+                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  //side: BorderSide(color: Colors.red) // border line color
+                                      )),
+                                ),
                                     onPressed: () {
                                       checkEmailDuplicate(emailController.text);
                                     },
-                                    child: Text('중복확인'),
+                                    child: Text('중복확인',style: TextStyle(color: Colors.black),),
+                                    
                                   ))
                               : Icon(
                                   Icons.check_box_outlined,
@@ -89,13 +121,13 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(height: 20),
                 //비밀번호 입력창
                 Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(30, 0, 30,0),
                   child: TextField(
                     obscureText: obscurePasswordOne,
                     controller: passwordController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Password',
+                        labelText: '비밀번호',
                         suffixIcon: obscurePasswordOne == true
                             ? IconButton(
                                 icon: Icon(Icons.visibility_off),
@@ -125,7 +157,7 @@ class _SignUpState extends State<SignUp> {
 
                 // 비밀번호 유효성 확인
                 Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.fromLTRB(35, 5, 30,15),
                     child: passwordValidation == '올바른 형식으로 입력해주세요.'
                         ? Text('$passwordValidation',
                             style: TextStyle(color: Colors.red))
@@ -136,13 +168,13 @@ class _SignUpState extends State<SignUp> {
 
                 // 비밀번호 확인용 입력창
                 Container(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  padding: EdgeInsets.fromLTRB(30, 0, 30,0),
                   child: TextField(
                     obscureText: obscurePasswordTwo,
                     controller: passwordConfirmController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Password Confirm',
+                        labelText: '비밀번호 확인',
                         suffixIcon: obscurePasswordTwo == true
                             ? IconButton(
                                 icon: Icon(Icons.visibility_off),
@@ -170,7 +202,7 @@ class _SignUpState extends State<SignUp> {
                 ),
 
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.fromLTRB(30, 5, 30,15),
                   child: passwordConfirmed
                       ? Text(
                           '비밀번호가 일치합니다.',
@@ -183,7 +215,7 @@ class _SignUpState extends State<SignUp> {
                 ),
                 //닉네임 입력
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.fromLTRB(30, 15, 30,0),
                   child: TextField(
                       onChanged: (value) {
                         setState(() {
@@ -199,24 +231,45 @@ class _SignUpState extends State<SignUp> {
                               ? Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: ElevatedButton(
+                                    style: ButtonStyle(
+                                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                            backgroundColor:
+                                            MaterialStateProperty.all<Color>(Color.fromARGB(255, 164, 185, 237)),
+                                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10.0),
+                                                  //side: BorderSide(color: Colors.red) // border line color
+                                      )),
+                                ),
                                     onPressed: () {
                                       checknicknameDuplicate(
                                           nicknameController.text);
                                     },
-                                    child: Text('중복확인'),
+                                    child: Text('중복확인',style: TextStyle(color: Colors.black)),
                                   ))
                               : Icon(
                                   Icons.check_box_outlined,
                                   color: Colors.green,
                                 ))),
                 ),
-
+                SizedBox(
+                  height:25
+                ),
                 // 가입 버튼
                 Container(
                     height: 50,
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: ElevatedButton(
-                      child: const Text('Sign Up'),
+                    padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                    child: ElevatedButton(style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor:MaterialStateProperty.all<Color>(Color.fromARGB(255,255,171,112),),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        //side: BorderSide(color: Colors.red) // border line color
+                      )),
+                    ),
+                        
+                      child: const Text('회원가입',style: TextStyle(color: Colors.black,fontSize: 17)),
                       onPressed: () {
                         if (emailController == '' ||
                             passwordController == '' ||
