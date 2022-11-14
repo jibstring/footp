@@ -2,8 +2,12 @@ package com.ssafy.back_footp.service;
 
 import com.ssafy.back_footp.entity.User;
 
+import com.ssafy.back_footp.jwt.JwtService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.entity.Mail;
@@ -16,14 +20,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+	private static final String SUCCESS = "success";
+	private static final String FAIL = "fail";
+
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	ClientKakao clientKakao;
+
+	@Autowired
+	JwtService jwtService;
 
 	@Transactional
 	public int createUser(User user) {
@@ -165,4 +180,22 @@ public class AuthService {
 		return userRepository.checkUserWithSessionKey(sessionId);
 	}
 
+	@Transactional
+	public ResponseEntity<Map<String, Object>> kakaoLogin(KakaoLoginReq kakaoLoginReq) {
+		User kakaoUser = clientKakao.getUserData(kakaoLoginReq.getAccessToken());
+		String socialEmail = kakaoUser.getUserEmail();
+		User usr = userRepository.findByUserEmail(socialEmail).get();
+
+		String appToken = jwtService.create("userid", kakaoUser.getUserId(), "Authorization");
+
+		if(usr == null) {
+			kakaoUser.setUserSocial((long)2);
+			kakaoUser.setUserNickname(kakaoUser.getUserNickname());
+			createUser(kakaoUser);
+		}
+		Map<String, Object> result = new HashMap<>();
+		result.put("Authorization", appToken);
+		result.put("message", SUCCESS);
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.ACCEPTED);
+	}
 }
