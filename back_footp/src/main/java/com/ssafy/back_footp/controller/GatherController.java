@@ -298,4 +298,12 @@ public class GatherController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	// 유저가 확성기에서 떠나기
+	@PostMapping("/leave/{gatherId}/{userId}")
+	@ApiOperation(value = "유저가 확성기에서 떠나기")
+	public ResponseEntity<String> leaveFromGather(@PathVariable long gatherId, @PathVariable long userId){
+		String result = gatherService.leaveGather(gatherId, userId);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 }
