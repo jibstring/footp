@@ -108,8 +108,53 @@ class _ChatRoomState extends State<ChatRoom> {
     }
   }
 
+  void exitAlert() {
+    if(widget.eventId == 0) {
+      return exitRoom();
+    }
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: 
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+            title: 
+              Column(
+                children: const <Widget>[
+                  Text("채팅방에서 나가시겠습니까?"),
+                ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const <Widget>[
+                Text(
+                  "모든 채팅 기록은 사라집니다.",
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("확인"),
+                onPressed: () {
+                  exitRoom();
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: const Text("취소"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Color color() {
-    if(widget.con) return Colors.lightGreenAccent;
+    if(widget.con) return Colors.yellow.shade100;
     return Colors.white;
   }
 
@@ -130,47 +175,83 @@ class _ChatRoomState extends State<ChatRoom> {
           child: 
             ListView.builder(
             controller: scrollController,
-            itemCount: widget.chatList.length+1,
+            itemCount: widget.chatList.length+2,
             itemBuilder: (context, index) {
               if(index == 0) {
-                return Flexible(
-                  child: 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                String temp = "";
+                if(widget.eventId == 0) {
+                  temp = "    채팅방에 연결되어 있지 않습니다.";
+                } else {
+                  temp = "    ${widget.eventId}번 채팅방에 참가중입니다." ;
+                }
+                return Container(
+                  color: Colors.grey,
+                  child :
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: 
+                          Text(
+                            temp,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber,
+                              ),
+                          )
+                      ),
+                      IconButton(
+                            onPressed: ()=>{exitAlert()}, 
+                            icon: const Icon(
+                              Icons.exit_to_app,
+                              color: Colors.red,
+                              size: 30,
+                              )
+                          )
+                    ],
+                  )
+                );
+              }else if(index == 1) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child:
                         Container(
                           color: Colors.lightBlueAccent,
                           width: MediaQuery.of(context).size.width*0.6,
+                          height: 50,
                           child: 
-                              TextField(
-                                decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
-                                controller: widget.textController,
-                                onSubmitted: (str)=>sendMsg(str),
-                              ),
-                        ),
+                            TextField(
+                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
+                              controller: widget.textController,
+                              onSubmitted: (str)=>sendMsg(str),
+                            ),
+                        )
+                    ),
+                    Container(
+                      color: Colors.orange.shade200,
+                      height: 50,
+                      child:
                         IconButton(
                           onPressed: ()=>sendMsg(widget.textController.text),
+                          color: Colors.deepPurple,
                           icon: 
                             const Icon(
                               Icons.send,
                               size: 30,
                             )
                         ),
-                        IconButton(
-                          onPressed: ()=>{exitRoom()}, 
-                          icon: const Icon(
-                            Icons.exit_to_app,
-                            color: Colors.red,
-                            size: 25,
-                            )
-                        )
-                      ],
                     )
+                  ],
+                );
+              }else {
+                return ListTile(
+                  title: mkText(widget.chatList[widget.chatList.length-index+1]),
                 );
               }
-              return ListTile(
-                title: mkText(widget.chatList[widget.chatList.length-index]),
-              );
             },          
           ),
         );

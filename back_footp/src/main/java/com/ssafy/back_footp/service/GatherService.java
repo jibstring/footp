@@ -15,6 +15,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.back_footp.entity.Gather;
+import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.entity.UserJoinedGather;
 import com.ssafy.back_footp.repository.UserJoinedGatherRepository;
 import com.ssafy.back_footp.request.GatherPostContent;
@@ -130,6 +131,14 @@ public class GatherService {
 			Gather.setGatherFileurl(imagePath);
 		}
 
+		//확성기 글 작성시 5만 cash 차감 , 부족하면 fail 출력
+		User user = userRepository.findByUserId(Gather.getUserId().getUserId());
+		if(user.getUserCash()<50000) {
+			return "No Cash";
+		}
+		
+		user.setUserCash(user.getUserCash()-50000);
+		userRepository.save(user);
 		// save
 		gatherRepository.save(Gather);
 		System.out.println("Gather saved");
