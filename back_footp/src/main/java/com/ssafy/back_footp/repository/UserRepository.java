@@ -1,10 +1,13 @@
 package com.ssafy.back_footp.repository;
 
+import java.util.Date;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.back_footp.entity.User;
@@ -25,5 +28,14 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	//회원탈퇴
 	@Transactional
 	public void deleteByUserId(User uid);
+	
+	
+	public static final String keepLogin = "UPDATE user set sessionKey = :sessionId, sessionLimit = next WHERE userId=:userId";
+	@Query(value = keepLogin, nativeQuery = true)
+	public Integer keepLogin(@Param("userId") long userId, @Param("sessionId") String sessionId, @Param("sessionLimit") Date sessionLimit);
+	
+	public static final String checkUserWithSessionKey = "SELECT * FROM user WHERE sessionKey = :sessionId and sessionLimit > now()";
+	@Query(value = checkUserWithSessionKey, nativeQuery = true)
+	public User checkUserWithSessionKey(@Param("sessionId") String sessionId);
 	
 }

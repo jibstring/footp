@@ -2,6 +2,7 @@ package com.ssafy.back_footp.controller;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.WebUtils;
 
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.entity.User;
@@ -93,7 +95,7 @@ public class AuthController {
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인")
 	public ResponseEntity<Map<String, Object>> signIn(
-			@RequestBody @ApiParam(value = "이메일, 비밀번호로 로그인", required = true) UserSignInReq user) throws Exception {
+			@RequestBody @ApiParam(value = "이메일, 비밀번호로 로그인", required = true) UserSignInReq user, HttpSession session, HttpServletResponse response) throws Exception {
 		Map<String, Object> result = new HashMap<>();
 
 		HttpStatus status = null;
@@ -101,6 +103,7 @@ public class AuthController {
 			User loginUser = authService.login(user.getUserEmail(), user.getUserPassword());
 
 			if (loginUser != null) {
+				session.setAttribute("login", loginUser);
 				String token = jwtService.create("userid", loginUser.getUserId(), "Authorization");
 
 				logger.debug("로그인 토큰 : {}", token);
@@ -108,14 +111,17 @@ public class AuthController {
 				result.put("message", SUCCESS);
 				status = HttpStatus.ACCEPTED;
 				
-//				if(loginUser.getUserAutologin()) {
-//					
-//					Cookie cookie = new Cookie( "loginCookie", session.getId());
-//					cookie.setPath("/");
-//					cookie.setMaxAge(60*60*24*30);
-//					
-//					response.addCookie(cookie);
-//				}
+				if(loginUser.getUserAutologin()) {
+					
+					Cookie cookie = new Cookie( "loginCookie", session.getId());
+					cookie.setPath("/");
+					cookie.setMaxAge(60*60*24*30);
+					
+					response.addCookie(cookie);
+					
+					Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+					authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
+				}
 				
 			} else {
 				result.put("message", FAIL);
@@ -148,15 +154,29 @@ public class AuthController {
 	
 	@GetMapping("/logout")
 	@ApiOperation(value = "회원 로그아웃")
-	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) throws Exception {
+	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
 
 		logger.debug("logout - 호출");
 		Map<String, Object> result = new HashMap<>();
 
 		if (jwtService.isUsable(request.getHeader("Authorization"))) {
+			
+			Object obj = session.getAttribute("login");
+			User user = (User)obj;
 			result.put("Authorization", null);
 			result.put("message", SUCCESS);
-//			session.invalidate();
+			session.removeAttribute("login");
+			session.invalidate();
+			
+			Cookie loginCookie = WebUtils.getCookie(request, "loginCookie");
+			if( loginCookie !=null) {
+				loginCookie.setPath("/");
+				loginCookie.setMaxAge(0);
+				response.addCookie(loginCookie);
+				
+				Date date = new Date(System.currentTimeMillis());
+				authService.KeepLogin(user.getUserId(), session.getId(), date);
+			}
 		} else {
 			result.put("message", FAIL);
 		}
