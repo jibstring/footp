@@ -31,6 +31,7 @@ class _SignInState extends State<SignIn> {
       'userEmail': emailController.text,
       'userPassword': passwordController.text,
     };
+
     final response_login =
         await dio.post('http://k7a108.p.ssafy.io:8080/auth/signin', data: data);
 
@@ -105,9 +106,10 @@ class _SignInState extends State<SignIn> {
                           '푸',
                           style: TextStyle(
                               color: Color.fromARGB(255,255,171,112),
-                              fontWeight: FontWeight.bold,
+                              // fontWeight: FontWeight.bold,
                               fontSize: 40,        
-                              fontFamily: "edu"),
+                              // fontFamily: "edu"
+                              ),
                         ),
                         SizedBox(
                           width: 2,
@@ -116,9 +118,10 @@ class _SignInState extends State<SignIn> {
                           '프',
                           style: TextStyle(
                               color: Color.fromARGB(255, 164, 185, 237),
-                              fontWeight: FontWeight.bold,
+                              // fontWeight: FontWeight.bold,
                               fontSize: 40,        
-                              fontFamily: "edu"),
+                              // fontFamily: "edu"
+                              ),
                         ),
                       ],
                     )),

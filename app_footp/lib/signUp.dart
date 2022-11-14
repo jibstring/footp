@@ -58,9 +58,10 @@ class _SignUpState extends State<SignUp> {
                           '푸',
                           style: TextStyle(
                               color: Color.fromARGB(255,255,171,112),
-                              fontWeight: FontWeight.bold,
+                              //fontWeight: FontWeight.bold,
                               fontSize: 30,        
-                              fontFamily: "edu"),
+                              //fontFamily: "edu"
+                              ),
                         ),
                         SizedBox(
                           width: 2,
@@ -69,9 +70,11 @@ class _SignUpState extends State<SignUp> {
                           '프',
                           style: TextStyle(
                               color: Color.fromARGB(255, 164, 185, 237),
-                              fontWeight: FontWeight.bold,
+                              //fontWeight: FontWeight.bold,
                               fontSize: 30,        
-                              fontFamily: "edu"),
+                              //fontFamily: "edu"
+                              
+                              ),
                         ),
                       ],
                     )),
@@ -362,7 +365,7 @@ class _SignUpState extends State<SignUp> {
     print('#################################');
 
     _showDialog('가입 성공!');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
+    Navigator.pop(context);
   }
 
   Future checknicknameDuplicate(String nickname) async {
