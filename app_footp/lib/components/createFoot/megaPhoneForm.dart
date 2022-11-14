@@ -248,7 +248,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         SizedBox(height: 40),
 
         TextField(
-          maxLines: 5,
+          maxLines: 7,
           decoration: InputDecoration(
             border: const OutlineInputBorder(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -259,7 +259,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
           controller: myMegaText,
         ),
         Container(
-          height: 150,
+          height: 170,
           width: 400,
           decoration: BoxDecoration(
             border: Border.all(
