@@ -217,7 +217,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       children: [
                         Container(
                           color: Colors.lightBlueAccent,
-                          width: MediaQuery.of(context).size.width*0.8,
+                          width: MediaQuery.of(context).size.width*0.6,
                           height: 50,
                           child: 
                               TextField(
