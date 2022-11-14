@@ -26,7 +26,7 @@ class MyFootPage extends StatefulWidget {
 class MyFootPageState extends State<MyFootPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
-  dynamic _mycontroller;
+  //dynamic _mycontroller;
   List<dynamic> _myfootData = [];
   int _messagelen = 0;
   List<OverlayImage> _footImage = [];
@@ -105,12 +105,12 @@ class MyFootPageState extends State<MyFootPage> {
     // update();
   }
 
-  void moveMapToMessage(double lat, double lng) {
-    CameraPosition cameraPosition =
-        CameraPosition(target: LatLng(lat, lng), zoom: 18.0);
-    _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
-    // update();
-  }
+  // void moveMapToMessage(double lat, double lng) {
+  //   CameraPosition cameraPosition =
+  //       CameraPosition(target: LatLng(lat, lng), zoom: 18.0);
+  //   _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
+  //   // update();
+  // }
 
   // 목록
   @override
@@ -158,7 +158,7 @@ class MyFootPageState extends State<MyFootPage> {
 
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
-    //maindata._mycontroller = controller;
+    maindata.setmycontroller =controller;
   }
 
   void _getImage() {
