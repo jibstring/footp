@@ -50,6 +50,9 @@ dependencies:
   video_player: ^2.4.7
   audioplayers: ^1.1.1
   just_audio: ^0.9.30
+  scaled_list: ^2.0.0
+  card_swiper: ^2.0.4
+  carousel_slider: ^4.1.1
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +83,7 @@ flutter:
     - asset/eventfoot.png
     - asset/normalfoot.png
     - asset/megaphone.png
+    - asset/band.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -94,6 +98,15 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
+  #     - family : edu
+  #       fonts :
+  #         - asset: assets/font/gangwoneduallLight.ttf
+  #           weight: 300
+  #         - asset: assets/font/gangwoneduallBold.ttf
+  #           weight: 700
+        
+
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
