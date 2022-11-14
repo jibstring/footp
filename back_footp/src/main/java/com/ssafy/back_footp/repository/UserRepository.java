@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	public void deleteByUserId(User uid);
 	
 	
-	public static final String keepLogin = "UPDATE user set sessionKey = :sessionId, sessionLimit = next WHERE userId=:userId";
+	public static final String keepLogin = "UPDATE user set sessionKey = :sessionId, sessionLimit =:sessionLimit WHERE userId=:userId";
 	@Query(value = keepLogin, nativeQuery = true)
 	public Integer keepLogin(@Param("userId") long userId, @Param("sessionId") String sessionId, @Param("sessionLimit") Date sessionLimit);
 	
