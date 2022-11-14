@@ -37,11 +37,6 @@ class MyFootPageState extends State<MyFootPage> {
     // print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
     // print(widget._jsonData);
 
-    if( widget._jsonData["message"]==null){
-      _messagelen=0;
-      return;
-    }
-
     try {
       _messagelen = widget._jsonData["message"].length;
     } catch (e) {
