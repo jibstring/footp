@@ -23,7 +23,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
   ModeController modeController2 = Get.put(ModeController());
   MyPosition myPosition_map = Get.put(MyPosition());
   CreateMarker createMarker = Get.put(CreateMarker());
-  List png = ['asset/normalfoot.png', 'asset/eventfoot.png'];
+  List png = ['asset/normalfoot.png', 'asset/megaphone.png'];
   Marker marker = Marker(markerId: '0', position: LatLng(0, 0));
 
   bool isTapped = false;
@@ -33,7 +33,9 @@ class _CreateFootMapState extends State<CreateFootMap> {
     //   isTapped = !isTapped;
     // });
     print('hello');
-    _callPOST();
+    Navigator.pop(context);
+    if (modeController2.mode == 0) _callFootPOST();
+    if (modeController2.mode == 1) _callMegaPOST();
     Navigator.pop(context);
   }
 
@@ -47,7 +49,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
     super.initState();
   }
 
-  void _callPOST() async {
+  void _callFootPOST() async {
     var url = Uri.parse('http://k7a108.p.ssafy.io:8080/foot/write');
 
     var data = DIO.FormData.fromMap({
@@ -78,10 +80,68 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print('############################################');
     print(response.statusCode);
     print(response);
+    print(response.data);
+    print(response.headers);
     print(data.fields);
     print(createMarker.filePath);
     print('########################################');
     Fluttertoast.showToast(msg: "발자국을 찍었습니다");
+
+    // Map marker = {
+    //   "isOpentoall": true,
+    //   "messageFileurl":
+    //       "https://mblogthumb-phinf.pstatic.net/MjAxOTEyMTdfMjM5/MDAxNTc2NTgwNjQxMzIw.UIw2A-EU9OUtt5FQ_6iRP2QJQS-aFE7L_EkI_VK6ED0g.dGYlktZJPVI8Jn9z6czNo1FmNIKqNk6ap1tODyDVmswg.JPEG.ideaeditor_lee/officialDobes.jpg?type=w800",
+    //   "messageId": 1,
+    //   "messageLatitude": 37.72479485462167,
+    //   "messageLikenum": 0,
+    //   "messageLongitude": 128.71639982661415,
+    //   "messageSpamnum": 0,
+    //   "messageText": "test",
+    //   "messageWritedate": "2022-11-03T03:52:19.705Z",
+    //   "userId": 5
+    // };
+  }
+
+  void _callMegaPOST() async {
+    var url = Uri.parse('http://k7a108.p.ssafy.io:8080/gather/write');
+
+    var data = DIO.FormData.fromMap({
+      'gatherContent': json.encode(createMarker.newmegaphone),
+    });
+
+    if (createMarker.filePath != '') {
+      data.files.addAll([
+        MapEntry('gatherFile',
+            await DIO.MultipartFile.fromFile(createMarker.filePath))
+      ]);
+    } else {}
+    ;
+
+    // var response = await http.post(url,
+    //     headers: {"Content-Type": "multipart/form-data"}, data: data);
+
+    var dio = DIO.Dio();
+    dio.options.contentType = 'multipart/form-data';
+    dio.options.maxRedirects.isFinite;
+    print('******************************');
+    print(data);
+    print(data.fields);
+    print(data.files);
+    print('***********************************');
+    var response = await dio.post(url.toString(), data: data);
+
+    print('############################################확성기');
+    print(response.statusCode);
+    print(response);
+    print(response.requestOptions);
+    print(response.headers);
+    print(response.extra);
+    print(response.statusMessage);
+    print(response.data);
+    print(data.fields);
+    print(createMarker.filePath);
+    print('########################################');
+    Fluttertoast.showToast(msg: "확성기를 설치했습니다");
 
     // Map marker = {
     //   "isOpentoall": true,

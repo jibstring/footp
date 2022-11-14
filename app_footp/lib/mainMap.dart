@@ -29,6 +29,7 @@ class MainData extends GetxController {
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   String _filter = 'hot';
+  String _markerString = '';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
@@ -41,6 +42,7 @@ class MainData extends GetxController {
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   String get filter => _filter;
+  String get markerString => _markerString;
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
@@ -60,7 +62,6 @@ class MainData extends GetxController {
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
 
-    markers.clear();
     for (int i = 0; i < _listsize; i++) {
       // print(dataList["message"][i]);
       getAddress(i);
@@ -99,18 +100,14 @@ class MainData extends GetxController {
       var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsondata["status"]["code"] == 0) {
         if (jsondata["results"].length > 1) {
-          _address = {
-            dataList["message"][idx]["messageId"]:
-                "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}"
-          };
+          _address[dataList["message"][idx]["messageId"]] =
+              "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
         } else {
-          _address = {
-            dataList["message"][idx]["messageId"]:
-                "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"]} ${jsondata["results"][0]["land"]["number1"]} ${jsondata["results"][0]["land"]["number2"]}"
-          };
+          _address[dataList["message"][idx]["messageId"]] =
+              "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
         }
       } else {
-        _address = {dataList["message"][idx]["messageId"]: ""};
+        _address[dataList["message"][idx]["messageId"]] = "";
       }
       update();
     } else {
@@ -119,9 +116,18 @@ class MainData extends GetxController {
     }
   }
 
+  String changeDate(String date) {
+    String newDate = "";
+    newDate = date.replaceAll('T', "  ");
+
+    return newDate;
+  }
+
   void createMarker(int idx) {
     int like = (dataList["message"][idx]["messageLikenum"] / 5).toInt();
     int color = 0;
+    _markerString =
+        "${dataList["message"][idx]["userNickname"]}      \u{2764} ${dataList["message"][idx]["messageLikenum"].toString()}\n${dataList["message"][idx]["messageText"]}\n${maindata.address[dataList["message"][idx]["messageId"]] == null ? "" : maindata.address[dataList["message"][idx]["messageId"]]}\n${changeDate(dataList["message"][idx]["messageWritedate"])}";
 
     if (like >= 45) {
       like = 44;
@@ -158,7 +164,7 @@ class MainData extends GetxController {
         onMarkerTab: (marker, iconSize) {
           print("Hi ${dataList["message"][idx]["messageId"]}");
         },
-        infoWindow: dataList["message"][idx]["messageText"]);
+        infoWindow: markerString);
 
     _markers.add(marker);
     update();
@@ -168,6 +174,10 @@ class MainData extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
+
+        markers.clear();
+        address.clear();
+        sleep(const Duration(milliseconds: 500));
       });
     });
     update();
@@ -175,7 +185,7 @@ class MainData extends GetxController {
 
   void moveMapToMessage(double lat, double lng) {
     CameraPosition cameraPosition =
-        CameraPosition(target: LatLng(lat, lng), zoom: 18.0);
+        CameraPosition(target: LatLng(lat, lng), zoom: 21.0);
     _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
     update();
   }
@@ -386,7 +396,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     _getImage();
     super.initState();
-    Timer.periodic(Duration(seconds: 2), (v) {
+    Timer.periodic(Duration(seconds: 1), (v) {
       if (mounted) {
         setState(() {
           location.getCurrentLocation();
@@ -420,7 +430,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             markers = maindata.markers;
           }
-          print(maindata.address);
+          // print(maindata.address);
         });
       }
     });
