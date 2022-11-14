@@ -53,7 +53,7 @@ class _NormalFormState extends State<NormalForm> {
                 child: Column(
                   children: [
                     TextField(
-                      maxLines: 5,
+                      maxLines: 3,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(
                           borderRadius:
@@ -65,7 +65,7 @@ class _NormalFormState extends State<NormalForm> {
                       controller: myText,
                     ),
                     TextField(
-                      maxLines: 5,
+                      maxLines: 3,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(
                           borderRadius:
@@ -80,7 +80,7 @@ class _NormalFormState extends State<NormalForm> {
                 ),
               )
             : TextField(
-                maxLines: 10,
+                maxLines: 7,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -91,7 +91,7 @@ class _NormalFormState extends State<NormalForm> {
                 controller: myText,
               ),
         Container(
-          height: 200,
+          height: 170,
           width: 400,
           decoration: BoxDecoration(
             border: Border.all(
