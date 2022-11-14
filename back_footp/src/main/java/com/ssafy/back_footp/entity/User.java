@@ -75,7 +75,7 @@ public class User {
 	@Column(name = "user_stampcreatenum")
 	private Integer userStampcreatenum;
 	
-	@Column(name = "user_autologin")
+	@Column(name = "user_autologin", columnDefinition = "TINYINT", length = 1)
 	private Boolean userAutologin;
 	
 	@Column(name = "user_sessionkey", nullable = false, columnDefinition = "varchar(50) default 'none'")
