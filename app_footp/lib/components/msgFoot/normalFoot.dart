@@ -12,6 +12,7 @@ import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/components/mainMap/footList.dart' as footlist;
 import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:app_footp/components/userSetting/myFoot.dart';
 
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
 
@@ -65,7 +66,7 @@ class _NormalFootState extends State<NormalFoot> {
 
     //AudioPlayer player = new AudioPlayer();
 
-    return GestureDetector(
+    return  GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
@@ -73,7 +74,7 @@ class _NormalFootState extends State<NormalFoot> {
           listmaker.refresh();
         },
         child: Card(
-            child: Container(
+          child: Container(
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
