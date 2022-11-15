@@ -13,6 +13,7 @@ class ChatRoom extends StatefulWidget {
   bool con = false;
   var chatList = List<Msg>.empty(growable: true);    //채팅 리스트
   final textController = TextEditingController();
+  FocusNode myFocus = FocusNode();
   ChatRoom(this.eventId, this.userId, this.userNickName, {Key? key}) : super(key: key);
   @override
   State<ChatRoom> createState() => _ChatRoomState();
@@ -74,22 +75,24 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   void showToast(String str) {
+    Fluttertoast.cancel();
     Fluttertoast.showToast(msg: str,
         gravity: ToastGravity.CENTER,
         backgroundColor: Colors.redAccent,
         fontSize: 20.0,
         textColor: Colors.white,
-        toastLength: Toast.LENGTH_SHORT
-      ); 
+        toastLength: Toast.LENGTH_SHORT,
+    );
   }
 
-  void sendMsg(String str) {
+  Future<void> sendMsg(String str) async {
     if(widget.con && widget.stompClient.connected && str.trim() != "") {
-      widget.textController.text = "";
       widget.stompClient.send(
         destination: '/app/send',
         body: jsonEncode(Msg(widget.eventId, widget.userId, str, widget.userNickName, ""))
       );
+      widget.textController.clear();
+      widget.myFocus.requestFocus();
     }else {
       showToast(str.trim()==""? '빈 메시지는 보낼 수 없습니다.':'채팅방 연결을 확인하세요.');
     }
@@ -130,12 +133,13 @@ class _ChatRoomState extends State<ChatRoom> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const <Widget>[
                 Text(
-                  "모든 채팅 기록은 사라집니다.",
+                  "채팅 기록은 저장되지 않습니다.",
+                  style: TextStyle(color: Colors.red),
                 ),
               ],
             ),
             actions: <Widget>[
-              TextButton(
+              ElevatedButton(
                 child: const Text("확인"),
                 onPressed: () {
                   exitRoom();
@@ -202,49 +206,44 @@ class _ChatRoomState extends State<ChatRoom> {
                           )
                       ),
                       IconButton(
-                            onPressed: ()=>{exitAlert()}, 
-                            icon: const Icon(
-                              Icons.exit_to_app,
-                              color: Colors.red,
-                              size: 30,
-                              )
-                          )
+                        onPressed: ()=>{exitAlert()}, 
+                        icon: const Icon(
+                          Icons.exit_to_app,
+                          color: Colors.red,
+                          size: 30,
+                        )
+                      )
                     ],
                   )
                 );
               }else if(index == 1) {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Flexible(
                       fit: FlexFit.tight,
                       child:
                         Container(
-                          color: Colors.lightBlueAccent,
-                          width: MediaQuery.of(context).size.width*0.6,
+                          color: Colors.white,
                           height: 50,
                           child: 
                             TextField(
                               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
+                              focusNode: widget.myFocus,
                               controller: widget.textController,
                               onSubmitted: (str)=>sendMsg(str),
                             ),
                         )
                     ),
-                    Container(
-                      color: Colors.orange.shade200,
-                      height: 50,
-                      child:
-                        IconButton(
-                          onPressed: ()=>sendMsg(widget.textController.text),
-                          color: Colors.deepPurple,
-                          icon: 
-                            const Icon(
-                              Icons.send,
-                              size: 30,
-                            )
-                        ),
-                    )
+                    IconButton(
+                      onPressed: ()=>sendMsg(widget.textController.text),
+                      color: Colors.deepPurple,
+                      icon: 
+                        const Icon(
+                        Icons.send,
+                        size: 30,
+                      )
+                    ),
                   ],
                 );
               }else {
