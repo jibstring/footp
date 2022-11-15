@@ -24,12 +24,14 @@ class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   UserData user = Get.put(UserData());
+  bool? _isAutoLogin = false;
 
   Future signIn() async {
     var dio = Dio();
     var data = {
       'userEmail': emailController.text,
       'userPassword': passwordController.text,
+      'userAutologin' : _isAutoLogin,
     };
 
     final response_login =
@@ -80,24 +82,23 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,   //fromARGB(245,239, 240, 253),
+        backgroundColor: Colors.white, //fromARGB(245,239, 240, 253),
         body: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 70, 20,20),
+            padding: const EdgeInsets.fromLTRB(20, 70, 20, 20),
             child: Center(
                 child: ListView(
               children: <Widget>[
-                //앱로고 
+                //앱로고
                 Container(
-                  height:130,
+                  height: 130,
                   child: Image.asset("./imgs/logo.png"),
-
                 ),
                 // 앱 이름
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
                     child: Row(
-                      mainAxisAlignment : MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
                           width: 10,
@@ -105,11 +106,11 @@ class _SignInState extends State<SignIn> {
                         const Text(
                           '푸',
                           style: TextStyle(
-                              color: Color.fromARGB(255,255,171,112),
-                              // fontWeight: FontWeight.bold,
-                              fontSize: 40,        
-                              // fontFamily: "edu"
-                              ),
+                            color: Color.fromARGB(255, 255, 171, 112),
+                            // fontWeight: FontWeight.bold,
+                            fontSize: 40,
+                            // fontFamily: "edu"
+                          ),
                         ),
                         SizedBox(
                           width: 2,
@@ -117,23 +118,23 @@ class _SignInState extends State<SignIn> {
                         const Text(
                           '프',
                           style: TextStyle(
-                              color: Color.fromARGB(255, 164, 185, 237),
-                              // fontWeight: FontWeight.bold,
-                              fontSize: 40,        
-                              // fontFamily: "edu"
-                              ),
+                            color: Color.fromARGB(255, 164, 185, 237),
+                            // fontWeight: FontWeight.bold,
+                            fontSize: 40,
+                            // fontFamily: "edu"
+                          ),
                         ),
                       ],
                     )),
 
                 //로그인 글자
                 SizedBox(
-                    height: 50,
+                  height: 50,
                 ),
 
                 //이메일 입력 창
                 Container(
-                  padding: EdgeInsets.fromLTRB(30, 0, 30,0),
+                  padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: TextField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -143,7 +144,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 //비밀번호 입력창
                 Container(
-                  padding: const EdgeInsets.fromLTRB(30, 20, 30,0),
+                  padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
                   child: TextField(
                     obscureText: obscurePassword,
                     controller: passwordController,
@@ -169,57 +170,81 @@ class _SignInState extends State<SignIn> {
                               )),
                   ),
                 ),
+                SizedBox(height: 10,),
+                //자동 로그인
+                Row(
+                  
+                  children: [
+                    SizedBox(width: 20,),
+                    Checkbox(
+                        value: _isAutoLogin,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        onChanged: (Value) {
+                          setState(() {
+                            _isAutoLogin = Value;
+                          });
+                        }),
+                    Text("로그인 상태 유지"),
+                  ],
+                ),
+
                 // 로그인 버튼
                 Container(
-                  padding: const EdgeInsets.fromLTRB(30, 30, 30,0),
-                  height: 80,//버튼의 세로 길이
-                      child: ElevatedButton(
-                        
-                        child: const Text('로그인',style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 17,
-                        ),),
-                        onPressed: () {
-                          signIn();
-                        },
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                          backgroundColor:
-                          MaterialStateProperty.all<Color>(Color.fromARGB(255, 164, 185, 237)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                //side: BorderSide(color: Colors.red) // border line color
-                    )),
-              ),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  height: 80, //버튼의 세로 길이
+                  child: ElevatedButton(
+                    child: const Text(
+                      '로그인',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                      ),
+                    ),
+                    onPressed: () {
+                      signIn();
+                    },
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromARGB(255, 164, 185, 237)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        //side: BorderSide(color: Colors.red) // border line color
+                      )),
+                    ),
                   ),
                 ),
                 Container(
-                    padding: const EdgeInsets.fromLTRB(30, 20, 30,0),
-                  height: 70,//버튼의 세로 길이
-                      child: ElevatedButton(
-                        child: const Text('회원가입',style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 17,
-                        ),),
-                        onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignUp()));
-                      },
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                          backgroundColor:
-                          MaterialStateProperty.all<Color>(Color.fromARGB(255,255,171,112)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                //side: BorderSide(color: Colors.red) // border line color
-                    )),
-              ),
-                  ),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                  height: 70, //버튼의 세로 길이
+                  child: ElevatedButton(
+                    child: const Text(
+                      '회원가입',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                      ),
                     ),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SignUp()));
+                    },
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromARGB(255, 255, 171, 112)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        //side: BorderSide(color: Colors.red) // border line color
+                      )),
+                    ),
+                  ),
+                ),
                 // Container(
                 //     padding: const EdgeInsets.fromLTRB(30, 0, 30,0),
                 //     child: Row(
