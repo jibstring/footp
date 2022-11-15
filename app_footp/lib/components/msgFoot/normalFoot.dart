@@ -71,7 +71,7 @@ class _NormalFootState extends State<NormalFoot> {
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
-          // listmaker.listcontroller.reset();
+          listmaker.listcontroller.reset();
           listmaker.refresh();
         },
         child: Card(
@@ -244,6 +244,18 @@ class _NormalFootState extends State<NormalFoot> {
                             color: Colors.grey),
                       ))
                   : Container(),
+              // 주소
+              Container(
+                  height: 40,
+                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                  width: width,
+                  child: Text(
+                    maindata.address[widget.normalmsg["messageId"]] ??= "",
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  )),
               //하단
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

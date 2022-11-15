@@ -68,7 +68,7 @@ class MainData extends GetxController {
       String userid, String lngR, String lngL, String latD, String latU) async {
     if (count > 30) {
       markers.clear();
-      address.clear();
+      // address.clear();
       sleep(const Duration(milliseconds: 500));
       _count = 0;
     }
@@ -79,11 +79,9 @@ class MainData extends GetxController {
     _listsize = await _dataList["message"].length;
 
     for (int i = 0; i < _listsize; i++) {
-      // print(dataList["message"][i]);
       if (_dataList["message"][i]["isBlurred"] == true) {
         getDistance(i);
       }
-      // if 걸어서 숨겨졌는가? 숨겨졌으면 내 위치랑 대조해서 가까운지 확인하는 메소드로 아니면 continue
       getAddress(i);
       createMarker(i);
     }
@@ -116,7 +114,6 @@ class MainData extends GetxController {
             sin(vect.radians(location.latitude)) *
                 sin(vect.radians(messageLat))));
 
-    // print(dataList["message"][idx]["messageBlurredtext"]);
     if (distance < 0.025) {
       _hiddenMessage[dataList["message"][idx]["messageId"]] =
           dataList["message"][idx]["messageBlurredtext"];
@@ -205,7 +202,7 @@ class MainData extends GetxController {
         width: 5 * (6 + like),
         height: 5 * (6 + like),
         onMarkerTab: (marker, iconSize) {
-          print("Hi ${dataList["message"][idx]["messageId"]}");
+          // print("Hi ${dataList["message"][idx]["messageId"]}");
         },
         infoWindow: markerString);
 
@@ -217,10 +214,6 @@ class MainData extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
-
-        // markers.clear();
-        // address.clear();
-        // sleep(const Duration(milliseconds: 500));
       });
     });
     update();
@@ -483,13 +476,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   maindata.mapEdge.southwest.latitude.toString(),
                   maindata.mapEdge.northeast.latitude.toString());
             }
-            markers = maindata.markers;
-            // print(maindata.mapEdge.northeast.longitude.toString());
-            // print(maindata.mapEdge.southwest.longitude.toString());
-            // print(maindata.mapEdge.southwest.latitude.toString());
-            // print(maindata.mapEdge.northeast.latitude.toString());
+            switch (_selectedIndex) {
+              case 0:
+                markers = maindata.markers;
+                break;
+              case 1:
+                markers = maindata.markers;
+                break;
+              case 2:
+                markers = maindata.markers;
+                break;
+              default:
+                markers = maindata.markers;
+            }
           }
-          // print(maindata.address);
         });
       }
     });
