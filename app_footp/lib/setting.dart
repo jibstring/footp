@@ -18,10 +18,7 @@ class SettingPage extends StatelessWidget {
           ),
           padding: const EdgeInsets.fromLTRB(10,0,0,0),
           onPressed:(){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder:  (context) => const MyPage()),
-            );
+            Navigator.pop(context);
           },
           ),
       ),

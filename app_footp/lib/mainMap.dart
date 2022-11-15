@@ -13,6 +13,7 @@ import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
 import 'package:app_footp/signIn.dart';
+import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
@@ -267,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
               } else {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyPage()),
+                  MaterialPageRoute(builder: (context) => const newMyPage()),
                 );
               }
             },
