@@ -62,7 +62,7 @@ class CreateMarker extends GetxController {
     "gatherText": "모집합니다",
     "gatherWritedate": DateTime.now().toString(),
     "gatherFinishdate": "2022-11-03T01:37",
-    "gatherDesigncode" : 1,
+    "gatherDesigncode": 1,
     "userId": 1
   };
 
@@ -171,4 +171,14 @@ class Category {
   final String name;
 
   Category({required this.image, required this.name});
+}
+
+class StampDetailInfo extends GetxController {
+  Map _stampDetail = {};
+
+  Map _nowStamp = {};
+
+  Map get stampDetail => _stampDetail;
+  Map get nowStamp => _nowStamp;
+  set nowStamp(value) => _nowStamp = value;
 }
