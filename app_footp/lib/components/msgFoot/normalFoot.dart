@@ -229,6 +229,21 @@ class _NormalFootState extends State<NormalFoot> {
                             )
                           ],
                         )),
+              // 비밀글
+              (maindata.hiddenMessage[widget.normalmsg["messageId"]] != null)
+                  ? Container(
+                      height: 50,
+                      padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      width: width,
+                      child: Text(
+                        maindata.hiddenMessage[
+                            widget.normalmsg["messageId"]] ??= "",
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey),
+                      ))
+                  : Container(),
               //하단
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
