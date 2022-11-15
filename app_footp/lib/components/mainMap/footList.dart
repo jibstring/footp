@@ -145,7 +145,7 @@ class _FootListState extends State<FootList> {
   void initState() {
     listmaker.readFile();
     super.initState();
-    Timer.periodic(Duration(seconds: 1), (v) {
+    Timer.periodic(Duration(seconds: 10), (v) {
       if (mounted) {
         setState(() {
           listmaker.readFile();
