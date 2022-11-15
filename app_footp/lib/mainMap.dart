@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -19,7 +20,7 @@ import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
-import 'package:app_footp/components/mainMap/chatRoom.dart';
+import 'package:app_footp/components/mainMap/gatherList.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 MainData maindata = Get.put(MainData());
@@ -41,7 +42,9 @@ class MainData extends GetxController {
   Map<int, double> _distances = {};
   Map<int, String> _address = {};
   Map<int, String> _hiddenMessage = {};
+  bool _attendChat=false;
 
+  bool get attendChat=>_attendChat;
   get dataList => _dataList;
   int get count => _count;
   int get listsize => _listsize;
@@ -58,6 +61,10 @@ class MainData extends GetxController {
   Map<int, String> get address => _address;
   Map<int, String> get hiddenMessage => _hiddenMessage;
 
+  set setAttendChat(bool attend){
+    _attendChat=attend;
+  }
+
   set fixFilter(String filter) {
     _filter = filter;
   }
@@ -67,7 +74,7 @@ class MainData extends GetxController {
   }
 
   void getURL(
-      String userid, String lngR, String lngL, String latD, String latU) async {
+      int index, String userid, String lngR, String lngL, String latD, String latU) async {
     if (count > 30) {
       markers.clear();
       // address.clear();
@@ -75,19 +82,49 @@ class MainData extends GetxController {
       _count = 0;
     }
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
-    _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
+
+    if(index==0) {
+      _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
+    } else {
+      _mainDataUrl = Uri.parse('$baseURL/gather/list/$filter/$apiKey');
+    }    
 
     _dataList = await getMainData();
-    _listsize = await _dataList["message"].length;
 
-    for (int i = 0; i < _listsize; i++) {
-      if (_dataList["message"][i]["isBlurred"] == true) {
-        getDistance(i);
+    if(index==0){
+      try{
+        _listsize = await _dataList["message"].length;
+      }catch(e){
+        _listsize=0;
       }
-      getAddress(i);
-      createMarker(i);
-    }
+    }else{
+      try{
+        _listsize = await _dataList["gather"].length;
+        print(dataList["gather"]);
+      }catch(e){
+        _listsize=0;
+      }
 
+    _markers.clear();
+
+    if(index==0){
+      for (int i = 0; i < _listsize; i++) {
+        // print(dataList["message"][i]);
+        if (_dataList["message"][i]["isBlurred"] == true) {
+          getDistance(i);
+        }
+        // if 걸어서 숨겨졌는가? 숨겨졌으면 내 위치랑 대조해서 가까운지 확인하는 메소드로 아니면 continue
+        //getAddress(index,i,"message","messageLatitude", "messageLongitude", "messageId");
+        createMarker(index,i,"message","messageLatitude", "messageLongitude","messageLikenum", "userNickname", "messageId","messageText","messageWritedate");
+      }
+    }
+    else{
+      for (int i = 0; i < _listsize; i++) {
+        //getAddress(index,i,"gather","gatherLatitude", "gatherLongitude", "gatherId");
+        createMarker(index,i,"gather","gatherLatitude", "gatherLongitude","gatherLikenum", "userNickname", "gatherId","gatherText","gatherWritedate");
+      }
+    }
+  
     _count++;
     update();
   }
@@ -126,9 +163,9 @@ class MainData extends GetxController {
     update();
   }
 
-  void getAddress(int idx) async {
-    String lat = dataList["message"][idx]["messageLatitude"].toString();
-    String lng = dataList["message"][idx]["messageLongitude"].toString();
+  void getAddress(int type,int idx,String messageType, String latitude, String longitude, String messageId,) async {
+    String lat = dataList[messageType][idx][latitude].toString();
+    String lng = dataList[messageType][idx][longitude].toString();
 
     Map<String, String> clientkey = {
       "X-NCP-APIGW-API-KEY-ID": "9foipum14s",
@@ -143,14 +180,14 @@ class MainData extends GetxController {
       var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsondata["status"]["code"] == 0) {
         if (jsondata["results"].length > 1) {
-          _address[dataList["message"][idx]["messageId"]] =
+          _address[dataList[messageType][idx][messageId]] =
               "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
         } else {
-          _address[dataList["message"][idx]["messageId"]] =
+          _address[dataList[messageType][idx][messageId]] =
               "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
         }
       } else {
-        _address[dataList["message"][idx]["messageId"]] = "";
+        _address[dataList[messageType][idx][messageId]] = "";
       }
       update();
     } else {
@@ -166,35 +203,60 @@ class MainData extends GetxController {
     return newDate;
   }
 
-  void createMarker(int idx) {
-    int like = (dataList["message"][idx]["messageLikenum"] / 5).toInt();
+  void createMarker(int type,int idx, String messageType,String latitude, String longitude,String likenum, String nickname, String messageId,String text,String writedate ) {
+    int like = (dataList[messageType][idx][likenum] / 5).toInt();
     int color = 0;
     _markerString =
-        "${dataList["message"][idx]["userNickname"]}      \u{2764} ${dataList["message"][idx]["messageLikenum"].toString()}\n${dataList["message"][idx]["messageText"]}\n${hiddenMessage[dataList["message"][idx]["messageId"]] ??= ""}\n${address[dataList["message"][idx]["messageId"]] ??= ""}\n${changeDate(dataList["message"][idx]["messageWritedate"])}";
+        "${dataList[messageType][idx][nickname]}      \u{2764} ${dataList[messageType][idx][likenum].toString()}\n${dataList[messageType][idx][text]}\n${hiddenMessage[dataList[messageType][idx][messageId]] ??= ""}\n${address[dataList[messageType][idx][messageId]] ??= ""}\n${changeDate(dataList[messageType][idx][writedate])}";
 
     if (like >= 45) {
       like = 44;
     }
 
+<<<<<<< app_footp/lib/mainMap.dart
+    if (type==0 && dataList[messageType][idx]["isBlurred"] == true) {
+      color = 4;
+    } else {
+      switch (dataList[messageType][idx][messageId] % 4) {
+        case 0:
+          color = 0;
+          break;
+        case 1:
+          color = 1;
+          break;
+        case 2:
+          color = 2;
+          break;
+        case 3:
+          color = 3;
+          break;
+        default:
+          color = 0;
+=======
     if (dataList["message"][idx]["isBlurred"] == true) {
       if ((distances[dataList["message"][idx]["messageId"]] ??= 1) < 0.025) {
         color = 8;
       } else {
         color = 7;
+>>>>>>> app_footp/lib/mainMap.dart
       }
     } else {
       color = dataList["message"][idx]["messageId"] % 7;
     }
 
     Marker marker = Marker(
-        markerId: dataList["message"][idx]["messageId"].toString(),
-        position: LatLng(dataList["message"][idx]["messageLatitude"],
-            dataList["message"][idx]["messageLongitude"]),
+        markerId: dataList[messageType][idx][messageId].toString(),
+        position: LatLng(dataList[messageType][idx][latitude],
+            dataList[messageType][idx][longitude]),
         icon: _footImage[color],
         width: 5 * (6 + like),
         height: 5 * (6 + like),
         onMarkerTab: (marker, iconSize) {
+<<<<<<< app_footp/lib/mainMap.dart
+          print("Hi ${dataList[messageType][idx][messageId]}");
+=======
           // print("Hi ${dataList["message"][idx]["messageId"]}");
+>>>>>>> app_footp/lib/mainMap.dart
         },
         infoWindow: markerString);
 
@@ -217,6 +279,8 @@ class MainData extends GetxController {
     _mycontroller.moveCamera(CameraUpdate.toCameraPosition(cameraPosition));
     update();
   }
+
+  void moveMapTogather(gathermsg, gathermsg2) {}
 }
 
 class MainMap extends StatelessWidget {
@@ -256,7 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 실시간 채팅방
-    ChatRoom(1, 2, "unknown"),
+    gatherList(), //ChatRoom(1, 2, "unknown"),
     // 스탬프 글목록
     StampList()
   ];
@@ -291,7 +355,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const MyPage()),
+                      MaterialPageRoute(builder: (context) => const newMyPage()),
                     );
                   }
                 },
@@ -378,6 +442,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mounted) {
       setState(() {
         _selectedIndex = index;
+        markers.clear();
+        maindata._markers.clear();
       });
     }
   }
@@ -479,6 +545,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (!user.isLogin()) {
               // User ID는 null, 추후 수정
               maindata.getURL(
+                _selectedIndex,
                   "1",
                   maindata.mapEdge.northeast.longitude.toString(),
                   maindata.mapEdge.southwest.longitude.toString(),
@@ -486,6 +553,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   maindata.mapEdge.northeast.latitude.toString());
             } else {
               maindata.getURL(
+                _selectedIndex,
                   user.userinfo["userId"].toString(),
                   maindata.mapEdge.northeast.longitude.toString(),
                   maindata.mapEdge.southwest.longitude.toString(),
