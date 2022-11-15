@@ -29,22 +29,26 @@ class MainData extends GetxController {
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   String _filter = 'hot';
+  String _markerString = '';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
+  Map<int, String> _address = {};
 
   get dataList => _dataList;
   int get listsize => _listsize;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   String get filter => _filter;
+  String get markerString => _markerString;
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
+  Map<int, String> get address => _address;
 
   set fixFilter(String filter) {
     _filter = filter;
@@ -62,9 +66,13 @@ class MainData extends GetxController {
     _dataList = await getMainData();
     _listsize = await _dataList["message"].length;
 
-    markers.clear();
     for (int i = 0; i < _listsize; i++) {
       // print(dataList["message"][i]);
+      if (_dataList["message"][i]["isBlurred"] == true) {
+        getDistance();
+      }
+      // if 걸어서 숨겨졌는가? 숨겨졌으면 내 위치랑 대조해서 가까운지 확인하는 메소드로 아니면 continue
+      getAddress(i);
       createMarker(i);
     }
 
@@ -83,12 +91,56 @@ class MainData extends GetxController {
     }
   }
 
-  void createMarker(int idx) {
-    int like = dataList["message"][idx]["messageLikenum"];
-    int color = 0;
+  void getDistance() {}
 
-    if (like >= 95) {
-      like = 94;
+  void getAddress(int idx) async {
+    String lat = dataList["message"][idx]["messageLatitude"].toString();
+    String lng = dataList["message"][idx]["messageLongitude"].toString();
+
+    Map<String, String> clientkey = {
+      "X-NCP-APIGW-API-KEY-ID": "9foipum14s",
+      "X-NCP-APIGW-API-KEY": "scvqRxQKoZo5vULsFL1vrE56tqKcOl7u1z16iWz2"
+    };
+
+    http.Response response = await http.get(
+        Uri.parse(
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+        headers: clientkey);
+    if (response.statusCode == 200) {
+      var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsondata["status"]["code"] == 0) {
+        if (jsondata["results"].length > 1) {
+          _address[dataList["message"][idx]["messageId"]] =
+              "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+        } else {
+          _address[dataList["message"][idx]["messageId"]] =
+              "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+        }
+      } else {
+        _address[dataList["message"][idx]["messageId"]] = "";
+      }
+      update();
+    } else {
+      print(response.statusCode);
+      throw 'getAddress() error';
+    }
+  }
+
+  String changeDate(String date) {
+    String newDate = "";
+    newDate = date.replaceAll('T', "  ");
+
+    return newDate;
+  }
+
+  void createMarker(int idx) {
+    int like = (dataList["message"][idx]["messageLikenum"] / 5).toInt();
+    int color = 0;
+    _markerString =
+        "${dataList["message"][idx]["userNickname"]}      \u{2764} ${dataList["message"][idx]["messageLikenum"].toString()}\n${dataList["message"][idx]["messageText"]}\n${maindata.address[dataList["message"][idx]["messageId"]] ??= ""}\n${changeDate(dataList["message"][idx]["messageWritedate"])}";
+
+    if (like >= 45) {
+      like = 44;
     }
 
     if (dataList["message"][idx]["isBlurred"] == true) {
@@ -122,7 +174,7 @@ class MainData extends GetxController {
         onMarkerTab: (marker, iconSize) {
           print("Hi ${dataList["message"][idx]["messageId"]}");
         },
-        infoWindow: dataList["message"][idx]["messageText"]);
+        infoWindow: markerString);
 
     _markers.add(marker);
     update();
@@ -132,6 +184,10 @@ class MainData extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
+
+        markers.clear();
+        // address.clear();
+        sleep(const Duration(milliseconds: 500));
       });
     });
     update();
@@ -350,7 +406,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     _getImage();
     super.initState();
-    Timer.periodic(Duration(seconds: 2), (v) {
+    Timer.periodic(Duration(seconds: 1), (v) {
       if (mounted) {
         setState(() {
           location.getCurrentLocation();
@@ -384,6 +440,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             markers = maindata.markers;
           }
+          // print(maindata.address);
         });
       }
     });

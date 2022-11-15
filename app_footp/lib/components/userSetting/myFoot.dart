@@ -28,6 +28,7 @@ class MyFootPageState extends State<MyFootPage> {
   //dynamic _mycontroller;
   List<dynamic> _myfootData = [];
   int _messagelen = 0;
+  String markerString = '';
   List<OverlayImage> _footImage = [];
   List<Marker> markers = [];
 
@@ -53,12 +54,21 @@ class MyFootPageState extends State<MyFootPage> {
     }
   }
 
-  void createMarker(int idx) {
-    int like = widget._jsonData["message"][idx]["messageLikenum"];
-    int color = 0;
+  String changeDate(String date) {
+    String newDate = "";
+    newDate = date.replaceAll('T', "  ");
 
-    if (like >= 95) {
-      like = 94;
+    return newDate;
+  }
+
+  void createMarker(int idx) {
+    int like = (widget._jsonData["message"][idx]["messageLikenum"] / 5).toInt();
+    int color = 0;
+    markerString =
+        "${widget._jsonData["message"][idx]["userNickname"]}      \u{2764} ${widget._jsonData["message"][idx]["messageLikenum"].toString()}\n${widget._jsonData["message"][idx]["messageText"]}\n${maindata.address[widget._jsonData["message"][idx]["messageId"]] ??= ""}\n${changeDate(widget._jsonData["message"][idx]["messageWritedate"])}";
+
+    if (like >= 45) {
+      like = 44;
     }
 
     if (widget._jsonData["message"][idx]["isBlurred"] == true) {
@@ -92,7 +102,7 @@ class MyFootPageState extends State<MyFootPage> {
         onMarkerTab: (marker, iconSize) {
           print("Hi ${widget._jsonData["message"][idx]["messageId"]}");
         },
-        infoWindow: widget._jsonData["message"][idx]["messageText"]);
+        infoWindow: markerString);
 
     markers.add(marker);
     // update();
@@ -118,7 +128,7 @@ class MyFootPageState extends State<MyFootPage> {
               0.65,
           child: NaverMap(
             onMapCreated: onMapCreated,
-            //onCameraIdle: getMapEdge,
+            // onCameraIdle: getMapEdge,
             minZoom: 5.0,
             markers: markers,
           )),
