@@ -34,7 +34,7 @@ public class Gather {
     @Column(name = "gather_text")
     private String gatherText;
 
-    @Column(name = "event_fileurl", length = 1024)
+    @Column(name = "gather_fileurl", length = 1024)
     private String gatherFileurl;
 
     @CreatedDate
