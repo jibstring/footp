@@ -52,7 +52,6 @@ class MyFootPageState extends State<MyFootPage> {
         _myfootData[i] = widget._jsonData["message"][i];
       }
     }
-    
   }
 
   String changeDate(String date) {
@@ -142,7 +141,7 @@ class MyFootPageState extends State<MyFootPage> {
               color: Colors.white,
               child: ListView.builder(
                   controller: scrollController,
-                  itemCount: _messagelen+1,
+                  itemCount: _messagelen + 1,
                   itemBuilder: (BuildContext context, int index) {
                     if (index < _messagelen) {
                       return NormalFoot(_myfootData[index]);
@@ -194,7 +193,8 @@ class MyFootPageState extends State<MyFootPage> {
       });
     });
   }
-  void initState(){
+
+  void initState() {
     _getImage();
     readFile();
   }
