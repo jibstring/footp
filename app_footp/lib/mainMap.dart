@@ -14,8 +14,8 @@ import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
 import 'package:app_footp/signIn.dart';
-import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/myPage.dart';
+import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
@@ -38,6 +38,7 @@ class MainData extends GetxController {
   dynamic _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
+  Map<int, double> _distances = {};
   Map<int, String> _address = {};
   Map<int, String> _hiddenMessage = {};
 
@@ -53,6 +54,7 @@ class MainData extends GetxController {
   dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
+  Map<int, double> get distances => _distances;
   Map<int, String> get address => _address;
   Map<int, String> get hiddenMessage => _hiddenMessage;
 
@@ -114,6 +116,7 @@ class MainData extends GetxController {
             sin(vect.radians(location.latitude)) *
                 sin(vect.radians(messageLat))));
 
+    _distances[dataList["message"][idx]["messageId"]] = distance;
     if (distance < 0.025) {
       _hiddenMessage[dataList["message"][idx]["messageId"]] =
           dataList["message"][idx]["messageBlurredtext"];
@@ -174,24 +177,13 @@ class MainData extends GetxController {
     }
 
     if (dataList["message"][idx]["isBlurred"] == true) {
-      color = 4;
-    } else {
-      switch (dataList["message"][idx]["messageId"] % 4) {
-        case 0:
-          color = 0;
-          break;
-        case 1:
-          color = 1;
-          break;
-        case 2:
-          color = 2;
-          break;
-        case 3:
-          color = 3;
-          break;
-        default:
-          color = 0;
+      if ((distances[dataList["message"][idx]["messageId"]] ??= 1) < 0.025) {
+        color = 8;
+      } else {
+        color = 7;
       }
+    } else {
+      color = dataList["message"][idx]["messageId"] % 7;
     }
 
     Marker marker = Marker(
@@ -411,7 +403,19 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/golden_print.png',
+        assetName: 'imgs/purple_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/pink_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/red_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
@@ -423,13 +427,25 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/white_print.png',
+        assetName: 'imgs/yellow_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/gray_print.png',
+        assetName: 'imgs/green_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/unknown_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/known_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
