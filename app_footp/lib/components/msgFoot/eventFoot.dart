@@ -230,21 +230,6 @@ class _EventFootState extends State<EventFoot> {
                             )
                           ],
                         )),
-              // 비밀글
-              // (maindata.hiddengather[widget.gathermsg["gatherId"]] != null)
-              //     ? Container(
-              //         height: 50,
-              //         padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-              //         width: width,
-              //         child: Text(
-              //           maindata.hiddengather[
-              //               widget.gathermsg["gatherId"]] ??= "",
-              //           style: const TextStyle(
-              //               fontSize: 15,
-              //               fontWeight: FontWeight.bold,
-              //               color: Colors.grey),
-              //         ))
-              //     : Container(),
               //하단
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

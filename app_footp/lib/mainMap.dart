@@ -86,10 +86,6 @@ class MainData extends GetxController {
     } else {
       _mainDataUrl = Uri.parse('$baseURL/gather/list/$filter/$apiKey');
     }    
-    print("확인해보자자잦URL");
-    print(_mainDataUrl);
-    print("확인해보자자잦INDEX는??");
-    print(index);
 
     _dataList = await getMainData();
 
@@ -107,6 +103,7 @@ class MainData extends GetxController {
         _listsize=0;
       }
     }
+    _markers.clear();
 
     if(index==0){
       for (int i = 0; i < _listsize; i++) {
@@ -115,7 +112,7 @@ class MainData extends GetxController {
           getDistance(i);
         }
         // if 걸어서 숨겨졌는가? 숨겨졌으면 내 위치랑 대조해서 가까운지 확인하는 메소드로 아니면 continue
-        getAddress(index,i,"message","messageLatitude", "messageLongitude", "messageId");
+        //getAddress(index,i,"message","messageLatitude", "messageLongitude", "messageId");
         createMarker(index,i,"message","messageLatitude", "messageLongitude","messageLikenum", "userNickname", "messageId","messageText","messageWritedate");
       }
     }
