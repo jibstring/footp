@@ -376,10 +376,23 @@ class _StampListState extends State<StampList> {
                                       ),
 
                                       // 참가하기 버튼
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        child: Text('참가하기'),
-                                      ),
+                                      _stampList[index]["stampboard_id"] !=
+                                              stampDetail
+                                                  .nowStamp["stampboard_id"]
+                                          ? TextButton(
+                                              child: Text('참가하기'),
+                                              onPressed: () {
+                                                joinStamp(index);
+                                              },
+                                            )
+                                          : TextButton(
+                                              child: Text('참가 취소',
+                                                  style: TextStyle(
+                                                      color: Colors.red)),
+                                              onPressed: () {
+                                                cancleStamp(index);
+                                              },
+                                            ),
 
                                       // 좋아요
                                       Row(
@@ -557,7 +570,7 @@ class _StampListState extends State<StampList> {
     var userId = user.userinfo["userId"];
     var stampboardId = _stampList[index]["stampboard_id"];
 
-    if (stampDetail.nowStamp == null) {
+    if (stampDetail.nowStamp == {}) {
       if (user.isLogin()) {
         var response = await dio.post(
             'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId');

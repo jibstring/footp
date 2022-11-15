@@ -174,44 +174,11 @@ class Category {
 }
 
 class StampDetailInfo extends GetxController {
-  Map _stampDetail = {
-    "stampboard_id": 11,
-    "user_id": 25,
-    "stampboard_title": "ㅇㅇ",
-    "stampboard_text": "하잇",
-    "stampboard_designcode": 6,
-    "stampboard_designurl":
-        "https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame6.png",
-    "stampboard_writedate": "2022-11-12T20:58:59",
-    "stampboard_likenum": 1,
-    "stampboard_spamnum": 0,
-    "stampboard_message1": 69,
-    "stampboard_message2": 106,
-    "stampboard_message3": 107,
-    "isMylike": true,
-    "isMyspam": false,
-    "isMyclear": false
-  };
+  Map _stampDetail = {};
 
-  Map _nowStamp = {
-    "stampboard_id": 13,
-    "user_id": null,
-    "stampboard_title": "",
-    "stampboard_text": "",
-    "stampboard_designcode": '',
-    "stampboard_designurl": "",
-    "stampboard_writedate": "",
-    "stampboard_likenum": 0,
-    "stampboard_spamnum": 0,
-    "stampboard_message1": null,
-    "stampboard_message2": null,
-    "stampboard_message3": null,
-    "isMylike": false,
-    "isMyspam": false,
-    "isMyclear": false
-  };
+  Map _nowStamp = {};
 
-  Map get stampInfo => _stampDetail;
+  Map get stampDetail => _stampDetail;
   Map get nowStamp => _nowStamp;
   set nowStamp(value) => _nowStamp = value;
 }
