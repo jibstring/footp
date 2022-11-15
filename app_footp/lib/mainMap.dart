@@ -15,8 +15,8 @@ import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
 import 'package:app_footp/signIn.dart';
-import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/myPage.dart';
+import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
@@ -39,6 +39,7 @@ class MainData extends GetxController {
   dynamic _mapEdge;
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
+  Map<int, double> _distances = {};
   Map<int, String> _address = {};
   Map<int, String> _hiddenMessage = {};
   bool _attendChat=false;
@@ -56,6 +57,7 @@ class MainData extends GetxController {
   dynamic get mapEdge => _mapEdge;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
+  Map<int, double> get distances => _distances;
   Map<int, String> get address => _address;
   Map<int, String> get hiddenMessage => _hiddenMessage;
 
@@ -75,7 +77,7 @@ class MainData extends GetxController {
       int index, String userid, String lngR, String lngL, String latD, String latU) async {
     if (count > 30) {
       markers.clear();
-      address.clear();
+      // address.clear();
       sleep(const Duration(milliseconds: 500));
       _count = 0;
     }
@@ -102,7 +104,7 @@ class MainData extends GetxController {
       }catch(e){
         _listsize=0;
       }
-    }
+
     _markers.clear();
 
     if(index==0){
@@ -151,7 +153,7 @@ class MainData extends GetxController {
             sin(vect.radians(location.latitude)) *
                 sin(vect.radians(messageLat))));
 
-    // print(dataList["message"][idx]["messageBlurredtext"]);
+    _distances[dataList["message"][idx]["messageId"]] = distance;
     if (distance < 0.025) {
       _hiddenMessage[dataList["message"][idx]["messageId"]] =
           dataList["message"][idx]["messageBlurredtext"];
@@ -211,6 +213,7 @@ class MainData extends GetxController {
       like = 44;
     }
 
+<<<<<<< app_footp/lib/mainMap.dart
     if (type==0 && dataList[messageType][idx]["isBlurred"] == true) {
       color = 4;
     } else {
@@ -229,7 +232,16 @@ class MainData extends GetxController {
           break;
         default:
           color = 0;
+=======
+    if (dataList["message"][idx]["isBlurred"] == true) {
+      if ((distances[dataList["message"][idx]["messageId"]] ??= 1) < 0.025) {
+        color = 8;
+      } else {
+        color = 7;
+>>>>>>> app_footp/lib/mainMap.dart
       }
+    } else {
+      color = dataList["message"][idx]["messageId"] % 7;
     }
 
     Marker marker = Marker(
@@ -240,7 +252,11 @@ class MainData extends GetxController {
         width: 5 * (6 + like),
         height: 5 * (6 + like),
         onMarkerTab: (marker, iconSize) {
+<<<<<<< app_footp/lib/mainMap.dart
           print("Hi ${dataList[messageType][idx][messageId]}");
+=======
+          // print("Hi ${dataList["message"][idx]["messageId"]}");
+>>>>>>> app_footp/lib/mainMap.dart
         },
         infoWindow: markerString);
 
@@ -252,10 +268,6 @@ class MainData extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
-
-        // markers.clear();
-        // address.clear();
-        // sleep(const Duration(milliseconds: 500));
       });
     });
     update();
@@ -457,7 +469,19 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/golden_print.png',
+        assetName: 'imgs/purple_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/pink_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/red_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
@@ -469,13 +493,25 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/white_print.png',
+        assetName: 'imgs/yellow_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/gray_print.png',
+        assetName: 'imgs/green_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/unknown_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/known_print.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
@@ -524,13 +560,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   maindata.mapEdge.southwest.latitude.toString(),
                   maindata.mapEdge.northeast.latitude.toString());
             }
-            markers = maindata.markers;
-            // print(maindata.mapEdge.northeast.longitude.toString());
-            // print(maindata.mapEdge.southwest.longitude.toString());
-            // print(maindata.mapEdge.southwest.latitude.toString());
-            // print(maindata.mapEdge.northeast.latitude.toString());
+            switch (_selectedIndex) {
+              case 0:
+                markers = maindata.markers;
+                break;
+              case 1:
+                markers = maindata.markers;
+                break;
+              case 2:
+                markers = maindata.markers;
+                break;
+              default:
+                markers = maindata.markers;
+            }
           }
-          // print(maindata.address);
         });
       }
     });

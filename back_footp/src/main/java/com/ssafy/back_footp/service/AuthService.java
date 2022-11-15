@@ -2,8 +2,14 @@ package com.ssafy.back_footp.service;
 
 import com.ssafy.back_footp.entity.User;
 
+import com.ssafy.back_footp.jwt.JwtService;
+import com.ssafy.back_footp.request.KakaoLoginReq;
+import com.ssafy.back_footp.response.KakaoLoginResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.back_footp.entity.Mail;
@@ -16,14 +22,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+	private static final String SUCCESS = "success";
+	private static final String FAIL = "fail";
+
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	ClientKakao clientKakao;
+
+	@Autowired
+	JwtService jwtService;
 
 	@Transactional
 	public int createUser(User user) {
@@ -157,7 +174,7 @@ public class AuthService {
 		return userRepository.findByUserId(userid);
 	}
 	
-	public void KeepLogin(long uid, String sessionId, Date next) {
+	public void KeepLogin(long uid, String sessionId, LocalDateTime next) {
 		userRepository.keepLogin(uid, sessionId, next);
 	}
 	
@@ -165,4 +182,35 @@ public class AuthService {
 		return userRepository.checkUserWithSessionKey(sessionId);
 	}
 
+	@Transactional
+	public KakaoLoginResponse kakaoLogin(KakaoLoginReq kakaoLoginReq) {
+		User kakaoUser = clientKakao.getUserData(kakaoLoginReq.getAccessToken());
+		String socialEmail = kakaoUser.getUserEmail();
+		User usr = userRepository.findByUserEmail(socialEmail).orElse(null);
+
+		String appToken = jwtService.create("userid", kakaoUser.getUserId(), "Authorization");
+
+		if(usr == null) {
+			System.out.println("새 유저 등록: "+ kakaoUser.getUserNickname());
+			kakaoUser.setUserSocial((long)2);
+			kakaoUser.setUserPassword("");
+			kakaoUser.setUserCash(0);
+			kakaoUser.setUserEmailKey("N");
+			kakaoUser.setUserAutologin(false);
+			kakaoUser.setUserSessionkey("none");
+			kakaoUser.setUserIsplaying((long)-1);
+			kakaoUser.setUserStampclearnum(0);
+			kakaoUser.setUserStampcreatenum(0);
+			kakaoUser.setUserNickname(kakaoUser.getUserNickname());
+			createUser(kakaoUser);
+		}
+
+		System.out.println("로그인 성공: "+ kakaoUser.getUserNickname());
+
+		return KakaoLoginResponse.builder()
+				.appToken(appToken)
+				.user(userRepository.findByUserEmail(socialEmail).get())
+				.isNewMember(usr == null)
+				.build();
+	}
 }

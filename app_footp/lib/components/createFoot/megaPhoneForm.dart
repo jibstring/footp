@@ -15,8 +15,8 @@ import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:scaled_list/scaled_list.dart';
-import 'package:card_swiper/card_swiper.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:banner_carousel/banner_carousel.dart';
+
 
 final List<String> imgList = [
   "asset/band.png",
@@ -43,7 +43,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
   UserData user = Get.put(UserData());
   var _timeresult = "종료 시간 설정";
   var _timeresultindex;
-  var _categoryresult = "카테고리 설정";
+  var _categoryresult = "슬라이드로 카테고리 설정";
   var _categoryindex;
 
   addtime() {
@@ -96,67 +96,6 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
           return addDate.toString();
         }
     }
-  }
-
-  Future<void> _categorieselect(BuildContext context) async {
-    return showDialog<void>(
-        context: context,
-        // 사용자가 다이얼로그 바깥을 터치하면 닫히지 않음
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.blue[100],
-            title: Text(
-              "카테고리 설정",
-              style: TextStyle(color: Colors.blue[900]),
-            ),
-            content: Container(
-              height: 400,
-              width: 300,
-              child: ScaledList(
-                  unSelectedCardHeightRatio: 0.4,
-                  selectedCardHeightRatio: 0.7,
-                  itemBuilder: (index, selectedIndex) {
-                    final category = categories[index];
-                    _categoryindex = selectedIndex;
-                    _categoryresult = categories[selectedIndex].name;
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: selectedIndex == index ? 100 : 80,
-                          child: Image.asset(category.image),
-                        ),
-                        SizedBox(height: 15),
-                        Text(
-                          category.name,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: selectedIndex == index ? 25 : 20),
-                        )
-                      ],
-                    );
-                  },
-                  itemCount: categories.length,
-                  itemColor: (index) {
-                    return kMixedColors[index % kMixedColors.length];
-                  }),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('확인'),
-                onPressed: () {
-                  // 다이얼로그 닫기
-                  setState(() {
-                    _categoryindex = _categoryindex;
-                    _categoryresult = _categoryresult;
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
   }
 
   Future<void> _neverSatisfied(BuildContext context) async {
@@ -217,23 +156,14 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         });
   }
 
-  final List<Color> kMixedColors = [
-    Color(0xff71A5D7),
-    Color(0xff72CCD4),
-    Color(0xffFBAB57),
-    Color(0xffF8B993),
-    Color(0xff962D17),
-    Color(0xffc657fb),
-    Color(0xfffb8457),
-  ];
 
-  final List<Category> categories = [
-    Category(image: "asset/band.png", name: "공연"),
-    Category(image: "asset/band.png", name: "맛집"),
-    Category(image: "asset/band.png", name: "행사"),
-    Category(image: "asset/band.png", name: "관광"),
-    Category(image: "asset/band.png", name: "친목"),
-  ];
+  List<BannerModel> listBanners = [
+    BannerModel(imagePath: "asset/catagories_band.png", id: "공연"),
+    BannerModel(imagePath: "asset/catagories_event.png", id: "행사"),
+    BannerModel(imagePath: "asset/catagories_food.png", id: "맛집"),
+    BannerModel(imagePath: "asset/catagories_travel.png", id: "관광"),
+    BannerModel(imagePath: "asset/catagories_friend.png", id: "친목"),
+];
 
   @override
   Widget build(BuildContext context) {
@@ -245,10 +175,32 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        SizedBox(height: 40),
+        SizedBox(height: 20),
+        BannerCarousel(
+          banners: listBanners,
+          customizedIndicators: IndicatorModel.animation(
+              width: 20, height: 5, spaceBetween: 2, widthAnimation: 50),
+          height: 150,
+          activeColor: Colors.blue[200],
+          disableColor: Colors.white,
+          animation: true,
+          borderRadius: 10,
+          width: 250,
+          indicatorBottom: false,
+          onPageChanged:(value) {
+            setState(() {
+              _categoryindex=value;
+              _categoryresult=listBanners[value].id;
+            });
+          },
+        ),
+
+        SizedBox(height: 20),
+        Text("$_categoryresult",style: TextStyle(fontSize: 20,color: Colors.blue),),
+        SizedBox(height: 20),
 
         TextField(
-          maxLines: 7,
+          maxLines: 6,
           decoration: InputDecoration(
             border: const OutlineInputBorder(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -259,7 +211,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
           controller: myMegaText,
         ),
         Container(
-          height: 170,
+          height: 120,
           width: 400,
           decoration: BoxDecoration(
             border: Border.all(
@@ -347,19 +299,19 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
             ],
           ),
         ),
-        SizedBox(height: 40),
+        SizedBox(height: 20),
         CupertinoButton(
           child: Text("$_timeresult"),
           onPressed: () {
             _neverSatisfied(context);
           },
         ),
-        CupertinoButton(
-          child: Text("$_categoryresult"),
-          onPressed: () {
-            _categorieselect(context);
-          },
-        ),
+        // CupertinoButton(
+        //   child: Text("$_categoryresult"),
+        //   onPressed: () {
+        //     _categorieselect(context);
+        //   },
+        // ),
         // Text("$_timeresult"),
         Container(
             child: IconButton(

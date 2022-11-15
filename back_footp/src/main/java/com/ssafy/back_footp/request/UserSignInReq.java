@@ -10,4 +10,6 @@ public class UserSignInReq {
 	private String userEmail;
 	
 	private String userPassword;
+	
+	private Boolean userAutologin; 
 }

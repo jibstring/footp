@@ -51,8 +51,7 @@ dependencies:
   audioplayers: ^1.1.1
   just_audio: ^0.9.30
   scaled_list: ^2.0.0
-  card_swiper: ^2.0.4
-  carousel_slider: ^4.1.1
+  banner_carousel: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +83,12 @@ flutter:
     - asset/normalfoot.png
     - asset/megaphone.png
     - asset/band.png
+    - asset/catagories_band.png
+    - asset/catagories_event.png
+    - asset/catagories_food.png
+    - asset/catagories_friend.png
+    - asset/catagories_travel.png
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
