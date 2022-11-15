@@ -2,6 +2,7 @@ package com.ssafy.back_footp.service;
 
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.response.KakaoUserResponse;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,7 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class ClientKakao{
-    private final WebClient webClient;
+    private final WebClient webClient = WebClient.create();
 
     public User getUserData(String accessToken) {
         KakaoUserResponse kakaoUserResponse = webClient.get()
@@ -22,6 +23,8 @@ public class ClientKakao{
                 .onStatus(HttpStatus::is5xxServerError, response -> Mono.error((Throwable) null))
                 .bodyToMono(KakaoUserResponse.class)
                 .block();
+
+        System.out.println(kakaoUserResponse.toString());
 
         return User.builder()
                 .userEmail(kakaoUserResponse.getKakaoAccount().getEmail())

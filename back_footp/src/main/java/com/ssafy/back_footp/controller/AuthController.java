@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import io.swagger.annotations.ApiResponse;
+import com.ssafy.back_footp.request.KakaoLoginReq;
+import com.ssafy.back_footp.response.KakaoLoginResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -332,7 +332,38 @@ public class AuthController {
 	// kakao 소셜 로그인
 	@ApiOperation(value = "Kakao 로그인")
 	@PostMapping(value = "/kakao")
-	public ResponseEntity<AuthResponse> kakaoAuthRequest(@RequestBody AuthRequest authRequest){
-		return ApiResponse.success(authService.kakaoLogin(authRequest));
+	public ResponseEntity<Map<String, Object>> kakaoAuthRequest(@RequestBody KakaoLoginReq kakaoLoginReq, HttpSession session, HttpServletResponse response){
+		Map<String, Object> result = new HashMap<>();
+		HttpStatus status = null;
+
+		try {
+			KakaoLoginResponse kakaoLoginResponse = authService.kakaoLogin(kakaoLoginReq);
+
+			result.put("Authorization", kakaoLoginResponse.getAppToken());
+			result.put("message", SUCCESS);
+			status = HttpStatus.ACCEPTED;
+
+			User loginUser = kakaoLoginResponse.getUser();
+
+			if(loginUser.getUserAutologin()) {
+
+				Cookie cookie = new Cookie( "loginCookie", session.getId());
+				cookie.setPath("/");
+				cookie.setMaxAge(60*60*24*30);
+
+				response.addCookie(cookie);
+
+				Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+				authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			logger.error("로그인 에러 : {}", e);
+			result.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Map<String, Object>>(result, status);
 	}
 }

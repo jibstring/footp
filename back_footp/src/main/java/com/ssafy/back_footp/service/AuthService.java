@@ -3,6 +3,8 @@ package com.ssafy.back_footp.service;
 import com.ssafy.back_footp.entity.User;
 
 import com.ssafy.back_footp.jwt.JwtService;
+import com.ssafy.back_footp.request.KakaoLoginReq;
+import com.ssafy.back_footp.response.KakaoLoginResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -181,21 +183,34 @@ public class AuthService {
 	}
 
 	@Transactional
-	public ResponseEntity<Map<String, Object>> kakaoLogin(KakaoLoginReq kakaoLoginReq) {
+	public KakaoLoginResponse kakaoLogin(KakaoLoginReq kakaoLoginReq) {
 		User kakaoUser = clientKakao.getUserData(kakaoLoginReq.getAccessToken());
 		String socialEmail = kakaoUser.getUserEmail();
-		User usr = userRepository.findByUserEmail(socialEmail).get();
+		User usr = userRepository.findByUserEmail(socialEmail).orElse(null);
 
 		String appToken = jwtService.create("userid", kakaoUser.getUserId(), "Authorization");
 
 		if(usr == null) {
+			System.out.println("새 유저 등록: "+ kakaoUser.getUserNickname());
 			kakaoUser.setUserSocial((long)2);
+			kakaoUser.setUserPassword("");
+			kakaoUser.setUserCash(0);
+			kakaoUser.setUserEmailKey("N");
+			kakaoUser.setUserAutologin(false);
+			kakaoUser.setUserSessionkey("none");
+			kakaoUser.setUserIsplaying((long)-1);
+			kakaoUser.setUserStampclearnum(0);
+			kakaoUser.setUserStampcreatenum(0);
 			kakaoUser.setUserNickname(kakaoUser.getUserNickname());
 			createUser(kakaoUser);
 		}
-		Map<String, Object> result = new HashMap<>();
-		result.put("Authorization", appToken);
-		result.put("message", SUCCESS);
-		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.ACCEPTED);
+
+		System.out.println("로그인 성공: "+ kakaoUser.getUserNickname());
+
+		return KakaoLoginResponse.builder()
+				.appToken(appToken)
+				.user(userRepository.findByUserEmail(socialEmail).get())
+				.isNewMember(usr == null)
+				.build();
 	}
 }
