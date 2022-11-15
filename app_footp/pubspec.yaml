@@ -29,13 +29,29 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  geolocator: ^9.0.2
   flutter:
     sdk: flutter
-
+  dio: ^4.0.6
+  numberpicker: ^2.1.1
+  file_picker: ^3.0.3
+  http: ^0.13.5
+  form_data: ^0.0.1-nullsafety.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  naver_map_plugin:
+    git: https://github.com/LBSTECH/naver_map_plugin.git
+  get:
+  fluttertoast: ^8.0.7
+  stomp_dart_client: ^0.4.4
+  chewie: ^1.3.5
+  video_player: ^2.4.7
+  audioplayers: ^1.1.1
+  just_audio: ^0.9.30
+  scaled_list: ^2.0.0
+  banner_carousel: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -60,8 +76,19 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - imgs/
+    - asset/
+    - asset/eventfoot.png
+    - asset/normalfoot.png
+    - asset/megaphone.png
+    - asset/band.png
+    - asset/catagories_band.png
+    - asset/catagories_event.png
+    - asset/catagories_food.png
+    - asset/catagories_friend.png
+    - asset/catagories_travel.png
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -76,6 +103,15 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
+  #     - family : edu
+  #       fonts :
+  #         - asset: assets/font/gangwoneduallLight.ttf
+  #           weight: 300
+  #         - asset: assets/font/gangwoneduallBold.ttf
+  #           weight: 700
+        
+
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

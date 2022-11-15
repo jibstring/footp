@@ -1,18 +1,21 @@
 package com.ssafy.back_footp.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="MessageSpam")
+@Table(name="messagespam")
 public class MessageSpam {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="messagespam_id")
