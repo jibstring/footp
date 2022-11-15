@@ -104,6 +104,7 @@ class MainData extends GetxController {
       }catch(e){
         _listsize=0;
       }
+    }
 
     _markers.clear();
 
