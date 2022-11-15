@@ -93,6 +93,26 @@ public class AuthController {
 
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
+	
+	
+//	@PostMapping("/autoCheck")
+//	@ApiOperation(value = "오토로그인 박스체크")
+//	public ResponseEntity<Integer> autoCheck(@RequestBody UserSignInReq user){
+//		
+//		if(userRepository.existsByUserEmail(user.getUserEmail())) {
+//		
+//		User userInfo = userRepository.findByUserEmailAndUserPassword(user.getUserEmail(), user.getUserPassword());
+//		
+//		userInfo.setUserAutologin(true);
+//		
+//		userRepository.save(userInfo);
+//		}
+//		
+//		return
+//		
+//		
+//		
+//	}
 
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인")
@@ -113,7 +133,7 @@ public class AuthController {
 				result.put("message", SUCCESS);
 				status = HttpStatus.ACCEPTED;
 				
-				if(loginUser.getUserAutologin()) {
+				if(user.getUserAutologin()) {
 					
 					Cookie cookie = new Cookie( "loginCookie", session.getId());
 					cookie.setPath("/");
@@ -121,8 +141,13 @@ public class AuthController {
 					
 					response.addCookie(cookie);
 					
-					Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+					LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
+					System.out.println(loginUser.getUserId()+" "+ session.getId()+ " " + sessionLimit);
 					authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
+					
+					loginUser.setUserAutologin(true);
+					
+					userRepository.save(loginUser);
 				}
 				
 			} else {
@@ -176,7 +201,7 @@ public class AuthController {
 				loginCookie.setMaxAge(0);
 				response.addCookie(loginCookie);
 				
-				Date date = new Date(System.currentTimeMillis());
+				LocalDateTime date = LocalDateTime.now();
 				authService.KeepLogin(user.getUserId(), session.getId(), date);
 			}
 		} else {
@@ -353,7 +378,7 @@ public class AuthController {
 
 				response.addCookie(cookie);
 
-				Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+				LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
 				authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
 			}
 		}

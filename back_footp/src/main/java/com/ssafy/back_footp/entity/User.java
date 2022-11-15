@@ -1,6 +1,8 @@
 package com.ssafy.back_footp.entity;
 
+import java.security.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -78,7 +80,7 @@ public class User {
 	@Column(name = "user_autologin", columnDefinition = "TINYINT", length = 1)
 	private Boolean userAutologin;
 	
-	@Column(name = "user_sessionkey", nullable = false, columnDefinition = "varchar(50) default 'none'")
+	@Column(name = "user_sessionkey", nullable = false)
 	private String userSessionkey;
 	
 	@Column(name = "user_sessionlimit")

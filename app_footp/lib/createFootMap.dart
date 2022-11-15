@@ -143,8 +143,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print('########################################');
     if (response.toString() == "success") {
       Fluttertoast.showToast(msg: "확성기를 설치했습니다");
-    }
-    else if(response.toString() == "No Cash"){
+    } else if (response.toString() == "No Cash") {
       Fluttertoast.showToast(msg: "포인트를 충전하세요");
     }
 
