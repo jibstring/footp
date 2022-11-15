@@ -16,5 +16,8 @@ public interface UserJoinedGatherRepository extends JpaRepository<UserJoinedGath
     @Transactional
     public void deleteByUserIdAndGatherId(User uid, Gather gid);
 
+    @Transactional
+    public void deleteAllByGatherId(Gather gid);
+
     public boolean existsByUserIdAndGatherId(User uid, Gather gid);
 }
