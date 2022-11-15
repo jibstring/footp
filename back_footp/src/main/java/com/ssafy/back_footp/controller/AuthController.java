@@ -378,7 +378,7 @@ public class AuthController {
 
 				response.addCookie(cookie);
 
-				Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+				LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
 				authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
 			}
 		}
