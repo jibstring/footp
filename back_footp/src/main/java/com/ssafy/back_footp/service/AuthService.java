@@ -157,7 +157,7 @@ public class AuthService {
 		return userRepository.findByUserId(userid);
 	}
 	
-	public void KeepLogin(long uid, String sessionId, Date next) {
+	public void KeepLogin(long uid, String sessionId, LocalDateTime next) {
 		userRepository.keepLogin(uid, sessionId, next);
 	}
 	

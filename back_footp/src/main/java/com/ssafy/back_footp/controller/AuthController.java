@@ -140,10 +140,11 @@ public class AuthController {
 					
 					response.addCookie(cookie);
 					
-					Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+					LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
+					System.out.println(loginUser.getUserId()+" "+ session.getId()+ " " + sessionLimit);
 					authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
 					
-					loginUser.setUserAutologin(user.getUserAutologin());
+					loginUser.setUserAutologin(true);
 					
 					userRepository.save(loginUser);
 				}
@@ -199,7 +200,7 @@ public class AuthController {
 				loginCookie.setMaxAge(0);
 				response.addCookie(loginCookie);
 				
-				Date date = new Date(System.currentTimeMillis());
+				LocalDateTime date = LocalDateTime.now();
 				authService.KeepLogin(user.getUserId(), session.getId(), date);
 			}
 		} else {

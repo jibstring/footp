@@ -11,5 +11,5 @@ public class UserSignInReq {
 	
 	private String userPassword;
 	
-	private Boolean userAutologin;
+	private Boolean userAutologin; 
 }
