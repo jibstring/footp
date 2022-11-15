@@ -170,6 +170,11 @@ public class UserService {
 
     public String deleteGather(long gid) {
         Gather gather = gatherRepository.findById(gid).get();
+
+        gatherLikeRepository.deleteAllByGatherId(gather);
+        gatherSpamRepository.deleteAllByGatherId(gather);
+        userJoinedGatherRepository.deleteAllByGatherId(gather);
+
         gatherRepository.delete(gather);
 
         return "success";
