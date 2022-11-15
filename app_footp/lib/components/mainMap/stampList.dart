@@ -36,9 +36,6 @@ class _StampListState extends State<StampList> {
     super.initState();
     loadStampList();
     loadJoinStamp();
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    print(stampDetail.nowStamp);
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
   }
 
   @override
@@ -447,9 +444,6 @@ class _StampListState extends State<StampList> {
                 )),
               ],
             ));
-        /*
-                  상세페이지 조회
-                  */
       },
     );
   }
@@ -570,11 +564,24 @@ class _StampListState extends State<StampList> {
     var userId = user.userinfo["userId"];
     var stampboardId = _stampList[index]["stampboard_id"];
 
-    if (stampDetail.nowStamp == {}) {
+    if (stampDetail.nowStamp["stampboard_id"] == null) {
       if (user.isLogin()) {
-        var response = await dio.post(
-            'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId');
-        stampDetail.nowStamp = response.data;
+        await dio
+            .post(
+                'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId')
+            .then((res) {
+          stampDetail.nowStamp = res.data;
+        }).then((res) {
+          Fluttertoast.showToast(
+              msg: '새로운 스탬푸를 시작했습니다.',
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Colors.lightGreenAccent,
+              fontSize: 20.0,
+              textColor: Colors.white,
+              toastLength: Toast.LENGTH_SHORT);
+        }).catchError((e) {
+          print(e);
+        });
       } else {
         Navigator.push(
           context,
@@ -603,9 +610,19 @@ class _StampListState extends State<StampList> {
   void cancleStamp(int index) async {
     var dio = DIO.Dio();
     var userId = user.userinfo["userId"];
-    var response =
-        await dio.delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId');
-    stampDetail.nowStamp = {};
+    await dio
+        .delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId')
+        .then((res) {
+      stampDetail.nowStamp = {};
+    }).then((res) {
+      Fluttertoast.showToast(
+          msg: '스탬푸 참가를 취소하였습니다.',
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.redAccent,
+          fontSize: 20.0,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    });
   }
 
   // 현재 참가 중인 스탬푸 조회하기
