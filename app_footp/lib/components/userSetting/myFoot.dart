@@ -33,8 +33,8 @@ class MyFootPageState extends State<MyFootPage> {
   List<Marker> markers = [];
 
   void readFile() {
-    // print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
-    // print(widget._jsonData);
+    print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
+    print(widget._jsonData);
 
     try {
       _messagelen = widget._jsonData["message"].length;
@@ -47,11 +47,12 @@ class MyFootPageState extends State<MyFootPage> {
     for (int i = 0; i < _messagelen; i++) {
       if (_myfootData.length <= i) {
         _myfootData.add(widget._jsonData["message"][i]);
+        createMarker(i);
       } else {
         _myfootData[i] = widget._jsonData["message"][i];
       }
-      createMarker(i);
     }
+    
   }
 
   String changeDate(String date) {
@@ -118,8 +119,6 @@ class MyFootPageState extends State<MyFootPage> {
   // 목록
   @override
   Widget build(BuildContext context) {
-    _getImage();
-    readFile();
     return SizedBox.expand(
         child: Stack(children: <Widget>[
       Container(
@@ -133,8 +132,8 @@ class MyFootPageState extends State<MyFootPage> {
             markers: markers,
           )),
       DraggableScrollableSheet(
-        initialChildSize: 0.3,
-        minChildSize: 0.3,
+        initialChildSize: 0.5,
+        minChildSize: 0.5,
         maxChildSize: 1,
         snap: true,
         // controller: listmaker.listcontroller,
@@ -143,7 +142,7 @@ class MyFootPageState extends State<MyFootPage> {
               color: Colors.white,
               child: ListView.builder(
                   controller: scrollController,
-                  itemCount: _messagelen,
+                  itemCount: _messagelen+1,
                   itemBuilder: (BuildContext context, int index) {
                     if (index < _messagelen) {
                       return NormalFoot(_myfootData[index]);
@@ -194,5 +193,9 @@ class MyFootPageState extends State<MyFootPage> {
         if (mounted) setState(() => _footImage.add(image));
       });
     });
+  }
+  void initState(){
+    _getImage();
+    readFile();
   }
 }
