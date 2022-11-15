@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:stomp_dart_client/stomp.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 
@@ -25,6 +26,7 @@ MyPosition location = Get.put(MyPosition());
 
 class MainData extends GetxController {
   var _dataList;
+  int _count = 0;
   int _listsize = 0;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
@@ -36,8 +38,10 @@ class MainData extends GetxController {
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
   Map<int, String> _address = {};
+  Map<int, String> _hiddenMessage = {};
 
   get dataList => _dataList;
+  int get count => _count;
   int get listsize => _listsize;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
@@ -49,6 +53,7 @@ class MainData extends GetxController {
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
   Map<int, String> get address => _address;
+  Map<int, String> get hiddenMessage => _hiddenMessage;
 
   set fixFilter(String filter) {
     _filter = filter;
@@ -60,6 +65,12 @@ class MainData extends GetxController {
 
   void getURL(
       String userid, String lngR, String lngL, String latD, String latU) async {
+    if (count > 30) {
+      markers.clear();
+      address.clear();
+      sleep(const Duration(milliseconds: 500));
+      _count = 0;
+    }
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
     _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
 
@@ -69,13 +80,14 @@ class MainData extends GetxController {
     for (int i = 0; i < _listsize; i++) {
       // print(dataList["message"][i]);
       if (_dataList["message"][i]["isBlurred"] == true) {
-        getDistance();
+        getDistance(i);
       }
       // if 걸어서 숨겨졌는가? 숨겨졌으면 내 위치랑 대조해서 가까운지 확인하는 메소드로 아니면 continue
       getAddress(i);
       createMarker(i);
     }
 
+    _count++;
     update();
   }
 
@@ -91,7 +103,27 @@ class MainData extends GetxController {
     }
   }
 
-  void getDistance() {}
+  void getDistance(int idx) {
+    double messageLat = dataList["message"][idx]["messageLatitude"];
+    double messageLng = dataList["message"][idx]["messageLongitude"];
+
+    double distance = (6371 *
+        acos(cos(vect.radians(location.latitude)) *
+                cos(vect.radians(messageLat)) *
+                cos(vect.radians(messageLng) -
+                    vect.radians(location.longitude)) +
+            sin(vect.radians(location.latitude)) *
+                sin(vect.radians(messageLat))));
+
+    // print(dataList["message"][idx]["messageBlurredtext"]);
+    if (distance < 0.025) {
+      _hiddenMessage[dataList["message"][idx]["messageId"]] =
+          dataList["message"][idx]["messageBlurredtext"];
+    } else {
+      _hiddenMessage[dataList["message"][idx]["messageId"]] = "";
+    }
+    update();
+  }
 
   void getAddress(int idx) async {
     String lat = dataList["message"][idx]["messageLatitude"].toString();
@@ -137,7 +169,7 @@ class MainData extends GetxController {
     int like = (dataList["message"][idx]["messageLikenum"] / 5).toInt();
     int color = 0;
     _markerString =
-        "${dataList["message"][idx]["userNickname"]}      \u{2764} ${dataList["message"][idx]["messageLikenum"].toString()}\n${dataList["message"][idx]["messageText"]}\n${maindata.address[dataList["message"][idx]["messageId"]] ??= ""}\n${changeDate(dataList["message"][idx]["messageWritedate"])}";
+        "${dataList["message"][idx]["userNickname"]}      \u{2764} ${dataList["message"][idx]["messageLikenum"].toString()}\n${dataList["message"][idx]["messageText"]}\n${hiddenMessage[dataList["message"][idx]["messageId"]] ??= ""}\n${address[dataList["message"][idx]["messageId"]] ??= ""}\n${changeDate(dataList["message"][idx]["messageWritedate"])}";
 
     if (like >= 45) {
       like = 44;
@@ -185,9 +217,9 @@ class MainData extends GetxController {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
 
-        markers.clear();
+        // markers.clear();
         // address.clear();
-        sleep(const Duration(milliseconds: 500));
+        // sleep(const Duration(milliseconds: 500));
       });
     });
     update();
@@ -231,6 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
   UserData user = Get.put(UserData());
   int _selectedIndex = 0;
   List<Marker> markers = [];
+  DateTime? currentBackPressTime;
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -244,109 +277,115 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Image.asset('imgs/logo.png', height: 45),
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.account_circle,
-              color: Color.fromARGB(255, 153, 181, 229),
-              size: 40,
-            ),
-            padding: const EdgeInsets.only(top: 5.0, right: 20.0),
-            onPressed: () {
-              if (!user.isLogin()) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignIn()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyPage()),
-                );
-              }
-            },
+    return WillPopScope(
+        onWillPop: () async {
+          bool result = onWillPop();
+          return await Future.value(result);
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Image.asset('imgs/logo.png', height: 45),
+            backgroundColor: Colors.white,
+            centerTitle: true,
+            elevation: 0,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.account_circle,
+                  color: Color.fromARGB(255, 153, 181, 229),
+                  size: 40,
+                ),
+                padding: const EdgeInsets.only(top: 5.0, right: 20.0),
+                onPressed: () {
+                  if (!user.isLogin()) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignIn()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MyPage()),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SizedBox.expand(
-          child: Stack(children: <Widget>[
-        Container(
-            height: (MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top) *
-                0.65,
-            child: NaverMap(
-                onMapCreated: _onMapCreated,
-                onCameraIdle: maindata.getMapEdge,
-                minZoom: 5.0,
-                locationButtonEnable: true,
-                initLocationTrackingMode: LocationTrackingMode.Follow,
-                markers: markers,
-                circles: [
-                  CircleOverlay(
-                      overlayId: "radius25",
-                      center: LatLng(location.latitude, location.longitude),
-                      radius: 25,
-                      color: Colors.transparent,
-                      outlineColor: Colors.orangeAccent,
-                      outlineWidth: 1)
-                ])),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: IconButton(
-            icon: Icon(
-              Icons.add_circle,
-              color: Color.fromARGB(255, 153, 181, 229),
-              size: 55,
-            ),
-            padding: EdgeInsets.only(
-                right: 50.0,
-                bottom: (MediaQuery.of(context).size.height -
+          body: SizedBox.expand(
+              child: Stack(children: <Widget>[
+            Container(
+                height: (MediaQuery.of(context).size.height -
                         MediaQuery.of(context).padding.top) *
-                    0.35),
-            onPressed: () {
-              if (!user.isLogin()) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignIn()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateFoot()),
-                );
-              }
-            },
-          ),
-        ),
-        widgetOptions.elementAt(_selectedIndex),
-        Align(
-            alignment: Alignment.bottomCenter,
-            child: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.list),
-                  label: 'List',
+                    0.65,
+                child: NaverMap(
+                    onMapCreated: _onMapCreated,
+                    onCameraIdle: maindata.getMapEdge,
+                    minZoom: 5.0,
+                    locationButtonEnable: true,
+                    initLocationTrackingMode: LocationTrackingMode.Follow,
+                    markers: markers,
+                    circles: [
+                      CircleOverlay(
+                          overlayId: "radius25",
+                          center: LatLng(location.latitude, location.longitude),
+                          radius: 25,
+                          color: Colors.transparent,
+                          outlineColor: Colors.orangeAccent,
+                          outlineWidth: 1)
+                    ])),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: Color.fromARGB(255, 153, 181, 229),
+                  size: 55,
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.location_pin),
-                  label: 'Alarm',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.linear_scale),
-                  label: 'Stamp',
-                )
-              ],
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            )),
-      ])),
-    );
+                padding: EdgeInsets.only(
+                    right: 50.0,
+                    bottom: (MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.35),
+                onPressed: () {
+                  if (!user.isLogin()) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignIn()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateFoot()),
+                    );
+                  }
+                },
+              ),
+            ),
+            widgetOptions.elementAt(_selectedIndex),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.list),
+                      label: 'List',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.location_pin),
+                      label: 'Alarm',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.linear_scale),
+                      label: 'Stamp',
+                    )
+                  ],
+                  currentIndex: _selectedIndex,
+                  onTap: _onItemTapped,
+                )),
+          ])),
+        ));
   }
 
   void _onItemTapped(int index) {
@@ -403,6 +442,22 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      Fluttertoast.showToast(
+          msg: "뒤로가기 버튼을 한번 더 누르면 종료됩니다.",
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: const Color(0xff6E6E6E),
+          fontSize: 10,
+          toastLength: Toast.LENGTH_SHORT);
+      return false;
+    }
+    return true;
+  }
+
   void initState() {
     _getImage();
     super.initState();
@@ -410,17 +465,6 @@ class _MyHomePageState extends State<MyHomePage> {
       if (mounted) {
         setState(() {
           location.getCurrentLocation();
-          // aLat, aLng는 임의로 생성한 메세지 위치, aDistance는 현재 위치에서 임의 메세지까지의 거리
-          // double aLat = 37.5015;
-          // double aLng = 127.0395;
-          // double aDistance = (6371 *
-          //     acos(cos(vect.radians(location.latitude)) *
-          //             cos(vect.radians(aLat)) *
-          //             cos(vect.radians(aLng) - vect.radians(location.longitude)) +
-          //         sin(vect.radians(location.latitude)) *
-          //             sin(vect.radians(aLat))));
-          // print(
-          //     "wow ${location.latitude} / ${location.longitude} / ${aDistance}");
           if (maindata.mapEdge != null) {
             if (!user.isLogin()) {
               // User ID는 null, 추후 수정
@@ -439,6 +483,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   maindata.mapEdge.northeast.latitude.toString());
             }
             markers = maindata.markers;
+            // print(maindata.mapEdge.northeast.longitude.toString());
+            // print(maindata.mapEdge.southwest.longitude.toString());
+            // print(maindata.mapEdge.southwest.latitude.toString());
+            // print(maindata.mapEdge.northeast.latitude.toString());
           }
           // print(maindata.address);
         });
