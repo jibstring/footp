@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class KakaoLoginReq {
 
-    private String accessToken;
+    private String access_token;
 }
