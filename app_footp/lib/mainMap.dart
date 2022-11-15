@@ -213,32 +213,11 @@ class MainData extends GetxController {
       like = 44;
     }
 
-<<<<<<< app_footp/lib/mainMap.dart
-    if (type==0 && dataList[messageType][idx]["isBlurred"] == true) {
-      color = 4;
-    } else {
-      switch (dataList[messageType][idx][messageId] % 4) {
-        case 0:
-          color = 0;
-          break;
-        case 1:
-          color = 1;
-          break;
-        case 2:
-          color = 2;
-          break;
-        case 3:
-          color = 3;
-          break;
-        default:
-          color = 0;
-=======
-    if (dataList["message"][idx]["isBlurred"] == true) {
+    if (type==0 && dataList["message"][idx]["isBlurred"] == true) {
       if ((distances[dataList["message"][idx]["messageId"]] ??= 1) < 0.025) {
         color = 8;
       } else {
         color = 7;
->>>>>>> app_footp/lib/mainMap.dart
       }
     } else {
       color = dataList["message"][idx]["messageId"] % 7;
@@ -252,11 +231,7 @@ class MainData extends GetxController {
         width: 5 * (6 + like),
         height: 5 * (6 + like),
         onMarkerTab: (marker, iconSize) {
-<<<<<<< app_footp/lib/mainMap.dart
-          print("Hi ${dataList[messageType][idx][messageId]}");
-=======
           // print("Hi ${dataList["message"][idx]["messageId"]}");
->>>>>>> app_footp/lib/mainMap.dart
         },
         infoWindow: markerString);
 
