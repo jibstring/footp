@@ -109,6 +109,7 @@ class CreateMarker extends GetxController {
 class UserData extends GetxController {
   //토큰들
   String _Token = "";
+  String _Mypayurl = "";
 
   Map _userinfo = {
     "userId": null,
@@ -127,6 +128,7 @@ class UserData extends GetxController {
 
   //토큰들
   String get Token => _Token;
+  String get Mypayurl => _Mypayurl;
 
   get userNickname => null;
 
@@ -163,6 +165,10 @@ class UserData extends GetxController {
 
   void userinfoSet(Map a) {
     _userinfo = a;
+  }
+  
+  void payurlSet(String url){
+    _Mypayurl = url;
   }
 }
 
