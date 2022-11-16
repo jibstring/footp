@@ -59,6 +59,7 @@ class newMyFootPageState extends State<newMyFootPage> {
 
     return newDate;
   }
+
   // 목록
   @override
   Widget build(BuildContext context) {
@@ -66,17 +67,16 @@ class newMyFootPageState extends State<newMyFootPage> {
     readFile();
     return SizedBox.expand(
       child: Container(
-            color: Colors.white,
-            child: ListView.builder(
-                itemCount: _messagelen + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index >= _messagelen) {
-                    return Container(color: Colors.white, height: 60);
-                  } else {
-                    return NormalFoot(_myfootData[index]);
-                  }
-                })),
-
+          color: Colors.white,
+          child: ListView.builder(
+              itemCount: _messagelen + 1,
+              itemBuilder: (BuildContext context, int index) {
+                if (index >= _messagelen) {
+                  return Container(color: Colors.white, height: 60);
+                } else {
+                  return NormalFoot(_myfootData[index]);
+                }
+              })),
     );
   }
 
@@ -95,7 +95,7 @@ class newMyFootPageState extends State<newMyFootPage> {
       });
 
       OverlayImage.fromAssetImage(
-        assetName: 'imgs/golden_print.png',
+        assetName: 'imgs/yellow_print.png',
       ).then((image) {
         if (mounted) setState(() => _footImage.add(image));
       });
