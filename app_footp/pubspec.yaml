@@ -56,6 +56,8 @@ dependencies:
   # webview_flutter: ^3.0.4
   android_intent_plus: ^3.1.5
   webview_flutter: ^0.3.24
+  # flutter_webview_plugin: ^0.4.0
+  log_print: ^0.0.2
 
 dev_dependencies:
   flutter_test:

@@ -108,11 +108,6 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
     }
   }
 
-  Future<WebView> _paypage(BuildContext context, url) async {
-    return WebView(
-      initialUrl: url,
-    );
-  }
 
   Future<void> _neverSatisfied(BuildContext context) async {
     final _items = [
@@ -204,11 +199,14 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
   }
 
   DoPay() async {
+
+    user.payRequest();
     var url = Uri.parse(
         'http://k7a108.p.ssafy.io:8080/pay/kakaoPay/${user.userinfo['userId']}');
 
     // var data = DIO.FormData.fromMap({
     //   'messageContent': json.encode(createMarker.newmarker),
+    
 
     var response = await http.post(url);
 
@@ -222,58 +220,6 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
 
      Navigator.push(context,
                   MaterialPageRoute(builder: (context) => payweb()));
-    // final Uri _url = Uri.parse(_payurl);
-    // try{
-    //   await launchUrlString(_payurl);
-    // }catch(e){
-    //   print(e.toString());
-    // }
-    // Uri realUri = await resolveRedirection(url: 'https://www.naver.com/');
-
-    // _paypage(context, "https://www.naver.com/");
-    // try {
-    //   await launch(_payurl).then((value) => print("@@@@@@@@@@@@@@@@@@@@@@@${value.runtimeType}"));
-    // } catch (e) {
-    //   print('!@!@!@!@!@!@!@!@!@!@!@!@${e.toString()}');
-    // }
-    
-    // AndroidIntent intent = AndroidIntent(
-    //   action: 'action_view',
-    //   data: result['next_redirect_app_url'],
-    //   arguments: {'txn_id': result['tid']},
-    // );
-    // print("a2wefkwjahfqwueafdg${intent.data}");
-    // await intent.launch().then((velue) => print("aaaaaaaaaaaaa"));
-    // print("a2wefkwjahfqwueafdg${intent.data}");
-    // print(intent.data);
-    // await Navigator.of(context).push(MaterialPageRoute(
-    //               builder: (BuildContext context) => Scaffold(
-    //                   appBar: AppBar(
-    //                     title: Text("PAY"),
-    //                   ),
-    //                   body: WebView(
-    //                     initialUrl: "https://www.naver.com/",
-    //                     javascriptMode: JavascriptMode.unrestricted,
-    //                   ))));
-  }
-
-  Future<Uri> resolveRedirection({String? url}) async {
-    Dio dio = new Dio();
-    dio.options.followRedirects = true;
-    dio.options.responseType = ResponseType.plain;
-    DIO.Response response = await dio.get(url.toString());
-    return response.realUri;
-  }
-
-  GoPayUrl() async {
-    final Uri _url = Uri.parse('https://flutter.dev');
-
-    // String payurl = 'https://www.naver.com/';
-    try {
-      await launchUrlString(_payurl);
-    } catch (e) {
-      print(e.toString());
-    }
   }
 
   List<BannerModel> listBanners = [
@@ -421,32 +367,6 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
             ],
           ),
         ),
-        TextButton(
-            onPressed: () async {
-              const String _url = 'https://www.naver.com';
-              await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Scaffold(
-                      appBar: AppBar(
-                        title: Text("PAY"),
-                      ),
-                      body: Container(
-                        child: WebView(
-                          initialUrl: "https://www.naver.com/",
-                          javascriptMode: JavascriptMode.unrestricted,
-                        ),
-                      ))));
-
-              // await Navigator.of(context).push<String>(MaterialPageRoute(
-              //     builder: (BuildContext context) => Scaffold(
-              //         appBar: AppBar(
-              //           title: Text("PAY"),
-              //         ),
-              //         body: WebView(
-              //           initialUrl: _url,
-              //           javascriptMode: JavascriptMode.unrestricted,
-              //         ))));
-            },
-            child: Text("충전")),
         SizedBox(height: 20),
         CupertinoButton(
           child: Text("$_timeresult"),
@@ -454,13 +374,6 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
             _neverSatisfied(context);
           },
         ),
-        // CupertinoButton(
-        //   child: Text("$_categoryresult"),
-        //   onPressed: () {
-        //     _categorieselect(context);
-        //   },
-        // ),
-        // Text("$_timeresult"),
         Container(
             child: IconButton(
           onPressed: () async {
@@ -509,9 +422,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else if (user.userinfo['userCash'] < 50000) {
-              // _NoCash(context);
               _NoCash(context);
-              // GoPayUrl();
             } else {
               createMarker.newmegaphone['gatherText'] = myMegaText.text;
 
