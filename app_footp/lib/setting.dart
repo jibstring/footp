@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_footp/myPage.dart';
+import 'package:app_footp/components/userSetting/agreement.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -43,9 +44,12 @@ class SettingPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.description, color: Colors.grey[850]),
               onTap: () {
-                print('이용약관클릭');
+                Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Agreement()),
+                );
               },
-              title: Text('이용약관'),
+              title: Text('푸프 약관 및 동의사항'),
             ),
             ListTile(
               leading: Icon(Icons.list, color: Colors.grey[850]),
