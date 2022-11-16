@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:app_footp/components/userSetting/agreement.dart';
 import 'package:dio/dio.dart';
 
 class SignUp extends StatefulWidget {
@@ -23,6 +24,7 @@ class _SignUpState extends State<SignUp> {
   bool obscurePasswordTwo = true;
   String passwordValidation = '알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자 이상';
   bool passwordConfirmed = true;
+  bool _isCheck=false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -255,6 +257,33 @@ class _SignUpState extends State<SignUp> {
                                   color: Colors.green,
                                 ))),
                 ),
+                // SizedBox(
+                //   height:10
+                // ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(30, 0, 30,0),
+                  child: InkWell(
+                    onTap:(){
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Agreement()),
+                    );
+                    },
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _isCheck,
+                          onChanged: (value){
+                            setState(() {
+                              _isCheck=value!;
+                            });
+                          }),
+                          Text("개인정보 동의 >",style: TextStyle(fontSize: 15),)
+                      ],  
+                    ),
+                  ),
+                )
+                ,
                 SizedBox(
                   height:25
                 ),
@@ -285,7 +314,10 @@ class _SignUpState extends State<SignUp> {
                           _showDialog('비밀번호를 확인해주세요.');
                         } else if (_nicknamevalue == false) {
                           _showDialog('닉네임 중복확인을 완료해주세요.');
-                        } else {
+                        }else if(_isCheck==false){
+                          _showDialog('이용약관을 동의해주세요');
+                        } 
+                        else {
                           createAccount();
                         }
                       },
