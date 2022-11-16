@@ -608,7 +608,7 @@ class _MyHomePageState extends State<MyHomePage> {
           msg: "뒤로가기 버튼을 한번 더 누르면 종료됩니다.",
           gravity: ToastGravity.BOTTOM,
           backgroundColor: const Color(0xff6E6E6E),
-          fontSize: 10,
+          fontSize: 11,
           toastLength: Toast.LENGTH_SHORT);
       return false;
     }
