@@ -18,7 +18,7 @@ class ListMaker extends GetxController {
 
 class gatherList extends StatefulWidget {
   const gatherList({super.key});
-
+  
   State<gatherList> createState() => _gatherListState();
 }
 
@@ -77,9 +77,11 @@ class _gatherListState extends State<gatherList> {
   }
 
   Widget build(BuildContext context) {
+    if(maindata.attendChat) {
+      return maindata.chatRoom;
+    }
     readFile();
     return
-    maindata.attendChat==false?
     DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -144,8 +146,7 @@ class _gatherListState extends State<gatherList> {
                   }
                 }));
       },
-    )
-    :maindata.chatRoom;
+    );
   }
 
   void initState() {
