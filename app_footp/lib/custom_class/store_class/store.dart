@@ -172,13 +172,3 @@ class Category {
 
   Category({required this.image, required this.name});
 }
-
-class StampDetailInfo extends GetxController {
-  Map _stampDetail = {};
-
-  Map _nowStamp = {};
-
-  Map get stampDetail => _stampDetail;
-  Map get nowStamp => _nowStamp;
-  set nowStamp(value) => _nowStamp = value;
-}

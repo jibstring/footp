@@ -28,14 +28,17 @@ class _StampListState extends State<StampList> {
   var _selectedValue = "NEW";
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
-  StampDetailInfo stampDetail = Get.put(StampDetailInfo());
+  // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
+  int? stampDetail;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadStampList();
-    loadJoinStamp();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadStampList();
+      loadJoinStamp();
+    });
   }
 
   @override
@@ -243,8 +246,7 @@ class _StampListState extends State<StampList> {
                                               actions: [
                                                 _stampList[index]
                                                             ["stampboard_id"] !=
-                                                        stampDetail.nowStamp[
-                                                            "stampboard_id"]
+                                                        stampDetail
                                                     ? TextButton(
                                                         child: Text('참가하기'),
                                                         onPressed: () {
@@ -375,7 +377,6 @@ class _StampListState extends State<StampList> {
                                       // 참가하기 버튼
                                       _stampList[index]["stampboard_id"] !=
                                               stampDetail
-                                                  .nowStamp["stampboard_id"]
                                           ? TextButton(
                                               child: Text('참가하기'),
                                               onPressed: () {
@@ -564,13 +565,13 @@ class _StampListState extends State<StampList> {
     var userId = user.userinfo["userId"];
     var stampboardId = _stampList[index]["stampboard_id"];
 
-    if (stampDetail.nowStamp["stampboard_id"] == null) {
+    if (stampDetail == null) {
       if (user.isLogin()) {
         await dio
             .post(
                 'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId')
             .then((res) {
-          stampDetail.nowStamp = res.data;
+          loadJoinStamp();
         }).then((res) {
           Fluttertoast.showToast(
               msg: '새로운 스탬푸를 시작했습니다.',
@@ -613,7 +614,9 @@ class _StampListState extends State<StampList> {
     await dio
         .delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId')
         .then((res) {
-      stampDetail.nowStamp = {};
+      setState(() {
+        stampDetail = null;
+      });
     }).then((res) {
       Fluttertoast.showToast(
           msg: '스탬푸 참가를 취소하였습니다.',
@@ -632,9 +635,15 @@ class _StampListState extends State<StampList> {
     if (user.isLogin()) {
       var response = await dio.get(
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
-      stampDetail.nowStamp = response.data;
+
+      setState(() {
+        stampDetail = response.data["stampboard_id"];
+      });
+
       print("################################################");
-      print(stampDetail.nowStamp);
+      print("${response.data["stampboard_id"]}");
+      print('진행중');
+      print(stampDetail);
       print('#############################################');
     }
   }
