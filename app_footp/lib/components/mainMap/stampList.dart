@@ -1,6 +1,7 @@
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
+import 'package:app_footp/components/stampDetailView.dart';
 import 'package:app_footp/createStamp.dart';
 import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,10 @@ class _StampListState extends State<StampList> {
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
   Map stampDetail = {};
   TextEditingController searchTextController = TextEditingController();
+  // Map stampMessage1 = {};
+  // Map stampMessage2 = {};
+  // Map stampMessage3 = {};
+  JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
 
   @override
   void initState() {
@@ -206,113 +211,23 @@ class _StampListState extends State<StampList> {
                                       ),
                                     ),
                                     onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              content: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Container(),
-                                                        flex: 1,
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(),
-                                                        flex: 1,
-                                                      ),
-                                                      Expanded(
-                                                        child: IconButton(
-                                                          icon:
-                                                              Icon(Icons.close),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                        flex: 1,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SingleChildScrollView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    child: Column(
-                                                        children:
-                                                            // Container(
-                                                            //   height: 200,
-                                                            //   decoration:
-                                                            //       BoxDecoration(
-                                                            //     image:
-                                                            //         DecorationImage(
-                                                            //       fit: BoxFit.cover,
-                                                            //       image: NetworkImage(
-                                                            //           _stampList[
-                                                            //                   index][
-                                                            //               'stampboard_designurl']),
-                                                            //     ),
-                                                            //   ),
-                                                            // ),
-                                                            // Container(
-                                                            //   child: Text('스탬푸 제목'),
-                                                            // ),
-                                                            // Container(
-                                                            //     decoration:
-                                                            //         BoxDecoration(
-                                                            //             border: Border
-                                                            //                 .all(
-                                                            //       width: 1,
-                                                            //       color: Colors.black,
-                                                            //     )),
-                                                            //     child:
-                                                            //         Text('스탬푸 내용')),
-                                                            List.generate(
-                                                                10,
-                                                                (index) =>
-                                                                    Container(
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              5),
-                                                                          color:
-                                                                              Colors.orange),
-                                                                    ))),
-                                                  ),
-                                                ],
-                                              ),
-                                              actions: [
-                                                _stampList[index]
-                                                            ["stampboard_id"] !=
-                                                        stampDetail[
-                                                            "stampboard_id"]
-                                                    ? TextButton(
-                                                        child: Text('참가하기'),
-                                                        onPressed: () {
-                                                          joinStamp(index);
-                                                        },
-                                                      )
-                                                    : TextButton(
-                                                        child: Text('참가 취소',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .red)),
-                                                        onPressed: () {
-                                                          cancleStamp(index);
-                                                        },
-                                                      ),
-                                                TextButton(
-                                                  child: Text('취소'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                )
-                                              ],
-                                            );
+                                      if (user.isLogin()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    StampDetailView()));
+                                      } else {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => SignIn()))
+                                          ..then((value) {
+                                            loadStampList();
+                                            loadJoinStamp();
                                           });
+                                        ;
+                                      }
                                     },
                                   ),
                                   SizedBox(height: 10),
@@ -686,12 +601,33 @@ class _StampListState extends State<StampList> {
     if (user.isLogin()) {
       var response = await dio.get(
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
-      print('----------------------------------------------------');
-      print(response.data);
-      print('--------------------------------------------------');
+      print('-----------------------------------------------------');
+      print(response.data == '');
+      print('-------------------------------------------------');
       setState(() {
         stampDetail = response.data;
       });
+
+      if (response.data != '') {
+        var firstMessage = response.data['stampboard_message1'];
+        var secondMessage = response.data['stampboard_message2'];
+        var thirdMessage = response.data['stampboard_message3'];
+        print('first: $firstMessage');
+        print('second: $secondMessage');
+        print('third: $thirdMessage');
+
+        await dio
+            .post(
+                'http://k7a108.p.ssafy.io:8080/stamp/info/$firstMessage/$secondMessage/$thirdMessage/${user.userinfo["userId"]}')
+            .then((res) {
+          print(res);
+          print('*******************************************');
+          joinedStamp.message1 = res.data[0];
+          joinedStamp.message2 = res.data[1];
+          joinedStamp.message3 = res.data[2];
+          print('********************************************');
+        });
+      }
 
       print("################################################");
       print("${response.data["stampboard_id"]}");

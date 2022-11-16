@@ -172,3 +172,17 @@ class Category {
 
   Category({required this.image, required this.name});
 }
+
+class JoinStampInfo extends GetxController {
+  Map _message1 = {};
+  Map _message2 = {};
+  Map _message3 = {};
+
+  Map get message1 => _message1;
+  Map get message2 => _message2;
+  Map get message3 => _message3;
+
+  set message1(value) => _message1 = value;
+  set message2(value) => _message2 = value;
+  set message3(value) => _message3 = value;
+}
