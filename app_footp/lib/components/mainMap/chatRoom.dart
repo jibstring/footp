@@ -4,6 +4,7 @@ import 'package:app_footp/custom_class/chat_class/msg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:app_footp/mainMap.dart';
 
 class ChatRoom extends StatefulWidget {
   var eventId = 0;  //참가하려는 이벤트의 아이디
@@ -144,6 +145,7 @@ class _ChatRoomState extends State<ChatRoom> {
                 onPressed: () {
                   exitRoom();
                   Navigator.pop(context);
+                  maindata.setAttendChat=false;
                 },
               ),
               TextButton(

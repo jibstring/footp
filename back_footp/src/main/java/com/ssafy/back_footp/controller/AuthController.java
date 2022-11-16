@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.ssafy.back_footp.request.KakaoLoginReq;
+import com.ssafy.back_footp.response.KakaoLoginResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,6 +93,26 @@ public class AuthController {
 
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
+	
+	
+//	@PostMapping("/autoCheck")
+//	@ApiOperation(value = "오토로그인 박스체크")
+//	public ResponseEntity<Integer> autoCheck(@RequestBody UserSignInReq user){
+//		
+//		if(userRepository.existsByUserEmail(user.getUserEmail())) {
+//		
+//		User userInfo = userRepository.findByUserEmailAndUserPassword(user.getUserEmail(), user.getUserPassword());
+//		
+//		userInfo.setUserAutologin(true);
+//		
+//		userRepository.save(userInfo);
+//		}
+//		
+//		return
+//		
+//		
+//		
+//	}
 
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인")
@@ -112,7 +133,7 @@ public class AuthController {
 				result.put("message", SUCCESS);
 				status = HttpStatus.ACCEPTED;
 				
-				if(loginUser.getUserAutologin()) {
+				if(user.getUserAutologin()) {
 					
 					Cookie cookie = new Cookie( "loginCookie", session.getId());
 					cookie.setPath("/");
@@ -120,8 +141,13 @@ public class AuthController {
 					
 					response.addCookie(cookie);
 					
-					Date sessionLimit = new Date(System.currentTimeMillis() + (1000*60*60*24*30));
+					LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
+					System.out.println(loginUser.getUserId()+" "+ session.getId()+ " " + sessionLimit);
 					authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
+					
+					loginUser.setUserAutologin(true);
+					
+					userRepository.save(loginUser);
 				}
 				
 			} else {
@@ -175,7 +201,7 @@ public class AuthController {
 				loginCookie.setMaxAge(0);
 				response.addCookie(loginCookie);
 				
-				Date date = new Date(System.currentTimeMillis());
+				LocalDateTime date = LocalDateTime.now();
 				authService.KeepLogin(user.getUserId(), session.getId(), date);
 			}
 		} else {
@@ -328,4 +354,41 @@ public class AuthController {
 		return new ResponseEntity<Integer>(result, HttpStatus.OK);
 	}
 
+	// kakao 소셜 로그인
+	@ApiOperation(value = "Kakao 로그인")
+	@PostMapping(value = "/kakao")
+	public ResponseEntity<Map<String, Object>> kakaoAuthRequest(@RequestBody KakaoLoginReq kakaoLoginReq, HttpSession session, HttpServletResponse response){
+		Map<String, Object> result = new HashMap<>();
+		HttpStatus status = null;
+
+		try {
+			KakaoLoginResponse kakaoLoginResponse = authService.kakaoLogin(kakaoLoginReq);
+
+			result.put("Authorization", kakaoLoginResponse.getAppToken());
+			result.put("message", SUCCESS);
+			status = HttpStatus.ACCEPTED;
+
+			User loginUser = kakaoLoginResponse.getUser();
+
+			if(loginUser.getUserAutologin()) {
+
+				Cookie cookie = new Cookie( "loginCookie", session.getId());
+				cookie.setPath("/");
+				cookie.setMaxAge(60*60*24*30);
+
+				response.addCookie(cookie);
+
+				LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
+				authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			logger.error("로그인 에러 : {}", e);
+			result.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+
+		return new ResponseEntity<Map<String, Object>>(result, status);
+	}
 }

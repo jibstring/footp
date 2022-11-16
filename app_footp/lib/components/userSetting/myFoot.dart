@@ -14,11 +14,10 @@ import 'package:vector_math/vector_math.dart' as vect;
 import 'package:http/http.dart' as http;
 import 'package:app_footp/mainMap.dart';
 
-
 class MyFootPage extends StatefulWidget {
   var _jsonData = {};
-  
-  MyFootPage(this._jsonData,{Key? key}) : super(key: key);
+
+  MyFootPage(this._jsonData, {Key? key}) : super(key: key);
   @override
   State<MyFootPage> createState() => MyFootPageState();
 }
@@ -29,13 +28,13 @@ class MyFootPageState extends State<MyFootPage> {
   //dynamic _mycontroller;
   List<dynamic> _myfootData = [];
   int _messagelen = 0;
+  String markerString = '';
   List<OverlayImage> _footImage = [];
   List<Marker> markers = [];
 
   void readFile() {
-
-    // print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
-    // print(widget._jsonData);
+    print("여기여이거ㅏ이거ㅣㅑㅕㄱ이겨 myFootData");
+    print(widget._jsonData);
 
     try {
       _messagelen = widget._jsonData["message"].length;
@@ -48,19 +47,28 @@ class MyFootPageState extends State<MyFootPage> {
     for (int i = 0; i < _messagelen; i++) {
       if (_myfootData.length <= i) {
         _myfootData.add(widget._jsonData["message"][i]);
+        createMarker(i);
       } else {
         _myfootData[i] = widget._jsonData["message"][i];
       }
-      createMarker(i);
     }
   }
 
-  void createMarker(int idx) {
-    int like = widget._jsonData["message"][idx]["messageLikenum"];
-    int color = 0;
+  String changeDate(String date) {
+    String newDate = "";
+    newDate = date.replaceAll('T', "  ");
 
-    if (like >= 95) {
-      like = 94;
+    return newDate;
+  }
+
+  void createMarker(int idx) {
+    int like = (widget._jsonData["message"][idx]["messageLikenum"] / 5).toInt();
+    int color = 0;
+    markerString =
+        "${widget._jsonData["message"][idx]["userNickname"]}      \u{2764} ${widget._jsonData["message"][idx]["messageLikenum"].toString()}\n${widget._jsonData["message"][idx]["messageText"]}\n${maindata.address[widget._jsonData["message"][idx]["messageId"]] ??= ""}\n${changeDate(widget._jsonData["message"][idx]["messageWritedate"])}";
+
+    if (like >= 45) {
+      like = 44;
     }
 
     if (widget._jsonData["message"][idx]["isBlurred"] == true) {
@@ -94,7 +102,7 @@ class MyFootPageState extends State<MyFootPage> {
         onMarkerTab: (marker, iconSize) {
           print("Hi ${widget._jsonData["message"][idx]["messageId"]}");
         },
-        infoWindow: widget._jsonData["message"][idx]["messageText"]);
+        infoWindow: markerString);
 
     markers.add(marker);
     // update();
@@ -110,50 +118,46 @@ class MyFootPageState extends State<MyFootPage> {
   // 목록
   @override
   Widget build(BuildContext context) {
-    _getImage();
-    readFile();
     return SizedBox.expand(
-          child: Stack(children: <Widget>[
-        Container(
-            height: (MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top) *
-                0.65,
-            child: NaverMap(
-                onMapCreated: onMapCreated,
-                //onCameraIdle: getMapEdge,
-                minZoom: 5.0,
-                markers: markers,
-                )),
-        DraggableScrollableSheet(
-      initialChildSize: 0.3,
-      minChildSize: 0.3,
-      maxChildSize: 1,
-      snap: true,
-      // controller: listmaker.listcontroller,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-            color: Colors.white,
-            child: ListView.builder(
-                controller: scrollController,
-                itemCount: _messagelen,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index < _messagelen) {
-                    return NormalFoot(_myfootData[index]);
-                  } else {  
-                    return Container(color: Colors.white, height: 60);
-                  }
-                }));
-      },
-    ),
-      ]));
+        child: Stack(children: <Widget>[
+      Container(
+          height: (MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top) *
+              0.65,
+          child: NaverMap(
+            onMapCreated: onMapCreated,
+            // onCameraIdle: getMapEdge,
+            minZoom: 5.0,
+            markers: markers,
+          )),
+      DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.5,
+        maxChildSize: 1,
+        snap: true,
+        // controller: listmaker.listcontroller,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Container(
+              color: Colors.white,
+              child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: _messagelen + 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index < _messagelen) {
+                      return NormalFoot(_myfootData[index]);
+                    } else {
+                      return Container(color: Colors.white, height: 60);
+                    }
+                  }));
+        },
+      ),
+    ]));
   }
 
-
   void onMapCreated(NaverMapController controller) {
-
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
-    maindata.setmycontroller =controller;
+    maindata.setmycontroller = controller;
   }
 
   void _getImage() {
@@ -188,5 +192,10 @@ class MyFootPageState extends State<MyFootPage> {
         if (mounted) setState(() => _footImage.add(image));
       });
     });
+  }
+
+  void initState() {
+    _getImage();
+    readFile();
   }
 }

@@ -1,4 +1,4 @@
-import 'package:app_footp/components/userSetting/myFoot.dart';
+import 'package:app_footp/components/userSetting/newmyFoot.dart';
 import 'package:app_footp/components/userSetting/nicknameSetting.dart';
 import 'package:app_footp/mainMap.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +10,13 @@ import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class MyPage extends StatelessWidget {
-  const MyPage({super.key});
+class newMyPage extends StatelessWidget {
+  const newMyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MyPage',
+      title: 'newMyPage',
       debugShowCheckedModeBanner: false,
       home: const MyHompageState(),
     );
@@ -47,9 +47,9 @@ class _MyHompageStateState extends State<MyHompageState> {
   dynamic _mapEdge;
   List<Marker> markers = [];
   List<OverlayImage> _footImage = [];
-  late Future<Map<dynamic,dynamic>> post;
+  late Future<Map> post;
 
-  Future<Map<dynamic,dynamic>> getURL() async {
+  Future<Map> getURL() async {
     String userid = controller.userinfo["userId"].toString();
     _mainDataUrl = Uri.parse(_baseURL + '/user/myfoot/' + userid);
     print(_mainDataUrl);
@@ -79,7 +79,7 @@ class _MyHompageStateState extends State<MyHompageState> {
             ),
             padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
             },
           ),
           actions: [
@@ -180,14 +180,14 @@ class _MyHompageStateState extends State<MyHompageState> {
             ),
             Expanded(
                 child: myfootClick == true
-                    ? FutureBuilder<Map<dynamic,dynamic>>(
+                    ? FutureBuilder<Map>(
                         future: post,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             print("데이터있데에에에에에");
                             print(dataList["message"].length);
                             return dataList["message"].length != 0
-                                ? MyFootPage(dataList)
+                                ? newMyFootPage(dataList)
                                 : Text("발자국을 남겨보세요!");
                           } else if (snapshot.hasError) {
                             return Text(

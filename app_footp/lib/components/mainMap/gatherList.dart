@@ -1,29 +1,46 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:app_footp/components/msgFoot/eventFoot.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/mainMap.dart' as mainmap;
+import 'package:app_footp/components/mainMap/chatRoom.dart';
 
 mainmap.MainData maindata = mainmap.maindata;
-ListMaker listmaker = Get.put(ListMaker());
 
 class ListMaker extends GetxController {
-  int _messagelen = 0;
+
+  
+}
+
+class gatherList extends StatefulWidget {
+  const gatherList({super.key});
+
+  State<gatherList> createState() => _gatherListState();
+}
+
+class _gatherListState extends State<gatherList> {
+  int _selectedIndex = 0;
+  final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
+  final _filterList = ['hot', 'like', 'new'];
+  var _selectedValue = "hot";
+
+  int _gatherlen = 0;
   bool _music_on = false;
   Map<String, dynamic> _jsonData = {};
-  List<dynamic> _footData = [];
+  List<dynamic> _gatherData = [];
   DraggableScrollableController _listcontroller =
       DraggableScrollableController();
 
-  int get messagelen => _messagelen;
+  int get gatherlen => _gatherlen;
   bool get music_on => _music_on;
   Map<String, dynamic> get jsonData => _jsonData;
-  List<dynamic> get footData => _footData;
+  List<dynamic> get gatherData => _gatherData;
   DraggableScrollableController get listcontroller => _listcontroller;
+
 
   void readFile() {
     //서버 통신으로 받아온 메시지 파싱
@@ -34,18 +51,20 @@ class ListMaker extends GetxController {
     }
 
     try {
-      _messagelen = jsonData["message"].length;
+      _gatherlen = jsonData["gather"].length;
     } catch (e) {
-      _messagelen = 0;
+      _gatherlen = 0;
     }
 
-    for (int i = 0; i < messagelen; i++) {
-      if (footData.length <= i) {
-        footData.add(jsonData["message"][i]);
+    for (int i = 0; i < gatherlen; i++) {
+      if (gatherData.length <= i) {
+        gatherData.add(jsonData["gather"][i]);
       } else {
-        footData[i] = jsonData["message"][i];
+        gatherData[i] = jsonData["gather"][i];
       }
     }
+    print("gather이야아아아아ㅏ아아아");
+    print(gatherData);
   }
 
   void refresh() {
@@ -56,34 +75,23 @@ class ListMaker extends GetxController {
   set musicCheck(bool check) {
     _music_on = check;
   }
-}
-
-class FootList extends StatefulWidget {
-  const FootList({super.key});
-
-  State<FootList> createState() => _FootListState();
-}
-
-class _FootListState extends State<FootList> {
-  int _selectedIndex = 0;
-  final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
-  final _filterList = ['hot', 'like', 'new'];
-  var _selectedValue = "hot";
 
   Widget build(BuildContext context) {
-    listmaker.readFile();
-    return DraggableScrollableSheet(
+    readFile();
+    return
+    maindata.attendChat==false?
+    DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
       maxChildSize: 1,
       snap: true,
-      controller: listmaker.listcontroller,
+      controller: listcontroller,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: listmaker.messagelen + 2,
+                itemCount: gatherlen + 2,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return Container(
@@ -118,7 +126,7 @@ class _FootListState extends State<FootList> {
                               Icons.refresh,
                               size: 40,
                             ),
-                            onPressed: listmaker.refresh,
+                            onPressed: refresh,
                           ),
                           IconButton(
                             // 검색
@@ -128,26 +136,25 @@ class _FootListState extends State<FootList> {
                         ],
                       ),
                     );
-                  } else if (index > listmaker.messagelen) {
+                  } else if (index > gatherlen) {
                     return Container(color: Colors.white, height: 60);
                   } else {
-                    return NormalFoot(listmaker.footData[index - 1]);
-                    // footData[index]["check"] == 0
-                    //     ? EventFoot(footData[index])
-                    //     : NormalFoot(footData[index]);
+                    return EventFoot(gatherData[index - 1]);
+                    
                   }
                 }));
       },
-    );
+    )
+    :maindata.chatRoom;
   }
 
   void initState() {
-    listmaker.readFile();
+    readFile();
     super.initState();
     Timer.periodic(Duration(seconds: 10), (v) {
       if (mounted) {
         setState(() {
-          listmaker.readFile();
+          readFile();
         });
       }
     });

@@ -28,45 +28,21 @@ class _StampListState extends State<StampList> {
   var _selectedValue = "NEW";
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
+  StampDetailInfo stampDetail = Get.put(StampDetailInfo());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     loadStampList();
+    loadJoinStamp();
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    print(stampDetail.nowStamp);
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
   }
 
   @override
   Widget build(BuildContext context) {
-    //   return DraggableScrollableSheet(
-    //     initialChildSize: 0.3,
-    //     minChildSize: 0.3,
-    //     maxChildSize: 0.9,
-    //     snap: true,
-    //     builder: (BuildContext context, ScrollController scrollController) {
-    //       return Container(
-    //           height: 100,
-    //           child: TextButton(
-    //             onPressed: () {
-    //               if (!user.isLogin()) {
-    //                 Navigator.push(
-    //                   context,
-    //                   MaterialPageRoute(builder: (context) => const SignIn()),
-    //                 );
-    //               } else {
-    //                 Navigator.push(
-    //                   context,
-    //                   MaterialPageRoute(
-    //                       builder: (context) => const CreateStamp()),
-    //                 );
-    //               }
-    //             },
-    //             child: Text('스탬프 작성하기'),
-    //           ));
-    //     },
-    //   );
-    // }
-
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -79,76 +55,75 @@ class _StampListState extends State<StampList> {
             child: Column(
               children: <Widget>[
                 Container(
-                  color: Colors.white,
-                  height: 50,
-                  padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      // 필터
-                      DropdownButton(
-                        value: _selectedValue,
-                        items: _filterList.map(
-                          (value) {
-                            return DropdownMenuItem(
-                                value: value, child: Text(value));
+                    color: Colors.white,
+                    height: 50,
+                    padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // 필터
+                        DropdownButton(
+                          value: _selectedValue,
+                          items: _filterList.map(
+                            (value) {
+                              return DropdownMenuItem(
+                                  value: value, child: Text(value));
+                            },
+                          ).toList(),
+                          onChanged: (value) {
+                            if (mounted) {
+                              setState(() {
+                                _selectedValue = value!;
+                                maindata.fixFilter = _selectedValue;
+                                if (value == '좋아요') {
+                                  loadStampLike();
+                                } else if (value == 'NEW') {
+                                  loadStampList();
+                                } else {}
+                              });
+                            }
                           },
-                        ).toList(),
-                        onChanged: (value) {
-                          if (mounted) {
-                            setState(() {
-                              _selectedValue = value!;
-                              maindata.fixFilter = _selectedValue;
-                              if (value == '좋아요') {
-                                loadStampLike();
-                              } else if (value == 'NEW') {
-                                loadStampList();
-                              } else {}
-                            });
-                          }
-                        },
-                      ),
+                        ),
 
-                      // 새로고침
-                      IconButton(
-                        icon: Icon(
-                          Icons.refresh,
-                          size: 40,
+                        // 새로고침
+                        IconButton(
+                          icon: Icon(
+                            Icons.refresh,
+                            size: 40,
+                          ),
+                          onPressed: () {
+                            loadStampList();
+                          },
                         ),
-                        onPressed: () {
-                          loadStampList();
-                        },
-                      ),
-                      // 새로운 스탬푸 작성
-                      IconButton(
-                        icon: Icon(
-                          Icons.send,
-                          size: 40,
+                        // 새로운 스탬푸 작성
+                        IconButton(
+                          icon: Icon(
+                            Icons.send,
+                            size: 40,
+                          ),
+                          onPressed: () {
+                            if (!user.isLogin()) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignIn()),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const CreateStamp()),
+                              );
+                            }
+                          },
                         ),
-                        onPressed: () {
-                          if (!user.isLogin()) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignIn()),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const CreateStamp()),
-                            );
-                          }
-                        },
-                      ),
-                      IconButton(
-                        // 검색
-                        onPressed: () {},
-                        icon: Icon(Icons.search, size: 40),
-                      ),
-                    ],
-                  ),
-                ),
+                        IconButton(
+                          // 검색
+                          onPressed: () {},
+                          icon: Icon(Icons.search, size: 40),
+                        ),
+                      ],
+                    )),
 
                 // 스탬푸 목록
                 Container(
@@ -178,15 +153,126 @@ class _StampListState extends State<StampList> {
                                   SizedBox(height: 10),
 
                                   // 스탬푸 시트
-                                  Container(
-                                    height: 200,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(_stampList[index]
-                                            ['stampboard_designurl']),
+                                  GestureDetector(
+                                    child: Container(
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(_stampList[index]
+                                              ['stampboard_designurl']),
+                                        ),
                                       ),
                                     ),
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              content: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Container(),
+                                                        flex: 1,
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(),
+                                                        flex: 1,
+                                                      ),
+                                                      Expanded(
+                                                        child: IconButton(
+                                                          icon:
+                                                              Icon(Icons.close),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        flex: 1,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    child: Column(
+                                                        children:
+                                                            // Container(
+                                                            //   height: 200,
+                                                            //   decoration:
+                                                            //       BoxDecoration(
+                                                            //     image:
+                                                            //         DecorationImage(
+                                                            //       fit: BoxFit.cover,
+                                                            //       image: NetworkImage(
+                                                            //           _stampList[
+                                                            //                   index][
+                                                            //               'stampboard_designurl']),
+                                                            //     ),
+                                                            //   ),
+                                                            // ),
+                                                            // Container(
+                                                            //   child: Text('스탬푸 제목'),
+                                                            // ),
+                                                            // Container(
+                                                            //     decoration:
+                                                            //         BoxDecoration(
+                                                            //             border: Border
+                                                            //                 .all(
+                                                            //       width: 1,
+                                                            //       color: Colors.black,
+                                                            //     )),
+                                                            //     child:
+                                                            //         Text('스탬푸 내용')),
+                                                            List.generate(
+                                                                10,
+                                                                (index) =>
+                                                                    Container(
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              5),
+                                                                          color:
+                                                                              Colors.orange),
+                                                                    ))),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                _stampList[index]
+                                                            ["stampboard_id"] !=
+                                                        stampDetail.nowStamp[
+                                                            "stampboard_id"]
+                                                    ? TextButton(
+                                                        child: Text('참가하기'),
+                                                        onPressed: () {
+                                                          joinStamp(index);
+                                                        },
+                                                      )
+                                                    : TextButton(
+                                                        child: Text('참가 취소',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red)),
+                                                        onPressed: () {
+                                                          cancleStamp(index);
+                                                        },
+                                                      ),
+                                                TextButton(
+                                                  child: Text('취소'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    },
                                   ),
                                   SizedBox(height: 10),
 
@@ -290,10 +376,23 @@ class _StampListState extends State<StampList> {
                                       ),
 
                                       // 참가하기 버튼
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        child: Text('참가하기'),
-                                      ),
+                                      _stampList[index]["stampboard_id"] !=
+                                              stampDetail
+                                                  .nowStamp["stampboard_id"]
+                                          ? TextButton(
+                                              child: Text('참가하기'),
+                                              onPressed: () {
+                                                joinStamp(index);
+                                              },
+                                            )
+                                          : TextButton(
+                                              child: Text('참가 취소',
+                                                  style: TextStyle(
+                                                      color: Colors.red)),
+                                              onPressed: () {
+                                                cancleStamp(index);
+                                              },
+                                            ),
 
                                       // 좋아요
                                       Row(
@@ -348,6 +447,9 @@ class _StampListState extends State<StampList> {
                 )),
               ],
             ));
+        /*
+                  상세페이지 조회
+                  */
       },
     );
   }
@@ -384,6 +486,7 @@ class _StampListState extends State<StampList> {
     });
   }
 
+  // 스탬프 좋아요
   void stampLike(int index) async {
     var dio = DIO.Dio();
 
@@ -410,6 +513,7 @@ class _StampListState extends State<StampList> {
     }));
   }
 
+  // 스탬프 삭제
   void deleteStamp(int index) async {
     var dio = DIO.Dio();
 
@@ -425,6 +529,7 @@ class _StampListState extends State<StampList> {
     Navigator.pop(context);
   }
 
+  // 스탬프 신고하기
   void reportStamp(int index) async {
     var dio = DIO.Dio();
     var userId = user.userinfo["userId"];
@@ -456,6 +561,64 @@ class _StampListState extends State<StampList> {
           textColor: Colors.white,
           toastLength: Toast.LENGTH_SHORT);
       _stampList[index]["isMyspam"] = true;
+    }
+  }
+
+  // 스탬푸 참가하기
+  void joinStamp(int index) async {
+    var dio = DIO.Dio();
+    var userId = user.userinfo["userId"];
+    var stampboardId = _stampList[index]["stampboard_id"];
+
+    if (stampDetail.nowStamp == {}) {
+      if (user.isLogin()) {
+        var response = await dio.post(
+            'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId');
+        stampDetail.nowStamp = response.data;
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignIn()),
+        );
+      }
+    } else {
+      if (user.isLogin()) {
+        Fluttertoast.showToast(
+            msg: '참가 중인 스탬푸가 있습니다.',
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Colors.orangeAccent,
+            fontSize: 20.0,
+            textColor: Colors.white,
+            toastLength: Toast.LENGTH_SHORT);
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignIn()),
+        );
+      }
+    }
+  }
+
+  // 스탬푸 참가 취소하기
+  void cancleStamp(int index) async {
+    var dio = DIO.Dio();
+    var userId = user.userinfo["userId"];
+    var response =
+        await dio.delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId');
+    stampDetail.nowStamp = {};
+  }
+
+  // 현재 참가 중인 스탬푸 조회하기
+  void loadJoinStamp() async {
+    var dio = DIO.Dio();
+
+    if (user.isLogin()) {
+      var response = await dio.get(
+          'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
+      stampDetail.nowStamp = response.data;
+      print("################################################");
+      print(stampDetail.nowStamp);
+      print('#############################################');
     }
   }
 }

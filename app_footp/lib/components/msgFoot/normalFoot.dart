@@ -14,7 +14,7 @@ import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/components/userSetting/myFoot.dart';
 
-const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+const serverUrl = 'http://k7a108.p.ssafy.io:8080/';
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -27,11 +27,10 @@ class NormalFoot extends StatefulWidget {
 class _NormalFootState extends State<NormalFoot> {
   @override
   int heartnum = 0;
-  
-  late VideoPlayerController _videocontroller;
-  
-  late Future<void> _initializeVideoPlayerFuture;
 
+  late VideoPlayerController _videocontroller;
+
+  late Future<void> _initializeVideoPlayerFuture;
 
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   UserData user = Get.put(UserData());
@@ -39,19 +38,20 @@ class _NormalFootState extends State<NormalFoot> {
   bool click_play = false;
   final _player = AudioPlayer();
 
-  void initState(){
-    _videocontroller=VideoPlayerController.network(widget.normalmsg["messageFileurl"],);
+  void initState() {
+    _videocontroller = VideoPlayerController.network(
+      widget.normalmsg["messageFileurl"],
+    );
 
     _initializeVideoPlayerFuture = _videocontroller.initialize();
-    
+
     super.initState();
   }
 
-  void dispose(){
+  void dispose() {
     _videocontroller.dispose();
     super.dispose();
   }
-
 
   Widget build(BuildContext context) {
     //VideoPlayerController _videocontroller;
@@ -67,15 +67,15 @@ class _NormalFootState extends State<NormalFoot> {
 
     //AudioPlayer player = new AudioPlayer();
 
-    return  GestureDetector(
+    return GestureDetector(
         onTap: () {
           maindata.moveMapToMessage(widget.normalmsg["messageLatitude"],
               widget.normalmsg["messageLongitude"]);
-          // listmaker.listcontroller.reset();
+          listmaker.listcontroller.reset();
           listmaker.refresh();
         },
         child: Card(
-          child: Container(
+            child: Container(
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
@@ -131,63 +131,73 @@ class _NormalFootState extends State<NormalFoot> {
                                         //비디오
                                         // print("비디오");
                                         // print(_videocontroller);
-                                        return 
-                                            FutureBuilder(
-                                          future:_initializeVideoPlayerFuture,
-                                          builder: (context,snapshot){
-                                            if(snapshot.connectionState==ConnectionState.done){
-                                              return AspectRatio(
-                                                aspectRatio: _videocontroller.value.aspectRatio,
-                                                child:InkWell(
-                                                  onTap: (){
-                                                  setState((){
-                                                    print(_videocontroller.value.isPlaying);
-                                                    if(_videocontroller.value.isPlaying){
-                                                      print("중지");
-                                                      _videocontroller.pause();
-                                                    }
-                                                    else{
-                                                      print("시작");
-                                                      print(_videocontroller);
-                                                      _videocontroller.play();
-                                                    }
-                                                    });
-                                                  },
-                                                  child: 
-                                                    VideoPlayer(_videocontroller),
-                                                ),
-                                              );
-                                            }else {
-                                              return Center(child: CircularProgressIndicator());
-                                            }
-                                          }
-                                        )                                        ;
-                                        } else if (flag == 2) {
+                                        return FutureBuilder(
+                                            future:
+                                                _initializeVideoPlayerFuture,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                return AspectRatio(
+                                                  aspectRatio: _videocontroller
+                                                      .value.aspectRatio,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        print(_videocontroller
+                                                            .value.isPlaying);
+                                                        if (_videocontroller
+                                                            .value.isPlaying) {
+                                                          print("중지");
+                                                          _videocontroller
+                                                              .pause();
+                                                        } else {
+                                                          print("시작");
+                                                          print(
+                                                              _videocontroller);
+                                                          _videocontroller
+                                                              .play();
+                                                        }
+                                                      });
+                                                    },
+                                                    child: VideoPlayer(
+                                                        _videocontroller),
+                                                  ),
+                                                );
+                                              } else {
+                                                return Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              }
+                                            });
+                                      } else if (flag == 2) {
                                         //오디오
-                                        return click_play==false?
-                                        IconButton(
-                                          icon: Icon(Icons.play_arrow,
-                                            size: 30),
-                                          onPressed: (){
-                                            _player.stop();
-                                            // print("재생!!");
-                                            
-                                            click_play=true;
-                                            _player.setUrl(widget.normalmsg["messageFileurl"]);
-                                            _player.play();
-                                            
-                                            print(click_play);
-                                          } ,)
-                                          :
-                                          IconButton(
-                                          icon: Icon(Icons.pause,
-                                            size: 30),
-                                          onPressed: (){
-                                            _player.stop();
-                                            // print("멈춰!!");
-                                            click_play=false;
-                                            print(click_play);
-                                            } ,);
+                                        return click_play == false
+                                            ? IconButton(
+                                                icon: Icon(Icons.play_arrow,
+                                                    size: 30),
+                                                onPressed: () {
+                                                  _player.stop();
+                                                  // print("재생!!");
+
+                                                  click_play = true;
+                                                  _player.setUrl(
+                                                      widget.normalmsg[
+                                                          "messageFileurl"]);
+                                                  _player.play();
+
+                                                  print(click_play);
+                                                },
+                                              )
+                                            : IconButton(
+                                                icon:
+                                                    Icon(Icons.pause, size: 30),
+                                                onPressed: () {
+                                                  _player.stop();
+                                                  // print("멈춰!!");
+                                                  click_play = false;
+                                                  print(click_play);
+                                                },
+                                              );
                                       }
                                     })(),
                                   )
@@ -219,6 +229,33 @@ class _NormalFootState extends State<NormalFoot> {
                             )
                           ],
                         )),
+              // 비밀글
+              (maindata.hiddenMessage[widget.normalmsg["messageId"]] != null)
+                  ? Container(
+                      height: 50,
+                      padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      width: width,
+                      child: Text(
+                        maindata.hiddenMessage[
+                            widget.normalmsg["messageId"]] ??= "",
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey),
+                      ))
+                  : Container(),
+              // 주소
+              Container(
+                  height: 40,
+                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                  width: width,
+                  child: Text(
+                    maindata.address[widget.normalmsg["messageId"]] ??= "",
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  )),
               //하단
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -231,14 +268,39 @@ class _NormalFootState extends State<NormalFoot> {
                           MaterialPageRoute(
                               builder: (context) => const SignIn()),
                         );
-                      } else {
-                        showDialog(
+                      } else {showDialog(
                             context: context,
                             builder: (context) {
-                              return ReportModal(widget.normalmsg["messageId"],
+                              
+                        return widget.normalmsg["userNickname"]==user.userinfo["userNickname"]?
+                           AlertDialog(
+                            title:Text("확성기 삭제하기"),
+                            content:SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text('삭제하시겠습니까??')
+                                ]),
+                              ),
+                              actions:<Widget>[
+                                TextButton(
+                                  onPressed: (){
+                                    deleteMessage(widget.normalmsg["messageId"]);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("삭제")
+                                ),
+                                TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  },
+                                child: Text("취소"))
+                                ]
+                          )
+                          :
+                              ReportModal(widget.normalmsg["messageId"],
                                   user.userinfo["userId"]);
-                            });
                       }
+                      );
+                    }
                     },
                     icon: Icon(Icons.more_horiz, size: 30),
                   ),
@@ -306,8 +368,7 @@ class _NormalFootState extends State<NormalFoot> {
   }
 
   void heartRequest(context, var heartInfo) async {
-    final uri = Uri.parse(serverUrl +
-        "/" +
+    final uri = Uri.parse(serverUrl +'foot/' +
         heartInfo +
         "/" +
         widget.normalmsg["messageId"].toString() +
@@ -359,5 +420,24 @@ class _NormalFootState extends State<NormalFoot> {
       }
       heartRequest(context, heartInfo);
     });
+  }
+  void deleteMessage(int messageId)async{
+   
+    final uri=Uri.parse(serverUrl+'user/myfoot/'+'$messageId');
+
+    print("메시지 삭제");
+    print(uri);
+    http.Response response=await http.delete(
+      uri
+    );
+    print(uri);
+    if(response.statusCode==200){
+      var decodedData=jsonDecode(response.body);
+      print(decodedData);
+    }
+    else{
+      print('실패패패패패패ㅐ퍂');
+      print(response.statusCode);
+    }
   }
 }
