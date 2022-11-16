@@ -29,7 +29,7 @@ class _StampListState extends State<StampList> {
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
-  int? stampDetail;
+  Map stampDetail = {};
 
   @override
   void initState() {
@@ -93,6 +93,7 @@ class _StampListState extends State<StampList> {
                           ),
                           onPressed: () {
                             loadStampList();
+                            loadJoinStamp();
                           },
                         ),
                         // 새로운 스탬푸 작성
@@ -107,7 +108,7 @@ class _StampListState extends State<StampList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const SignIn()),
-                              );
+                              ).then((value) => setState(() {}));
                             } else {
                               Navigator.push(
                                 context,
@@ -246,7 +247,8 @@ class _StampListState extends State<StampList> {
                                               actions: [
                                                 _stampList[index]
                                                             ["stampboard_id"] !=
-                                                        stampDetail
+                                                        stampDetail[
+                                                            "stampboard_id"]
                                                     ? TextButton(
                                                         child: Text('참가하기'),
                                                         onPressed: () {
@@ -376,7 +378,7 @@ class _StampListState extends State<StampList> {
 
                                       // 참가하기 버튼
                                       _stampList[index]["stampboard_id"] !=
-                                              stampDetail
+                                              stampDetail["stampboard_id"]
                                           ? TextButton(
                                               child: Text('참가하기'),
                                               onPressed: () {
@@ -565,7 +567,7 @@ class _StampListState extends State<StampList> {
     var userId = user.userinfo["userId"];
     var stampboardId = _stampList[index]["stampboard_id"];
 
-    if (stampDetail == null) {
+    if (stampDetail["stampboard_id"] == null) {
       if (user.isLogin()) {
         await dio
             .post(
@@ -587,7 +589,10 @@ class _StampListState extends State<StampList> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SignIn()),
-        );
+        ).then((value) {
+          loadStampList();
+          loadJoinStamp();
+        });
       }
     } else {
       if (user.isLogin()) {
@@ -615,7 +620,7 @@ class _StampListState extends State<StampList> {
         .delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId')
         .then((res) {
       setState(() {
-        stampDetail = null;
+        stampDetail = {};
       });
     }).then((res) {
       Fluttertoast.showToast(
@@ -635,9 +640,11 @@ class _StampListState extends State<StampList> {
     if (user.isLogin()) {
       var response = await dio.get(
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
-
+      print('----------------------------------------------------');
+      print(response.data);
+      print('--------------------------------------------------');
       setState(() {
-        stampDetail = response.data["stampboard_id"];
+        stampDetail = response.data;
       });
 
       print("################################################");
