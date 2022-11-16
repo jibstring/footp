@@ -1,5 +1,13 @@
 package com.ssafy.back_footp.controller;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,15 +37,17 @@ public class PayController {
 	
 	@PostMapping("/kakaoPay/{userId}")
 	@ApiOperation(value = "카카오페이 테스트")
-	public ResponseEntity<String> kakaoPay(@PathVariable long userId){
+	public ResponseEntity<KakaoPay> kakaoPay(@PathVariable long userId) throws MalformedURLException, IOException{
 		
-		String result = payService.kakaoPay(userId);
+		KakaoPay result = payService.kakaoPay(userId);
 		System.out.println(result);
-		return new ResponseEntity<String>(result,HttpStatus.OK);
+		
+		return new ResponseEntity<KakaoPay>(result,HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/kakaoPaySuccess")
-    public void kakaoPaySuccess(@RequestParam("pg_token") String pg_token, Model model) {
+    public void kakaoPaySuccess(@RequestParam("pg_token") String pg_token, Model model){
+		
         log.info("kakaoPaySuccess get............................................");
         log.info("kakaoPaySuccess pg_token : " + pg_token);
         

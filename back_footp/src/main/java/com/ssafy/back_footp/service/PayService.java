@@ -41,7 +41,7 @@ public class PayService {
 	private KakaoInfo kakaoInfo;
 	
 	@Transactional
-	public String kakaoPay(long userId) {
+	public KakaoPay kakaoPay(long userId) {
 		
 		RestTemplate restTemplate = new RestTemplate();
 		
@@ -72,7 +72,7 @@ public class PayService {
             kakao.setUserId(userId);
             
             log.info("" + kakao);
-            return kakao.getNext_redirect_app_url();
+            return kakao;
  
         } catch (RestClientException e) {
             // TODO Auto-generated catch block
@@ -82,11 +82,13 @@ public class PayService {
             e.printStackTrace();
         }
         
-        return "/pay";
+        return null;
 	}
 	
 	@Transactional
 	public KakaoInfo kakaoPayInfo(String pg_token) {
+		
+		System.out.println(kakao.getNext_redirect_app_url());
 		 
         log.info("KakaoPayInfoVO............................................");
         log.info("-----------------------------");
