@@ -32,10 +32,12 @@ class MainData extends GetxController {
   int _listsize = 0;
   int _selectedIndex = 0;
   bool _attendChat = false;
+  bool _seachFlag=false;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   String _filter = 'hot';
   String _markerString = '';
+  String _searchKeyword='';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
@@ -51,9 +53,11 @@ class MainData extends GetxController {
   int get listsize => _listsize;
   int get selectedIndex => _selectedIndex;
   bool get attendChat => _attendChat;
+  bool get searchFlag=>_seachFlag;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   String get filter => _filter;
+  String get searchKeyword => _searchKeyword;
   String get markerString => _markerString;
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
@@ -69,6 +73,10 @@ class MainData extends GetxController {
     _chatRoom = cr;
   }
 
+  set setSearchFlag(bool searchflag){
+    _seachFlag=searchflag;
+  }
+
   set fixFilter(String filter) {
     _filter = filter;
   }
@@ -79,6 +87,15 @@ class MainData extends GetxController {
 
   set setAttendChat(bool attend) {
     _attendChat = attend;
+  }
+  
+  set setListclean(bool clear){
+    _dataList.clear();
+    _markers.clear();
+  }
+
+  set setSearchKeyword(String keyword){
+    _searchKeyword=keyword;
   }
 
   void getURL(
@@ -358,6 +375,89 @@ class MainData extends GetxController {
   }
 
   void moveMapTogather(gathermsg, gathermsg2) {}
+
+  void getSearch(String userid, String lng, String lat) async {
+
+    print("검색가장");
+    _apiKey = '${userid}/${lng}/${lat}';
+
+
+    switch (selectedIndex) {
+      case 0:
+        _mainDataUrl = Uri.parse('$baseURL/foot/search/$apiKey');
+
+        print(_mainDataUrl);
+        _dataList = await getSearchData();
+
+        try {
+          _listsize = await _dataList["message"].length;
+        } catch (e) {
+          _listsize = 0;
+        }
+
+        for (int i = 0; i < _listsize; i++) {
+          if (_dataList["message"][i]["isBlurred"] == true) {
+            getDistance(i);
+          }
+          getAddress(i);
+          createMarker(i);
+        }
+
+        break;
+
+      case 1:
+        _mainDataUrl = Uri.parse('$baseURL/gather/search/$apiKey');
+        _dataList = await getSearchData();
+
+        try {
+          _listsize = await _dataList["gather"].length;
+        } catch (e) {
+          _listsize = 0;
+        }
+
+        for (int i = 0; i < _listsize; i++) {
+          getAddress(i);
+          createMarker(i);
+        }
+
+        break;
+
+      case 2:
+        break;
+
+      default:
+    }
+
+    update();
+
+  }
+
+  Future getSearchData() async {
+    print(searchKeyword);
+
+    var body = jsonEncode( {
+          "keyword":searchKeyword
+        });
+    http.Response response = await http.post(_mainDataUrl,
+    headers: {
+  "Accept": "application/json",
+  "content-type":"application/json"
+},
+    body: body
+    );
+    if (response.statusCode == 200) {
+      _dataList = jsonDecode(utf8.decode(response.bodyBytes));
+      print(_dataList);
+      update();
+      return _dataList;
+    } else {
+      print(response.statusCode);
+      throw 'getMainData() error';
+    }
+  }
+
+
+
 }
 
 class MainMap extends StatelessWidget {
@@ -522,9 +622,12 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedIndex = index;
         maindata._selectedIndex = index;
 
+
         markers.clear();
-        maindata._markers.clear();
+        maindata.setListclean=true;
         maindata._address.clear();
+        maindata.setSearchFlag=false;
+        maindata.setSearchKeyword="";
       });
     }
   }
@@ -618,26 +721,51 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     _getImage();
     super.initState();
-    Timer.periodic(Duration(seconds: 1), (v) {
+    Timer.periodic(Duration(seconds: 2), (v) {
       if (mounted) {
         setState(() {
           location.getCurrentLocation();
           if (maindata.mapEdge != null) {
-            if (!user.isLogin()) {
-              // User ID는 null, 추후 수정
-              maindata.getURL(
-                  "1",
-                  maindata.mapEdge.northeast.longitude.toString(),
-                  maindata.mapEdge.southwest.longitude.toString(),
-                  maindata.mapEdge.southwest.latitude.toString(),
-                  maindata.mapEdge.northeast.latitude.toString());
-            } else {
-              maindata.getURL(
-                  user.userinfo["userId"].toString(),
-                  maindata.mapEdge.northeast.longitude.toString(),
-                  maindata.mapEdge.southwest.longitude.toString(),
-                  maindata.mapEdge.southwest.latitude.toString(),
-                  maindata.mapEdge.northeast.latitude.toString());
+            if(maindata.searchFlag==false){
+              print("아니 리스트인데요");
+              if (!user.isLogin()) {
+                // User ID는 null, 추후 수정
+                maindata.getURL(
+                    "1",
+                    maindata.mapEdge.northeast.longitude.toString(),
+                    maindata.mapEdge.southwest.longitude.toString(),
+                    maindata.mapEdge.southwest.latitude.toString(),
+                    maindata.mapEdge.northeast.latitude.toString());
+              } else {
+                maindata.getURL(
+                    user.userinfo["userId"].toString(),
+                    maindata.mapEdge.northeast.longitude.toString(),
+                    maindata.mapEdge.southwest.longitude.toString(),
+                    maindata.mapEdge.southwest.latitude.toString(),
+                    maindata.mapEdge.northeast.latitude.toString());
+              }
+            }
+            else{
+              print(maindata.searchKeyword);
+              if(maindata.searchKeyword!=""){
+                if (!user.isLogin()) {
+                  maindata.getSearch(
+                    "1",
+                    ((maindata.mapEdge.northeast.longitude+maindata.mapEdge.southwest.longitude)/2).toString(),
+                    ((maindata.mapEdge.southwest.latitude+maindata.mapEdge.northeast.latitude)/2).toString()
+                  );
+                }
+                else{
+                  maindata.getSearch(
+                    user.userinfo["userId"].toString(),
+                    ((maindata.mapEdge.northeast.longitude+maindata.mapEdge.southwest.longitude)/2).toString(),
+                    ((maindata.mapEdge.southwest.latitude+maindata.mapEdge.northeast.latitude)/2).toString()
+                  );
+                }                
+              }
+              else{
+                maindata.setListclean=true;
+              }
             }
             markers = maindata.markers;
           }
