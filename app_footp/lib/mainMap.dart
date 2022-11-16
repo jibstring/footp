@@ -4,7 +4,6 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -19,8 +18,9 @@ import 'package:app_footp/myPage.dart';
 import 'package:app_footp/newmyPage.dart';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
-import 'package:app_footp/components/mainMap/stampList.dart';
 import 'package:app_footp/components/mainMap/gatherList.dart';
+import 'package:app_footp/components/mainMap/stampList.dart';
+import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 MainData maindata = Get.put(MainData());
@@ -30,6 +30,8 @@ class MainData extends GetxController {
   var _dataList;
   int _count = 0;
   int _listsize = 0;
+  int _selectedIndex = 0;
+  bool _attendChat = false;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   String _filter = 'hot';
@@ -37,17 +39,18 @@ class MainData extends GetxController {
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
+  ChatRoom _chatRoom = ChatRoom(0, 0, "");
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
   Map<int, double> _distances = {};
   Map<int, String> _address = {};
   Map<int, String> _hiddenMessage = {};
-  bool _attendChat=false;
 
-  bool get attendChat=>_attendChat;
   get dataList => _dataList;
   int get count => _count;
   int get listsize => _listsize;
+  int get selectedIndex => _selectedIndex;
+  bool get attendChat => _attendChat;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   String get filter => _filter;
@@ -55,14 +58,15 @@ class MainData extends GetxController {
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
+  ChatRoom get chatRoom => _chatRoom;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
   Map<int, double> get distances => _distances;
   Map<int, String> get address => _address;
   Map<int, String> get hiddenMessage => _hiddenMessage;
 
-  set setAttendChat(bool attend){
-    _attendChat=attend;
+  set setChatRoom(ChatRoom cr) {
+    _chatRoom = cr;
   }
 
   set fixFilter(String filter) {
@@ -73,60 +77,58 @@ class MainData extends GetxController {
     _mycontroller = mycontroller;
   }
 
+  set setAttendChat(bool attend) {
+    _attendChat = attend;
+  }
+
   void getURL(
-      int index, String userid, String lngR, String lngL, String latD, String latU) async {
-    if (count > 30) {
-      markers.clear();
-      // address.clear();
-      sleep(const Duration(milliseconds: 500));
-      _count = 0;
-    }
+      String userid, String lngR, String lngL, String latD, String latU) async {
     _apiKey = '${userid}/${lngR}/${lngL}/${latD}/${latU}';
 
-    if(index==0) {
-      _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
-    } else {
-      _mainDataUrl = Uri.parse('$baseURL/gather/list/$filter/$apiKey');
-    }    
+    switch (selectedIndex) {
+      case 0:
+        _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
+        _dataList = await getMainData();
 
-    _dataList = await getMainData();
-
-    if(index==0){
-      try{
-        _listsize = await _dataList["message"].length;
-      }catch(e){
-        _listsize=0;
-      }
-    }else{
-      try{
-        _listsize = await _dataList["gather"].length;
-        print(dataList["gather"]);
-      }catch(e){
-        _listsize=0;
-      }
-    }
-
-    _markers.clear();
-
-    if(index==0){
-      for (int i = 0; i < _listsize; i++) {
-        // print(dataList["message"][i]);
-        if (_dataList["message"][i]["isBlurred"] == true) {
-          getDistance(i);
+        try {
+          _listsize = await _dataList["message"].length;
+        } catch (e) {
+          _listsize = 0;
         }
-        // if 걸어서 숨겨졌는가? 숨겨졌으면 내 위치랑 대조해서 가까운지 확인하는 메소드로 아니면 continue
-        //getAddress(index,i,"message","messageLatitude", "messageLongitude", "messageId");
-        createMarker(index,i,"message","messageLatitude", "messageLongitude","messageLikenum", "userNickname", "messageId","messageText","messageWritedate");
-      }
+
+        for (int i = 0; i < _listsize; i++) {
+          if (_dataList["message"][i]["isBlurred"] == true) {
+            getDistance(i);
+          }
+          getAddress(i);
+          createMarker(i);
+        }
+
+        break;
+
+      case 1:
+        _mainDataUrl = Uri.parse('$baseURL/gather/list/$filter/$apiKey');
+        _dataList = await getMainData();
+
+        try {
+          _listsize = await _dataList["gather"].length;
+        } catch (e) {
+          _listsize = 0;
+        }
+
+        for (int i = 0; i < _listsize; i++) {
+          getAddress(i);
+          createMarker(i);
+        }
+
+        break;
+
+      case 2:
+        break;
+
+      default:
     }
-    else{
-      for (int i = 0; i < _listsize; i++) {
-        //getAddress(index,i,"gather","gatherLatitude", "gatherLongitude", "gatherId");
-        createMarker(index,i,"gather","gatherLatitude", "gatherLongitude","gatherLikenum", "userNickname", "gatherId","gatherText","gatherWritedate");
-      }
-    }
-  
-    _count++;
+
     update();
   }
 
@@ -164,7 +166,37 @@ class MainData extends GetxController {
     update();
   }
 
-  void getAddress(int type,int idx,String messageType, String latitude, String longitude, String messageId,) async {
+  void getAddress(int idx) async {
+    String messageType = "";
+    String id = "";
+    String latitude = "";
+    String longitude = "";
+
+    switch (selectedIndex) {
+      case 0:
+        messageType = "message";
+        id = "messageId";
+        latitude = "messageLatitude";
+        longitude = "messageLongitude";
+        break;
+
+      case 1:
+        messageType = "gather";
+        id = "gatherId";
+        latitude = "gatherLatitude";
+        longitude = "gatherLongitude";
+        break;
+
+      case 2:
+        break;
+
+      default:
+        messageType = "message";
+        id = "messageId";
+        latitude = "messageLatitude";
+        longitude = "messageLongitude";
+    }
+
     String lat = dataList[messageType][idx][latitude].toString();
     String lng = dataList[messageType][idx][longitude].toString();
 
@@ -181,14 +213,14 @@ class MainData extends GetxController {
       var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsondata["status"]["code"] == 0) {
         if (jsondata["results"].length > 1) {
-          _address[dataList[messageType][idx][messageId]] =
+          _address[dataList[messageType][idx][id]] =
               "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
         } else {
-          _address[dataList[messageType][idx][messageId]] =
+          _address[dataList[messageType][idx][id]] =
               "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
         }
       } else {
-        _address[dataList[messageType][idx][messageId]] = "";
+        _address[dataList[messageType][idx][id]] = "";
       }
       update();
     } else {
@@ -204,28 +236,89 @@ class MainData extends GetxController {
     return newDate;
   }
 
-  void createMarker(int type,int idx, String messageType,String latitude, String longitude,String likenum, String nickname, String messageId,String text,String writedate ) {
+  void createMarker(int idx) {
+    String messageType = "";
+    String id = "";
+    String nickname = "";
+    String text = "";
+    String latitude = "";
+    String longitude = "";
+    String likenum = "";
+    String writedate = "";
+
+    switch (selectedIndex) {
+      case 0:
+        messageType = "message";
+        id = "messageId";
+        nickname = "userNickname";
+        text = "messageText";
+        latitude = "messageLatitude";
+        longitude = "messageLongitude";
+        likenum = "messageLikenum";
+        writedate = "messageWritedate";
+        break;
+
+      case 1:
+        messageType = "gather";
+        id = "gatherId";
+        nickname = "userNickname";
+        text = "gatherText";
+        latitude = "gatherLatitude";
+        longitude = "gatherLongitude";
+        likenum = "gatherLikenum";
+        writedate = "gatherWritedate";
+        break;
+
+      case 2:
+        break;
+
+      default:
+        messageType = "message";
+        id = "messageId";
+        nickname = "userNickname";
+        text = "messageText";
+        latitude = "messageLatitude";
+        longitude = "messageLongitude";
+        likenum = "messageLikenum";
+        writedate = "messageWritedate";
+    }
+
     int like = (dataList[messageType][idx][likenum] / 5).toInt();
     int color = 0;
     _markerString =
-        "${dataList[messageType][idx][nickname]}      \u{2764} ${dataList[messageType][idx][likenum].toString()}\n${dataList[messageType][idx][text]}\n${hiddenMessage[dataList[messageType][idx][messageId]] ??= ""}\n${address[dataList[messageType][idx][messageId]] ??= ""}\n${changeDate(dataList[messageType][idx][writedate])}";
+        "${dataList[messageType][idx][nickname]}      \u{2764} ${dataList[messageType][idx][likenum].toString()}\n${dataList[messageType][idx][text]}\n${hiddenMessage[dataList[messageType][idx][id]] ??= ""}\n${address[dataList[messageType][idx][id]] ??= ""}\n${changeDate(dataList[messageType][idx][writedate])}";
 
     if (like >= 45) {
       like = 44;
     }
 
-    if (type==0 && dataList["message"][idx]["isBlurred"] == true) {
-      if ((distances[dataList["message"][idx]["messageId"]] ??= 1) < 0.025) {
-        color = 8;
-      } else {
-        color = 7;
-      }
-    } else {
-      color = dataList["message"][idx]["messageId"] % 7;
+    switch (selectedIndex) {
+      case 0:
+        if (dataList["message"][idx]["isBlurred"] == true) {
+          if ((distances[dataList["message"][idx]["messageId"]] ??= 1) <
+              0.025) {
+            color = 8;
+          } else {
+            color = 7;
+          }
+        } else {
+          color = dataList[messageType][idx][id] % 7;
+        }
+        break;
+
+      case 1:
+        color = dataList[messageType][idx][id] % 7;
+        break;
+
+      case 2:
+        color = dataList[messageType][idx][id] % 7;
+        break;
+
+      default:
     }
 
     Marker marker = Marker(
-        markerId: dataList[messageType][idx][messageId].toString(),
+        markerId: dataList[messageType][idx][id].toString(),
         position: LatLng(dataList[messageType][idx][latitude],
             dataList[messageType][idx][longitude]),
         icon: _footImage[color],
@@ -241,6 +334,14 @@ class MainData extends GetxController {
   }
 
   void getMapEdge() {
+    if (count > 30) {
+      markers.clear();
+      // address.clear();
+      sleep(const Duration(milliseconds: 500));
+      _count = 0;
+    }
+    _count++;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mycontroller.getVisibleRegion().then((value) {
         _mapEdge = value;
@@ -287,7 +388,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   Completer<NaverMapController> _controller = Completer();
   UserData user = Get.put(UserData());
-  int _selectedIndex = 0;
+  int selectedIndex = maindata.selectedIndex;
   List<Marker> markers = [];
   DateTime? currentBackPressTime;
 
@@ -296,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 실시간 채팅방
-    gatherList(), //ChatRoom(1, 2, "unknown"),
+    gatherList(),
     // 스탬프 글목록
     StampList()
   ];
@@ -331,7 +432,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const newMyPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const newMyPage()),
                     );
                   }
                 },
@@ -389,7 +491,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ),
-            widgetOptions.elementAt(_selectedIndex),
+            widgetOptions.elementAt(selectedIndex),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: BottomNavigationBar(
@@ -407,7 +509,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       label: 'Stamp',
                     )
                   ],
-                  currentIndex: _selectedIndex,
+                  currentIndex: selectedIndex,
                   onTap: _onItemTapped,
                 )),
           ])),
@@ -417,9 +519,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onItemTapped(int index) {
     if (mounted) {
       setState(() {
-        _selectedIndex = index;
+        selectedIndex = index;
+        maindata._selectedIndex = index;
+
         markers.clear();
         maindata._markers.clear();
+        maindata._address.clear();
       });
     }
   }
@@ -521,7 +626,6 @@ class _MyHomePageState extends State<MyHomePage> {
             if (!user.isLogin()) {
               // User ID는 null, 추후 수정
               maindata.getURL(
-                _selectedIndex,
                   "1",
                   maindata.mapEdge.northeast.longitude.toString(),
                   maindata.mapEdge.southwest.longitude.toString(),
@@ -529,26 +633,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   maindata.mapEdge.northeast.latitude.toString());
             } else {
               maindata.getURL(
-                _selectedIndex,
                   user.userinfo["userId"].toString(),
                   maindata.mapEdge.northeast.longitude.toString(),
                   maindata.mapEdge.southwest.longitude.toString(),
                   maindata.mapEdge.southwest.latitude.toString(),
                   maindata.mapEdge.northeast.latitude.toString());
             }
-            switch (_selectedIndex) {
-              case 0:
-                markers = maindata.markers;
-                break;
-              case 1:
-                markers = maindata.markers;
-                break;
-              case 2:
-                markers = maindata.markers;
-                break;
-              default:
-                markers = maindata.markers;
-            }
+            markers = maindata.markers;
           }
         });
       }
