@@ -54,7 +54,7 @@ class _EventFootState extends State<EventFoot> {
     super.dispose();
   }
 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext pcontext) {
     //VideoPlayerController _videocontroller;
     footlist.ListMaker listmaker = footlist.listmaker;
     MyFootPageState myfoot;
@@ -290,6 +290,7 @@ class _EventFootState extends State<EventFoot> {
                   ),
                   ElevatedButton(
                     onPressed: (){
+                      setState(() {});
                       if (!user.isLogin()) {
                         Navigator.push(
                           context,
@@ -300,8 +301,9 @@ class _EventFootState extends State<EventFoot> {
                       else{
                         maindata.setChatRoom=ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
                         maindata.setAttendChat=true;
-                        setState(() {});
+                        pcontext.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.setState(() {});
                       }
+
                     },
                     child: Text("채팅방참가"),)
                   ,
