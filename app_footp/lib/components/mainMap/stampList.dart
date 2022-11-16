@@ -108,13 +108,16 @@ class _StampListState extends State<StampList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const SignIn()),
-                              ).then((value) => setState(() {}));
+                              );
                             } else {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const CreateStamp()),
-                              );
+                              ).then((value) {
+                                loadStampList();
+                                loadJoinStamp();
+                              });
                             }
                           },
                         ),
@@ -414,7 +417,10 @@ class _StampListState extends State<StampList> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             const SignIn()),
-                                                  );
+                                                  ).then((value) {
+                                                    loadStampList();
+                                                    loadJoinStamp();
+                                                  });
                                                 } else {
                                                   // heartChange();
                                                   stampLike(index);
@@ -607,7 +613,10 @@ class _StampListState extends State<StampList> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SignIn()),
-        );
+        ).then((value) {
+          loadStampList();
+          loadJoinStamp();
+        });
       }
     }
   }
