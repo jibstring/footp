@@ -256,7 +256,7 @@ public class StampboardService {
 	// 검색 결과 최신순
 	public List<stampboardDTO> sortSearchNew(String text, long uid) {
 		List<Stampboard> temps = stampboardRepository
-				.findByStampboardTextContainingIgnoreCaseOrderByStampboardWritedateDesc(text);
+				.findByStampboardTextContainingIgnoreCaseOrStampboardTitleContainingIgnoreCaseOrderByStampboardWritedateDesc(text,text);
 
 		List<stampboardDTO> list = new ArrayList<>();
 
