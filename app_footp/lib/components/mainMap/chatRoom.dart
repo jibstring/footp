@@ -100,7 +100,7 @@ class _ChatRoomState extends State<ChatRoom> {
     setState(() {});
   }
 
-  void exitRoom() {
+  void exitRoom(BuildContext pcontext) {
     if(widget.con && widget.stompClient.isActive) {
       widget.stompClient.deactivate();
       widget.chatList.add(Msg(widget.eventId, widget.userId, "채팅방에서 나왔습니다.", widget.userNickName, "."));
@@ -109,12 +109,14 @@ class _ChatRoomState extends State<ChatRoom> {
       setState(() {});
     }else {
       showToast("채팅방에 연결되어있지 않습니다.");
+      maindata.setAttendChat=false;
+      pcontext.findAncestorStateOfType()?.setState(() {});
     }
   }
 
-  void exitAlert() {
+  void exitAlert(BuildContext pcontext) {
     if(widget.eventId == 0) {
-      return exitRoom();
+      return exitRoom(pcontext);
     }
     showDialog(
         context: context,
@@ -143,9 +145,10 @@ class _ChatRoomState extends State<ChatRoom> {
               ElevatedButton(
                 child: const Text("확인"),
                 onPressed: () {
-                  exitRoom();
+                  exitRoom(pcontext);
                   Navigator.pop(context);
                   maindata.setAttendChat=false;
+                  pcontext.findAncestorStateOfType()?.setState(() {});
                 },
               ),
               TextButton(
@@ -165,7 +168,7 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext pcontext) {
     if(widget.eventId > 0) {
       widget.stompClient.activate();
     }
@@ -208,7 +211,7 @@ class _ChatRoomState extends State<ChatRoom> {
                           )
                       ),
                       IconButton(
-                        onPressed: ()=>{exitAlert()}, 
+                        onPressed: ()=>{exitAlert(pcontext)}, 
                         icon: const Icon(
                           Icons.exit_to_app,
                           color: Colors.red,
@@ -233,12 +236,17 @@ class _ChatRoomState extends State<ChatRoom> {
                               decoration: const InputDecoration(border: OutlineInputBorder(), labelText: '채팅을 입력하세요.'),
                               focusNode: widget.myFocus,
                               controller: widget.textController,
-                              onSubmitted: (str)=>sendMsg(str),
+                              onSubmitted: 
+                                (str)=> setState(() {
+                                  sendMsg(str);
+                                }) 
                             ),
                         )
                     ),
                     IconButton(
-                      onPressed: ()=>sendMsg(widget.textController.text),
+                      onPressed: ()=>setState(() {
+                        sendMsg(widget.textController.text);
+                      }),
                       color: Colors.deepPurple,
                       icon: 
                         const Icon(
