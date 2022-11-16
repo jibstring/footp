@@ -28,17 +28,18 @@ class _StampListState extends State<StampList> {
   var _selectedValue = "NEW";
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
-  StampDetailInfo stampDetail = Get.put(StampDetailInfo());
+  // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
+  Map stampDetail = {};
+  TextEditingController searchTextController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadStampList();
-    loadJoinStamp();
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    print(stampDetail.nowStamp);
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadStampList();
+      loadJoinStamp();
+    });
   }
 
   @override
@@ -93,6 +94,7 @@ class _StampListState extends State<StampList> {
                           ),
                           onPressed: () {
                             loadStampList();
+                            loadJoinStamp();
                           },
                         ),
                         // 새로운 스탬푸 작성
@@ -113,13 +115,52 @@ class _StampListState extends State<StampList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const CreateStamp()),
-                              );
+                              ).then((value) {
+                                loadStampList();
+                                loadJoinStamp();
+                              });
                             }
                           },
                         ),
                         IconButton(
                           // 검색
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('스탬푸 검색'),
+                                    content: TextField(
+                                      controller: searchTextController,
+                                      decoration: InputDecoration(
+                                          hintText: "검색어를 입력하세요"),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('CANCEL',
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('OK',
+                                            style:
+                                                TextStyle(color: Colors.green)),
+                                        onPressed: () {
+                                          searchStamp(
+                                              searchTextController.text);
+                                          searchTextController.clear();
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
                           icon: Icon(Icons.search, size: 40),
                         ),
                       ],
@@ -246,7 +287,7 @@ class _StampListState extends State<StampList> {
                                               actions: [
                                                 _stampList[index]
                                                             ["stampboard_id"] !=
-                                                        stampDetail.nowStamp[
+                                                        stampDetail[
                                                             "stampboard_id"]
                                                     ? TextButton(
                                                         child: Text('참가하기'),
@@ -377,8 +418,7 @@ class _StampListState extends State<StampList> {
 
                                       // 참가하기 버튼
                                       _stampList[index]["stampboard_id"] !=
-                                              stampDetail
-                                                  .nowStamp["stampboard_id"]
+                                              stampDetail["stampboard_id"]
                                           ? TextButton(
                                               child: Text('참가하기'),
                                               onPressed: () {
@@ -414,7 +454,10 @@ class _StampListState extends State<StampList> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             const SignIn()),
-                                                  );
+                                                  ).then((value) {
+                                                    loadStampList();
+                                                    loadJoinStamp();
+                                                  });
                                                 } else {
                                                   // heartChange();
                                                   stampLike(index);
@@ -447,9 +490,6 @@ class _StampListState extends State<StampList> {
                 )),
               ],
             ));
-        /*
-                  상세페이지 조회
-                  */
       },
     );
   }
@@ -570,16 +610,32 @@ class _StampListState extends State<StampList> {
     var userId = user.userinfo["userId"];
     var stampboardId = _stampList[index]["stampboard_id"];
 
-    if (stampDetail.nowStamp == {}) {
+    if (stampDetail["stampboard_id"] == null) {
       if (user.isLogin()) {
-        var response = await dio.post(
-            'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId');
-        stampDetail.nowStamp = response.data;
+        await dio
+            .post(
+                'http://k7a108.p.ssafy.io:8080/stamp/join/$userId/$stampboardId')
+            .then((res) {
+          loadJoinStamp();
+        }).then((res) {
+          Fluttertoast.showToast(
+              msg: '새로운 스탬푸를 시작했습니다.',
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Colors.lightGreenAccent,
+              fontSize: 20.0,
+              textColor: Colors.white,
+              toastLength: Toast.LENGTH_SHORT);
+        }).catchError((e) {
+          print(e);
+        });
       } else {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SignIn()),
-        );
+        ).then((value) {
+          loadStampList();
+          loadJoinStamp();
+        });
       }
     } else {
       if (user.isLogin()) {
@@ -594,7 +650,10 @@ class _StampListState extends State<StampList> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SignIn()),
-        );
+        ).then((value) {
+          loadStampList();
+          loadJoinStamp();
+        });
       }
     }
   }
@@ -603,9 +662,21 @@ class _StampListState extends State<StampList> {
   void cancleStamp(int index) async {
     var dio = DIO.Dio();
     var userId = user.userinfo["userId"];
-    var response =
-        await dio.delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId');
-    stampDetail.nowStamp = {};
+    await dio
+        .delete('http://k7a108.p.ssafy.io:8080/stamp/leave/$userId')
+        .then((res) {
+      setState(() {
+        stampDetail = {};
+      });
+    }).then((res) {
+      Fluttertoast.showToast(
+          msg: '스탬푸 참가를 취소하였습니다.',
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.redAccent,
+          fontSize: 20.0,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT);
+    });
   }
 
   // 현재 참가 중인 스탬푸 조회하기
@@ -615,10 +686,34 @@ class _StampListState extends State<StampList> {
     if (user.isLogin()) {
       var response = await dio.get(
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
-      stampDetail.nowStamp = response.data;
+      print('----------------------------------------------------');
+      print(response.data);
+      print('--------------------------------------------------');
+      setState(() {
+        stampDetail = response.data;
+      });
+
       print("################################################");
-      print(stampDetail.nowStamp);
+      print("${response.data["stampboard_id"]}");
+      print('진행중');
+      print(stampDetail);
       print('#############################################');
     }
+  }
+
+  void searchStamp(String searchText) async {
+    var dio = DIO.Dio();
+
+    var userId = user.isLogin() ? user.userinfo["userId"] : 0;
+    await dio
+        .get(
+            'http://k7a108.p.ssafy.io:8080/stamp/search/like/$searchText/$userId')
+        .then((res) {
+      setState(() {
+        _stampList = res.data;
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 }

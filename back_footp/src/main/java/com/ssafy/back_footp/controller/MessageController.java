@@ -3,6 +3,7 @@ package com.ssafy.back_footp.controller;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.MessagePostContent;
 import com.ssafy.back_footp.request.MessagePostReq;
+import com.ssafy.back_footp.request.MessageSearchReq;
 import com.ssafy.back_footp.response.messagelikeDTO;
 import com.ssafy.back_footp.response.messagelistDTO;
 import com.ssafy.back_footp.service.MessageService;
@@ -272,11 +273,11 @@ public class MessageController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping("/search/{userId}/{lon}/{lat}/{keyword}")
+	@PostMapping("/search/{userId}/{lon}/{lat}")
 	@ApiOperation(value = "일반 발자국 검색 (좌표에서 가까운 순으로 정렬)")
-	public ResponseEntity<JSONObject> messageSearch(@PathVariable long userId, @PathVariable long lon, @PathVariable double lat, @PathVariable String keyword){
+	public ResponseEntity<JSONObject> messageSearch(@PathVariable long userId, @PathVariable long lon, @PathVariable double lat, @RequestBody MessageSearchReq messageSearchReq){
 
-		JSONObject result = messageService.searchMessage(userId, lon, lat, keyword);
+		JSONObject result = messageService.searchMessage(userId, lon, lat, messageSearchReq.getKeyword());
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }
