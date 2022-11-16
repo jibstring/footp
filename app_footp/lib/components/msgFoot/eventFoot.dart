@@ -290,19 +290,18 @@ class _EventFootState extends State<EventFoot> {
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      maindata.setAttendChat=true;
-                      
-                      // if (!user.isLogin()) {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => const SignIn()),
-                      //   );
-                      // }
-                      // else{
-                      //   ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
-                      // }
-
+                      if (!user.isLogin()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignIn()),
+                        );
+                      }
+                      else{
+                        maindata.setChatRoom=ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
+                        maindata.setAttendChat=true;
+                        setState(() {});
+                      }
                     },
                     child: Text("채팅방참가"),)
                   ,
