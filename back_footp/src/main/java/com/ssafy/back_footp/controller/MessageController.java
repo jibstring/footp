@@ -275,7 +275,7 @@ public class MessageController {
 
 	@PostMapping("/search/{userId}/{lon}/{lat}")
 	@ApiOperation(value = "일반 발자국 검색 (좌표에서 가까운 순으로 정렬)")
-	public ResponseEntity<JSONObject> messageSearch(@PathVariable long userId, @PathVariable long lon, @PathVariable double lat, @RequestBody MessageSearchReq messageSearchReq){
+	public ResponseEntity<JSONObject> messageSearch(@PathVariable long userId, @PathVariable double lon, @PathVariable double lat, @RequestBody MessageSearchReq messageSearchReq){
 
 		JSONObject result = messageService.searchMessage(userId, lon, lat, messageSearchReq.getKeyword());
 		return new ResponseEntity<>(result, HttpStatus.OK);
