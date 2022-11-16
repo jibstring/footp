@@ -14,13 +14,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.ssafy.back_footp.entity.Gather;
-import com.ssafy.back_footp.entity.User;
-import com.ssafy.back_footp.entity.UserJoinedGather;
+import com.ssafy.back_footp.entity.*;
 import com.ssafy.back_footp.repository.UserJoinedGatherRepository;
 import com.ssafy.back_footp.request.GatherPostContent;
 import com.ssafy.back_footp.request.GatherPostReq;
 import com.ssafy.back_footp.response.gatherlistDTO;
+import com.ssafy.back_footp.response.messagelistDTO;
 import org.json.simple.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -76,7 +75,7 @@ public class GatherService {
 				Gather.getGatherFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
 				Gather.getGatherPoint().getX(),
 				Gather.getGatherPoint().getY(),
-				gatherLikeRepository.findByGatherIdAndUserId(Gather, Gather.getUserId()) != null,
+				gatherLikeRepository.findByGatherIdAndUserId(Gather, userRepository.findById(userId).get()) != null,
 				Gather.getGatherLikenum(),
 				Gather.getGatherSpamnum(),
 				Gather.getGatherDesigncode()
@@ -161,6 +160,35 @@ public class GatherService {
 	public String leaveGather(long gid, long uid){
 		userJoinedGatherRepository.deleteByUserIdAndGatherId(userRepository.findById(uid).get(), gatherRepository.findById(gid).get());
 		return "success";
+	}
+
+
+	// 확성기 검색
+	public JSONObject searchGather(long userId, double lon, double lat, String keyword) {
+		List<gatherlistDTO> gatherlist = new ArrayList<>();
+
+		List<Gather> gathers = new ArrayList<>();
+		gathers = gatherRepository.searchGatherSortingByDistance(keyword, lon, lat);
+
+		gathers.forEach(Gather->gatherlist.add(new gatherlistDTO(
+				Gather.getGatherId(),
+				Gather.getUserId().getUserNickname(),
+				Gather.getGatherText(),
+				Gather.getGatherFileurl(),
+				Gather.getGatherWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+				Gather.getGatherFinishdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+				Gather.getGatherPoint().getX(),
+				Gather.getGatherPoint().getY(),
+				gatherLikeRepository.findByGatherIdAndUserId(Gather, userRepository.findById(userId).get()) != null,
+				Gather.getGatherLikenum(),
+				Gather.getGatherSpamnum(),
+				Gather.getGatherDesigncode()
+		)));
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("gather", gatherlist);
+
+		return jsonObject;
 	}
 	
 }
