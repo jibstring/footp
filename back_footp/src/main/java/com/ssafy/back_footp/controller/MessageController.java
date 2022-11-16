@@ -271,4 +271,12 @@ public class MessageController {
 		JSONObject result = messageService.getMessageList("new", userId, lon_r, lon_l, lat_d, lat_u);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
+	@GetMapping("/search/{userId}/{lon}/{lat}/{keyword}")
+	@ApiOperation(value = "일반 발자국 검색 (좌표에서 가까운 순으로 정렬)")
+	public ResponseEntity<JSONObject> messageSearch(@PathVariable long userId, @PathVariable long lon, @PathVariable double lat, @PathVariable String keyword){
+
+		JSONObject result = messageService.searchMessage(userId, lon, lat, keyword);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }
