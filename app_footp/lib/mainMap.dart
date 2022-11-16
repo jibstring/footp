@@ -39,6 +39,7 @@ class MainData extends GetxController {
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
+  ChatRoom _chatRoom = ChatRoom(0, 0, "");
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
   Map<int, double> _distances = {};
@@ -57,11 +58,16 @@ class MainData extends GetxController {
   dynamic get mainDataUrl => _mainDataUrl;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
+  ChatRoom get chatRoom => _chatRoom;
   List<Marker> get markers => _markers;
   List<OverlayImage> get footImage => _footImage;
   Map<int, double> get distances => _distances;
   Map<int, String> get address => _address;
   Map<int, String> get hiddenMessage => _hiddenMessage;
+
+  set setChatRoom(ChatRoom cr) {
+    _chatRoom = cr;
+  }
 
   set fixFilter(String filter) {
     _filter = filter;
@@ -391,7 +397,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // 발자국 글목록
     FootList(),
     // 실시간 채팅방
-    // ChatRoom(1, 2, "unknown"),
     gatherList(),
     // 스탬프 글목록
     StampList()

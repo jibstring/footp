@@ -145,8 +145,7 @@ class _gatherListState extends State<gatherList> {
                 }));
       },
     )
-    :ChatRoom(0,1, "초코송이");
-
+    :maindata.chatRoom;
   }
 
   void initState() {
