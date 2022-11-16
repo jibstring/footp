@@ -5,8 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ssafy.back_footp.request.GatherPostContent;
-import com.ssafy.back_footp.request.GatherPostReq;
+import com.ssafy.back_footp.request.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import com.ssafy.back_footp.repository.GatherRepository;
 import com.ssafy.back_footp.repository.GatherSpamRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.GatherPostReq;
-import com.ssafy.back_footp.request.UserRankingReq;
 import com.ssafy.back_footp.service.GatherLikeService;
 import com.ssafy.back_footp.service.GatherService;
 import com.ssafy.back_footp.service.GatherSpamService;
@@ -306,4 +304,13 @@ public class GatherController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+
+	// 확성기 검색
+	@PostMapping("/search/{userId}/{lon}/{lat}")
+	@ApiOperation(value = "확성기 검색 기능")
+	public ResponseEntity<JSONObject> gatherSearch(@PathVariable long userId, @PathVariable double lon, @PathVariable double lat, @RequestBody GatherSearchReq gatherSearchReq){
+
+		JSONObject result = gatherService.searchGather(userId, lon, lat, gatherSearchReq.getKeyword());
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }
