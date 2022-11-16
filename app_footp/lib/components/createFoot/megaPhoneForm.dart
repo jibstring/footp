@@ -108,7 +108,6 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
     }
   }
 
-
   Future<void> _neverSatisfied(BuildContext context) async {
     final _items = [
       "1시간",
@@ -176,7 +175,20 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("풋포인트 부족"),
-            content: Text("충전하시겠습니까?"),
+            content: Container(
+              height: 100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("충전하시겠습니까?",style: TextStyle(fontSize: 20,)),
+                  SizedBox(height: 10,),
+                  Text(
+                    "나의 풋포인트 : ${user.userinfo['userCash']}",
+                    style: TextStyle(fontSize: 15, color: Colors.blue),
+                  )
+                ],
+              ),
+            ),
             actions: <Widget>[
               TextButton(
                 child: const Text('예'),
@@ -199,14 +211,12 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
   }
 
   DoPay() async {
-
     user.payRequest();
     var url = Uri.parse(
         'http://k7a108.p.ssafy.io:8080/pay/kakaoPay/${user.userinfo['userId']}');
 
     // var data = DIO.FormData.fromMap({
     //   'messageContent': json.encode(createMarker.newmarker),
-    
 
     var response = await http.post(url);
 
@@ -218,8 +228,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
     print('payurl : $_payurl');
     user.payurlSet(_payurl);
 
-     Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => payweb()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => payweb()));
   }
 
   List<BannerModel> listBanners = [
@@ -259,14 +268,12 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
             });
           },
         ),
-
         SizedBox(height: 20),
         Text(
           "$_categoryresult",
           style: TextStyle(fontSize: 20, color: Colors.blue),
         ),
         SizedBox(height: 20),
-
         TextField(
           maxLines: 6,
           decoration: InputDecoration(

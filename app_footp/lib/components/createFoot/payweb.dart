@@ -86,7 +86,8 @@ class _paywebState extends State<payweb> {
         onWebResourceError: (error) => {
           LogPrint("${error.description}"),
           Navigator.of(context).pop(),
-          paySuccessMessage(context)
+          paySuccessMessage(context),
+          user.paySuccess()
         },
         navigationDelegate: (request) async {
           LogPrint('navigate url : ${request.url}');

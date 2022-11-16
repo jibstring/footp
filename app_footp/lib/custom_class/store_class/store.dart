@@ -152,6 +152,16 @@ class UserData extends GetxController {
     _isPayRequest = true;
   }
 
+  void paySuccess(){
+    _userinfo["userCash"]+=50000;
+    update();
+  }
+
+  void megaCost(){
+    _userinfo["userCash"]-=50000;
+    update();
+  }
+
   void payRequestDone(){
     _isPayRequest = false;
   }
