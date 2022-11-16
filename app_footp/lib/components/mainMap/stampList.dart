@@ -30,6 +30,7 @@ class _StampListState extends State<StampList> {
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
   Map stampDetail = {};
+  TextEditingController searchTextController = TextEditingController();
 
   @override
   void initState() {
@@ -123,7 +124,43 @@ class _StampListState extends State<StampList> {
                         ),
                         IconButton(
                           // 검색
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('스탬푸 검색'),
+                                    content: TextField(
+                                      controller: searchTextController,
+                                      decoration: InputDecoration(
+                                          hintText: "검색어를 입력하세요"),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('CANCEL',
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('OK',
+                                            style:
+                                                TextStyle(color: Colors.green)),
+                                        onPressed: () {
+                                          searchStamp(
+                                              searchTextController.text);
+                                          searchTextController.clear();
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
                           icon: Icon(Icons.search, size: 40),
                         ),
                       ],
@@ -662,5 +699,21 @@ class _StampListState extends State<StampList> {
       print(stampDetail);
       print('#############################################');
     }
+  }
+
+  void searchStamp(String searchText) async {
+    var dio = DIO.Dio();
+
+    var userId = user.isLogin() ? user.userinfo["userId"] : 0;
+    await dio
+        .get(
+            'http://k7a108.p.ssafy.io:8080/stamp/search/like/$searchText/$userId')
+        .then((res) {
+      setState(() {
+        _stampList = res.data;
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 }
