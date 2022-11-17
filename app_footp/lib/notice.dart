@@ -8,6 +8,8 @@ import 'package:get/get.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 
+Notice notice = Notice();
+
 class Notice extends GetxController{
   late StompClient stompClient;
   late MainData maindata;
@@ -44,8 +46,8 @@ class Notice extends GetxController{
   }
 
   void showToast(Map<String, dynamic> map) {
-    String str = map["userId"] + " : " + map["gatherText"];
-    Fluttertoast.cancel();
+    print("999999999999999999999");
+    String str = "${map["userId"]} : ${map["gatherText"]}";
     Fluttertoast.showToast(msg: str,
         gravity: ToastGravity.TOP,
         backgroundColor: Colors.red.shade100,
