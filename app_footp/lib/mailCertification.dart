@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
@@ -15,6 +17,8 @@ class MailCertification extends StatefulWidget {
 }
 
 class _MailCertificationState extends State<MailCertification> {
+  var url;
+  var response;
   int time = 180;
   int timerActive = 0;
   int buttonActive = 0;
@@ -51,7 +55,7 @@ class _MailCertificationState extends State<MailCertification> {
           Container(
             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
-              "유효 기간 3분 내로 인증 번호 6자리를 입력해 주세요!",
+              "유효 기간 3분 내로 인증 번호 10자리를 입력해 주세요!",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 15,
@@ -85,9 +89,14 @@ class _MailCertificationState extends State<MailCertification> {
                         fontSize: 16,
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      url = Uri.parse(
+                          'http://k7a108.p.ssafy.io:8080/auth/email/${user.userinfo["userEmail"]}');
+                      response = await http.post(url);
+
                       time = 180;
                       buttonActive = 1;
+
                       if (timerActive == 0) {
                         timerActive = 1;
                         timer = Timer.periodic(Duration(milliseconds: 1000),
@@ -99,7 +108,6 @@ class _MailCertificationState extends State<MailCertification> {
                           });
                         });
                       }
-                      // 인증번호 발송 요청
                     },
                     style: ButtonStyle(
                         foregroundColor:
@@ -118,10 +126,11 @@ class _MailCertificationState extends State<MailCertification> {
                 children: <Widget>[
                   Container(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    width: 100,
+                    width: 150,
                     child: TextField(
                         controller: numberController,
-                        maxLength: 6,
+                        textCapitalization: TextCapitalization.characters,
+                        maxLength: 10,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: '인증번호',
@@ -165,13 +174,47 @@ class _MailCertificationState extends State<MailCertification> {
                                 fontSize: 16,
                               ),
                             ),
-                            onPressed: () {
-                              if (numberController.text.length == 6) {
-                                // 인증 요청 보내고 맞는지 확인
-                                print(numberController.text);
+                            onPressed: () async {
+                              if (time != 0) {
+                                if (numberController.text.length == 10) {
+                                  numberController.text =
+                                      numberController.text.toUpperCase();
+
+                                  url = Uri.parse(
+                                      'http://k7a108.p.ssafy.io:8080/auth/success/${user.userinfo["userId"]}/${numberController.text}');
+                                  response = await http.post(url);
+
+                                  print(json.decode(response.body));
+                                  if (json.decode(response.body) == true) {
+                                    Fluttertoast.showToast(
+                                        msg: "인증이 완료되었습니다.",
+                                        gravity: ToastGravity.BOTTOM,
+                                        backgroundColor:
+                                            const Color(0xff6E6E6E),
+                                        fontSize: 11,
+                                        toastLength: Toast.LENGTH_SHORT);
+                                    Navigator.of(context)
+                                        .popUntil((route) => route.isFirst);
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "인증 번호가 다릅니다. 다시 확인해주세요.",
+                                        gravity: ToastGravity.BOTTOM,
+                                        backgroundColor:
+                                            const Color(0xff6E6E6E),
+                                        fontSize: 11,
+                                        toastLength: Toast.LENGTH_SHORT);
+                                  }
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "10자리 인증번호를 모두 입력해주세요.",
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: const Color(0xff6E6E6E),
+                                      fontSize: 11,
+                                      toastLength: Toast.LENGTH_SHORT);
+                                }
                               } else {
                                 Fluttertoast.showToast(
-                                    msg: "6자리 인증번호를 모두 입력해주세요!",
+                                    msg: "유효 기간이 경과하였습니다. 재발송 바랍니다.",
                                     gravity: ToastGravity.BOTTOM,
                                     backgroundColor: const Color(0xff6E6E6E),
                                     fontSize: 11,

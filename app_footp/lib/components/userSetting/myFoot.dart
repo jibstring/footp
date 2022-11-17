@@ -157,7 +157,7 @@ class MyFootPageState extends State<MyFootPage> {
   void onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
-    maindata.setmycontroller = controller;
+    maindata.setMyController = controller;
   }
 
   void _getImage() {

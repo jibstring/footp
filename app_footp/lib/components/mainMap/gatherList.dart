@@ -133,7 +133,7 @@ class _gatherListState extends State<gatherList> {
                                   onPressed: () {
                                     setState(() {
                                       maindata.setSearchFlag = true;
-                                      maindata.setListclean = true;
+                                      maindata.setListClean = true;
                                     });
                                   },
                                   icon: Icon(Icons.search, size: 40),
