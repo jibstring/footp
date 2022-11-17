@@ -25,6 +25,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
   CreateMarker createMarker = Get.put(CreateMarker());
   List png = ['asset/normalfoot.png', 'asset/megaphone.png'];
   Marker marker = Marker(markerId: '0', position: LatLng(0, 0));
+  UserData user = Get.put(UserData());
 
   bool isTapped = false;
 
@@ -34,7 +35,10 @@ class _CreateFootMapState extends State<CreateFootMap> {
     // });
     print('hello');
     if (modeController2.mode == 0) _callFootPOST();
-    if (modeController2.mode == 1) _callMegaPOST();
+    if (modeController2.mode == 1) {
+      _callMegaPOST();
+    }
+    ;
     Navigator.pop(context);
   }
 
@@ -47,6 +51,35 @@ class _CreateFootMapState extends State<CreateFootMap> {
     createMarker.list.clear();
     super.initState();
   }
+
+  // Future<void> _NoCash(BuildContext context) async {
+  //   return showDialog<void>(
+  //       context: context,
+  //       // 사용자가 다이얼로그 바깥을 터치하면 닫히지 않음
+  //       barrierDismissible: false,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: Text("포인트 부족"),
+  //           content: Text("충전하시겠습니까?"),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               child: const Text('예'),
+  //               onPressed: () {
+  //                 // 다이얼로그 닫기
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //             TextButton(
+  //               child: const Text('아니요'),
+  //               onPressed: () {
+  //                 // 다이얼로그 닫기
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
 
   void _callFootPOST() async {
     var url = Uri.parse('http://k7a108.p.ssafy.io:8080/foot/write');
@@ -143,8 +176,9 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print('########################################');
     if (response.toString() == "success") {
       Fluttertoast.showToast(msg: "확성기를 설치했습니다");
+      user.megaCost();
     } else if (response.toString() == "No Cash") {
-      Fluttertoast.showToast(msg: "포인트를 충전하세요");
+      Fluttertoast.showToast(msg: "풋포인트를 충전하세요");
     }
 
     // Map marker = {
