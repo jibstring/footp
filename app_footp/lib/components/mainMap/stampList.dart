@@ -683,104 +683,72 @@ class _StampListState extends State<StampList> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-              title: Text('Alert Dialog'),
-              content: SingleChildScrollView(
-                  child: Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      child: Column(
-                        children: [
-                          Image.network(
-                              '${joinedStamp.joinedStamp['stampboard_designurl']}'),
-                          // Container(
-                          //   // width: MediaQuery.of(context).size.width,
-                          //   height: 100,
-                          //   child: ListView.builder(
-                          //       scrollDirection: Axis.horizontal,
-                          //       itemCount: 3,
-                          //       itemBuilder: (BuildContext context, int index) {
-                          //         return Row(
-                          //           mainAxisAlignment:
-                          //               MainAxisAlignment.spaceEvenly,
-                          //           children: [
-                          //             GestureDetector(
-                          //               onTap: () {
-                          //                 setState(() {
-                          //                   selectedStamp = index + 1;
-                          //                 });
-                          //               },
-                          //               child: Container(
-                          //                   width: 50,
-                          //                   height: 50,
-                          //                   margin: EdgeInsets.all(6),
-                          //                   decoration: BoxDecoration(
-                          //                     borderRadius:
-                          //                         BorderRadius.circular(3),
-                          //                     border: Border.all(
-                          //                         color:
-                          //                             selectedStamp != index + 1
-                          //                                 ? Colors.grey.shade400
-                          //                                 : Colors.orange,
-                          //                         width: 1),
-                          //                   ),
-                          //                   child: Text('$index번 상자')),
-                          //             )
-                          //           ],
-                          //         );
-                          //       }),
-                          // ),
-                          // GridView.builder(
-                          //     shrinkWrap: false,
-                          //     scrollDirection: Axis.vertical,
-                          //     itemCount: 10,
-                          //     gridDelegate:
-                          //         new SliverGridDelegateWithFixedCrossAxisCount(
-                          //       crossAxisCount: 2,
-                          //       childAspectRatio: MediaQuery.of(context)
-                          //               .size
-                          //               .width /
-                          //           (MediaQuery.of(context).size.height / 3),
-                          //     ),
-                          //     itemBuilder: (BuildContext context, int index) {
-                          //       return GestureDetector(
-                          //         onTap: () {
-                          //           setState(() {
-                          //             // ontap of each card, set the defined int to the grid view index
-                          //             selectedStamp = index;
-                          //           });
-                          //         },
-                          //         child: Card(
-                          //           // check if the index is equal to the selected Card integer
-                          //           color: selectedStamp == index
-                          //               ? Colors.blue
-                          //               : Colors.amber,
-                          //           child: Container(
-                          //             height: 200,
-                          //             width: 200,
-                          //             child: Center(
-                          //               child: Text(
-                          //                 '$index',
-                          //                 style: TextStyle(
-                          //                   fontSize: 20,
-                          //                   color: Colors.white,
-                          //                   fontWeight: FontWeight.w500,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       );
-                          //     })
-                        ],
-                      ))),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK'))
-              ]);
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+                title: Text('진행 중인 스탬푸'),
+                content: SingleChildScrollView(
+                    child: Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: Column(
+                          children: [
+                            Image.network(
+                                '${joinedStamp.joinedStamp['stampboard_designurl']}'),
+                            Container(
+                              // width: MediaQuery.of(context).size.width,
+                              height: 100,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 3,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedStamp = index + 1;
+                                            });
+                                          },
+                                          child: Container(
+                                              width: 50,
+                                              height: 50,
+                                              margin: EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    selectedStamp == index + 1
+                                                        ? Colors.lightBlue
+                                                        : Colors.orange,
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                border: Border.all(
+                                                    color: Colors.grey.shade400,
+                                                    width: 1),
+                                              ),
+                                              child: Text('${index + 1}번 상자')),
+                                        )
+                                      ],
+                                    );
+                                  }),
+                            ),
+                          ],
+                        ))),
+                actions: <Widget>[
+                  ElevatedButton(
+                      onPressed: selectedStamp == 1
+                          ? () {}
+                          : null, // 여기 조건에 지금 있는 위치가 해당 장소의 근처인지 넣을거임
+                      child: Text('$selectedStamp번 장소 클리어')),
+                  TextButton(
+                      onPressed: () {
+                        selectedStamp = null;
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('OK'))
+                ]);
+          });
         });
   }
 
