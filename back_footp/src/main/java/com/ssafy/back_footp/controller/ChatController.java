@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,11 +44,16 @@ public class ChatController {
     @MessageMapping("/send")
     public void send(ChatMessage msg) {
         logger.info("{} 님의 채팅 전송", msg.getUserNickName());
-		System.out.println("send");
         LocalTime now = LocalTime.now(ZoneId.of(("Asia/Seoul")));
         msg.setNow(""+now.getHour() + ':' + now.getMinute());
         sendingOperations.convertAndSend(rootURL + msg.getEventId(), msg);
     }
+
+	@MessageMapping("/notice")
+	public void send(Map map) {
+		logger.info("{} 님의 확성기 방송", map.get("userNickname"));
+		sendingOperations.convertAndSend("/notice", map);
+	}
     
     @PostMapping("/ban/{blocking}/{blocked}")
     @ApiOperation(value = "채팅 차단 유저 등록", notes = "특정 유저를 차단하여 더이상 실시간 채팅에 띄우지 않을 수 있다")

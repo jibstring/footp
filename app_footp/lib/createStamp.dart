@@ -271,6 +271,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                     onPressed: () {
                       if (createStampValidation() == 1) {
                         stampCreate();
+                        Navigator.pop(context);
                       } else {
                         Fluttertoast.showToast(
                             msg: validationMessage[createStampValidation()],
@@ -330,7 +331,6 @@ class _CreateStampFormState extends State<CreateStampForm> {
         fontSize: 20.0,
         textColor: Colors.black,
         toastLength: Toast.LENGTH_SHORT);
-    Navigator.pop(context);
   }
 
   // 유효성 검사

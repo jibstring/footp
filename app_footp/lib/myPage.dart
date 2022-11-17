@@ -93,7 +93,7 @@ class _MyHompageStateState extends State<MyHompageState> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingPage()),
+                  MaterialPageRoute(builder: (context) => SettingPage()),
                 );
               },
             )
