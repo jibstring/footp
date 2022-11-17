@@ -148,21 +148,21 @@ class UserData extends GetxController {
       return true;
   }
 
-  void payRequest(){
+  void payRequest() {
     _isPayRequest = true;
   }
 
-  void paySuccess(){
-    _userinfo["userCash"]+=50000;
+  void paySuccess() {
+    _userinfo["userCash"] += 50000;
     update();
   }
 
-  void megaCost(){
-    _userinfo["userCash"]-=50000;
+  void megaCost() {
+    _userinfo["userCash"] -= 50000;
     update();
   }
 
-  void payRequestDone(){
+  void payRequestDone() {
     _isPayRequest = false;
   }
 
@@ -186,8 +186,8 @@ class UserData extends GetxController {
   void userinfoSet(Map a) {
     _userinfo = a;
   }
-  
-  void payurlSet(String url){
+
+  void payurlSet(String url) {
     _Mypayurl = url;
   }
 }
@@ -200,15 +200,35 @@ class Category {
 }
 
 class JoinStampInfo extends GetxController {
-  Map _message1 = {};
-  Map _message2 = {};
-  Map _message3 = {};
+  Map _joinedStamp = {};
+  Map<String, dynamic> _message1 = {};
+  Map<String, dynamic> _message2 = {};
+  Map<String, dynamic> _message3 = {};
 
-  Map get message1 => _message1;
-  Map get message2 => _message2;
-  Map get message3 => _message3;
+  Map<String, dynamic> get message1 => _message1;
+  Map<String, dynamic> get message2 => _message2;
+  Map<String, dynamic> get message3 => _message3;
+  Map get joinedStamp => _joinedStamp;
 
   set message1(value) => _message1 = value;
   set message2(value) => _message2 = value;
   set message3(value) => _message3 = value;
+  set joinedStamp(value) => _joinedStamp = value;
+}
+
+class StampMessage extends GetxController {
+  Map<String, dynamic> _stampMessage1 = {};
+  Map<String, dynamic> _stampMessage2 = {};
+  Map<String, dynamic> _stampMessage3 = {};
+  Map _viewStamp = {};
+
+  Map<String, dynamic> get stampMessage1 => _stampMessage1;
+  Map<String, dynamic> get stampMessage2 => _stampMessage2;
+  Map<String, dynamic> get stampMessage3 => _stampMessage3;
+  Map get viewStamp => _viewStamp;
+
+  set stampMessage1(value) => _stampMessage1 = value;
+  set stampMessage2(value) => _stampMessage2 = value;
+  set stampMessage3(value) => _stampMessage3 = value;
+  set viewStamp(value) => _viewStamp = value;
 }

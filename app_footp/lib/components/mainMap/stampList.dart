@@ -30,12 +30,10 @@ class _StampListState extends State<StampList> {
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
-  Map stampDetail = {};
+  Map stampDetail = {}; // 참가 중인 stamp
   TextEditingController searchTextController = TextEditingController();
-  // Map stampMessage1 = {};
-  // Map stampMessage2 = {};
-  // Map stampMessage3 = {};
   JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
+  StampMessage stampMessage = Get.put(StampMessage());
 
   @override
   void initState() {
@@ -128,6 +126,10 @@ class _StampListState extends State<StampList> {
                           },
                         ),
                         IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.face, size: 40),
+                        ),
+                        IconButton(
                           // 검색
                           onPressed: () {
                             showDialog(
@@ -212,11 +214,7 @@ class _StampListState extends State<StampList> {
                                     ),
                                     onTap: () {
                                       if (user.isLogin()) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    StampDetailView()));
+                                        loadStampDetail(index);
                                       } else {
                                         Navigator.push(
                                             context,
@@ -417,10 +415,6 @@ class _StampListState extends State<StampList> {
     var response =
         await dio.get('http://k7a108.p.ssafy.io:8080/stamp/sort/new/$userId');
 
-    print('#################################################');
-    print(response);
-    print('##########################################################');
-
     setState(() {
       _stampList = response.data;
     });
@@ -431,10 +425,6 @@ class _StampListState extends State<StampList> {
     var dio = DIO.Dio();
     var response = await dio.get(
         'http://k7a108.p.ssafy.io:8080/stamp/sort/like/${user.userinfo["userId"]}');
-
-    print('#################################################');
-    print(response);
-    print('##########################################################');
 
     setState(() {
       _stampList = response.data;
@@ -450,10 +440,6 @@ class _StampListState extends State<StampList> {
             'http://k7a108.p.ssafy.io:8080/stamp/unlike/${user.userinfo["userId"]}/${_stampList[index]["stampboard_id"]}')
         : await dio.post(
             'http://k7a108.p.ssafy.io:8080/stamp/like/${user.userinfo["userId"]}/${_stampList[index]["stampboard_id"]}');
-
-    print("*****************************************");
-    print(response.data);
-    print("********************************************");
 
     setState((() {
       if (_stampList[index]["isMylike"]) {
@@ -591,6 +577,10 @@ class _StampListState extends State<StampList> {
           fontSize: 20.0,
           textColor: Colors.white,
           toastLength: Toast.LENGTH_SHORT);
+      joinedStamp.joinedStamp = {};
+      joinedStamp.message1 = {};
+      joinedStamp.message2 = {};
+      joinedStamp.message3 = {};
     });
   }
 
@@ -601,9 +591,7 @@ class _StampListState extends State<StampList> {
     if (user.isLogin()) {
       var response = await dio.get(
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
-      print('-----------------------------------------------------');
-      print(response.data == '');
-      print('-------------------------------------------------');
+      ;
       setState(() {
         stampDetail = response.data;
       });
@@ -612,31 +600,28 @@ class _StampListState extends State<StampList> {
         var firstMessage = response.data['stampboard_message1'];
         var secondMessage = response.data['stampboard_message2'];
         var thirdMessage = response.data['stampboard_message3'];
-        print('first: $firstMessage');
-        print('second: $secondMessage');
-        print('third: $thirdMessage');
+        var joinStamp = response.data;
+        joinedStamp.joinedStamp = joinStamp;
+
+        print('#########################');
+        print(response.data);
+        print(response.data['stampboard_id']);
+        print(response.data['stampboard_id'].runtimeType);
+        print('##############################');
 
         await dio
             .post(
                 'http://k7a108.p.ssafy.io:8080/stamp/info/$firstMessage/$secondMessage/$thirdMessage/${user.userinfo["userId"]}')
             .then((res) {
-          print(res);
-          print('*******************************************');
           joinedStamp.message1 = res.data[0];
           joinedStamp.message2 = res.data[1];
           joinedStamp.message3 = res.data[2];
-          print('********************************************');
         });
       }
-
-      print("################################################");
-      print("${response.data["stampboard_id"]}");
-      print('진행중');
-      print(stampDetail);
-      print('#############################################');
     }
   }
 
+// 스탬푸 검색
   void searchStamp(String searchText) async {
     var dio = DIO.Dio();
 
@@ -648,6 +633,34 @@ class _StampListState extends State<StampList> {
       setState(() {
         _stampList = res.data;
       });
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  // 각 스탬프에 포함된 메세지 조회
+  void loadStampDetail(int index) async {
+    var dio = DIO.Dio();
+    var nowStamp = _stampList[index];
+    var userId = user.isLogin() ? user.userinfo["userId"] : 0;
+    var message1Id = _stampList[index]['stampboard_message1'];
+    var message2Id = _stampList[index]['stampboard_message2'];
+    var message3Id = _stampList[index]['stampboard_message3'];
+
+    await dio
+        .post(
+            'http://k7a108.p.ssafy.io:8080/stamp/info/$message1Id/$message2Id/$message3Id/$userId')
+        .then((res) {
+      print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+      print(res.data);
+      print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+      stampMessage.viewStamp = nowStamp;
+      stampMessage.stampMessage1 = res.data[0];
+      stampMessage.stampMessage2 = res.data[1];
+      stampMessage.stampMessage3 = res.data[2];
+    }).then((value) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => StampDetailView()));
     }).catchError((e) {
       print(e);
     });

@@ -1,9 +1,13 @@
+import 'package:app_footp/components/mainMap/stampList.dart';
+import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as DIO;
 
 class StampDetailView extends StatefulWidget {
   const StampDetailView({super.key});
@@ -13,7 +17,22 @@ class StampDetailView extends StatefulWidget {
 }
 
 class _StampDetailViewState extends State<StampDetailView> {
+  // JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
+  StampMessage stampMessage = Get.put(StampMessage());
+  UserData user = Get.put(UserData());
   JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('============================================');
+    print(stampMessage.stampMessage1);
+    print(stampMessage.stampMessage2);
+    print(stampMessage.stampMessage3);
+    print(stampMessage.viewStamp);
+    print('===========================================');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +40,9 @@ class _StampDetailViewState extends State<StampDetailView> {
         appBar: AppBar(
           title: Image.asset('imgs/logo.png', height: 45),
           elevation: 0,
+          leading: BackButton(
+            color: Colors.black,
+          ),
           backgroundColor: Colors.white,
           centerTitle: true,
           actions: <Widget>[
@@ -43,47 +65,49 @@ class _StampDetailViewState extends State<StampDetailView> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back))
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Container(
-                  height: 400,
-                  child: Center(
-                    child: Text('지도들어가요'),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 1.0),
-                  ),
-                  child: Text(joinedStamp.message1["messageText"]),
-                ),
-              ),
               Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1.0),
+                height: 400,
+                child: Center(
+                  child: Text('지도들어가요'),
                 ),
-                child: Text(joinedStamp.message2["messageText"]),
               ),
+              Container(child: Text('제목')),
+              SizedBox(height: 10),
               Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1.0),
-                ),
-                child: Text(joinedStamp.message3["messageText"]),
-              ),
-              Row(
-                children: [TextButton(onPressed: () {}, child: Text('참가하기'))],
-              )
+                  child: Text(stampMessage.viewStamp["stampboard_title"])),
+              SizedBox(height: 10),
+              Container(child: Text('설명')),
+              SizedBox(height: 10),
+              Container(child: Text(stampMessage.viewStamp["stampboard_text"])),
+              SizedBox(height: 10),
+              NormalFoot(stampMessage.stampMessage1),
+              SizedBox(height: 10),
+              NormalFoot(stampMessage.stampMessage2),
+              SizedBox(height: 10),
+              NormalFoot(stampMessage.stampMessage3),
+              SizedBox(height: 10),
+              // Row(
+              //   children: [
+              //     joinedStamp.joinedStamp["stampboard_id"] != stampMessage.viewStamp
+              //         ? TextButton(
+              //             child: Text('참가하기'),
+              //             onPressed: () {
+              //               print(
+              //                   '###########################################');
+              //               print(joinedStamp.joinedStampId);
+              //               print(stampMessage.viewStamp);
+              //               print('######################################');
+              //               joinedStamp.joinedStampId = stampMessage.viewStamp;
+              //               print(joinedStamp.joinedStampId);
+              //             },
+              //           )
+              //         : TextButton(
+              //             child: Text('참가 취소',
+              //                 style: TextStyle(color: Colors.red)),
+              //             onPressed: () {},
+              //           ),
+              //   ],
+              // )
             ],
           ),
         ));
