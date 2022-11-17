@@ -4,6 +4,8 @@ import 'dart:ffi';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/signUp.dart';
+import 'package:app_footp/mailCertification.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -31,7 +33,7 @@ class _SignInState extends State<SignIn> {
     var data = {
       'userEmail': emailController.text,
       'userPassword': passwordController.text,
-      'userAutologin' : _isAutoLogin,
+      'userAutologin': _isAutoLogin,
     };
 
     final response_login =
@@ -75,7 +77,13 @@ class _SignInState extends State<SignIn> {
 
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => mainMap()));
-      Navigator.pop(context);
+
+      if (identical(user.userinfo["userEmailKey"], "Y")) {
+        Navigator.pop(context);
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MailCertification()));
+      }
     }
   }
 
@@ -170,12 +178,15 @@ class _SignInState extends State<SignIn> {
                               )),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 //자동 로그인
                 Row(
-                  
                   children: [
-                    SizedBox(width: 20,),
+                    SizedBox(
+                      width: 20,
+                    ),
                     Checkbox(
                         value: _isAutoLogin,
                         shape: RoundedRectangleBorder(
