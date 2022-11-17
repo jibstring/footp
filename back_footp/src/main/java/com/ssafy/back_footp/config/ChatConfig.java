@@ -22,7 +22,7 @@ public class ChatConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app");
         //메시지 받을 때 관련 경로 설정
         //messageBroker가 잡아서 해당 채팅방을 구독하고 있는 클라이언트에게 메시지를 전달해줌
-        //주로 "/queue"는 알림용, "/topic"은 채팅방에서 사용
-        registry.enableSimpleBroker("/queue", "/topic");
+        //주로 "/notice"는 알림용, "/topic"은 채팅방에서 사용
+        registry.enableSimpleBroker("/notice", "/topic");
     }
 }
