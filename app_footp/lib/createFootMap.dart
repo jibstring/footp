@@ -12,6 +12,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as DIO;
 
+import 'notice.dart';
+
 class CreateFootMap extends StatefulWidget {
   CreateMarker image = Get.put(CreateMarker());
   @override
@@ -177,6 +179,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
     if (response.toString() == "success") {
       Fluttertoast.showToast(msg: "확성기를 설치했습니다");
       user.megaCost();
+      Get.put(Notice()).send(createMarker.newmegaphone);
     } else if (response.toString() == "No Cash") {
       Fluttertoast.showToast(msg: "풋포인트를 충전하세요");
     }
