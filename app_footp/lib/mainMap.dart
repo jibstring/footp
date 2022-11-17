@@ -324,7 +324,7 @@ class MainData extends GetxController {
         break;
 
       case 1:
-        color = dataList[messageType][idx][id] % 7;
+        color = 9;
         break;
 
       case 2:
@@ -685,6 +685,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
       OverlayImage.fromAssetImage(
         assetName: 'imgs/known_print.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/megaphone.png',
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
