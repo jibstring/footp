@@ -13,6 +13,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as DIO;
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 
 class StampList extends StatefulWidget {
   const StampList({super.key});
@@ -34,6 +37,8 @@ class _StampListState extends State<StampList> {
   TextEditingController searchTextController = TextEditingController();
   JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
   StampMessage stampMessage = Get.put(StampMessage());
+
+  int? selectedStamp;
 
   @override
   void initState() {
@@ -126,8 +131,19 @@ class _StampListState extends State<StampList> {
                           },
                         ),
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.face, size: 40),
+                          onPressed: () {
+                            joinedStamp.joinedStamp["stampboard_id"] == null
+                                ? showNotJoinedStamp()
+                                : showJoinedStamp();
+                          },
+                          icon: Icon(
+                            Icons.face,
+                            size: 40,
+                            color:
+                                joinedStamp.joinedStamp["stampboard_id"] == null
+                                    ? Colors.red
+                                    : Colors.green,
+                          ),
                         ),
                         IconButton(
                           // 검색
@@ -664,5 +680,82 @@ class _StampListState extends State<StampList> {
     }).catchError((e) {
       print(e);
     });
+  }
+
+  void showJoinedStamp() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Alert Dialog'),
+              content: SingleChildScrollView(
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: Column(
+                        children: [
+                          Image.network(
+                              '${joinedStamp.joinedStamp['stampboard_designurl']}'),
+                          Container(
+                            // width: MediaQuery.of(context).size.width,
+                            height: 100,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: 3,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedStamp = index + 1;
+                                          });
+                                        },
+                                        child: Container(
+                                            width: 50,
+                                            height: 50,
+                                            margin: EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                              border: Border.all(
+                                                  color:
+                                                      selectedStamp != index + 1
+                                                          ? Colors.grey.shade400
+                                                          : Colors.orange,
+                                                  width: 1),
+                                            ),
+                                            child: Text('$index번 상자')),
+                                      )
+                                    ],
+                                  );
+                                }),
+                          ),
+                        ],
+                      ))),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'))
+              ]);
+        });
+  }
+
+  void showNotJoinedStamp() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(content: Text('진행 중인 스탬푸가 없소'), actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('No'))
+          ]);
+        });
   }
 }
