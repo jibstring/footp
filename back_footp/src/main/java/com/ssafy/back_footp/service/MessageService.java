@@ -133,4 +133,33 @@ public class MessageService {
 		return "success";
 	}
 
+    public JSONObject searchMessage(long userId, double lon, double lat, String keyword) {
+		List<messagelistDTO> messagelist = new ArrayList<>();
+
+		List<Message> messages = new ArrayList<>();
+		messages = messageRepository.searchMessageSortingByDistance(keyword, lon, lat);
+
+		messages.forEach(Message->
+				messagelist.add(new messagelistDTO(
+						Message.getMessageId(),
+						Message.getUserId().getUserNickname(),
+						Message.getMessageText(),
+						Message.getMessageBlurredtext(),
+						Message.getMessageFileurl(),
+						Message.getMessagePoint().getX(),
+						Message.getMessagePoint().getY(),
+						Message.getIsOpentoall(),
+						Message.getIsBlurred(),
+						messageLikeRepository.existsByMessageIdAndUserId(Message, userRepository.findByUserId(userId)),
+						messageSpamRepository.existsByMessageIdAndUserId(Message, userRepository.findById(userId).get()),
+						Message.getMessageLikenum(),
+						Message.getMessageSpamnum(),
+						Message.getMessageWritedate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))))
+		);
+
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("message", messagelist);
+
+		return jsonObject;
+    }
 }

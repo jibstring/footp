@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 //import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:app_footp/signIn.dart';
 import 'package:app_footp/mainMap.dart';
@@ -14,7 +15,7 @@ import 'package:app_footp/components/msgFoot/reportModal.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/components/userSetting/myFoot.dart';
 
-const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+const serverUrl = 'http://k7a108.p.ssafy.io:8080/';
 
 class NormalFoot extends StatefulWidget {
   Map<String, dynamic> normalmsg;
@@ -73,6 +74,12 @@ class _NormalFootState extends State<NormalFoot> {
               widget.normalmsg["messageLongitude"]);
           listmaker.listcontroller.reset();
           listmaker.refresh();
+          Fluttertoast.showToast(
+              msg: "해당 메세지로 지도를 이동하였습니다.",
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: const Color(0xff6E6E6E),
+              fontSize: 10,
+              toastLength: Toast.LENGTH_SHORT);
         },
         child: Card(
             child: Container(
@@ -272,8 +279,31 @@ class _NormalFootState extends State<NormalFoot> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return ReportModal(widget.normalmsg["messageId"],
-                                  user.userinfo["userId"]);
+                              return widget.normalmsg["userNickname"] ==
+                                      user.userinfo["userNickname"]
+                                  ? AlertDialog(
+                                      title: Text("확성기 삭제하기"),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(children: <Widget>[
+                                          Text('삭제하시겠습니까??')
+                                        ]),
+                                      ),
+                                      actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                deleteMessage(widget
+                                                    .normalmsg["messageId"]);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("삭제")),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("취소"))
+                                        ])
+                                  : ReportModal(widget.normalmsg["messageId"],
+                                      user.userinfo["userId"]);
                             });
                       }
                     },
@@ -344,7 +374,7 @@ class _NormalFootState extends State<NormalFoot> {
 
   void heartRequest(context, var heartInfo) async {
     final uri = Uri.parse(serverUrl +
-        "/" +
+        'foot/' +
         heartInfo +
         "/" +
         widget.normalmsg["messageId"].toString() +
@@ -396,5 +426,21 @@ class _NormalFootState extends State<NormalFoot> {
       }
       heartRequest(context, heartInfo);
     });
+  }
+
+  void deleteMessage(int messageId) async {
+    final uri = Uri.parse(serverUrl + 'user/myfoot/' + '$messageId');
+
+    print("메시지 삭제");
+    print(uri);
+    http.Response response = await http.delete(uri);
+    print(uri);
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+      print(decodedData);
+    } else {
+      print('실패패패패패패ㅐ퍂');
+      print(response.statusCode);
+    }
   }
 }

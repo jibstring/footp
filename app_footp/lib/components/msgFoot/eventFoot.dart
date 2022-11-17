@@ -15,7 +15,7 @@ import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/components/userSetting/myFoot.dart';
 import 'package:app_footp/components/mainMap/chatRoom.dart';
 
-const serverUrl = 'http://k7a108.p.ssafy.io:8080/foot';
+const serverUrl = 'http://k7a108.p.ssafy.io:8080/';
 
 class EventFoot extends StatefulWidget {
   Map<String, dynamic> gathermsg;
@@ -54,7 +54,7 @@ class _EventFootState extends State<EventFoot> {
     super.dispose();
   }
 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext pcontext) {
     //VideoPlayerController _videocontroller;
     footlist.ListMaker listmaker = footlist.listmaker;
     MyFootPageState myfoot;
@@ -230,6 +230,18 @@ class _EventFootState extends State<EventFoot> {
                             )
                           ],
                         )),
+                        // 주소
+              Container(
+                  height: 40,
+                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                  width: width,
+                  child: Text(
+                    maindata.address[widget.gathermsg["gatherId"]] ??= "",
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  )),
               //하단
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,10 +255,33 @@ class _EventFootState extends State<EventFoot> {
                               builder: (context) => const SignIn()),
                         );
                       } else {
-                        showDialog(
+                         showDialog(
                             context: context,
                             builder: (context) {
-                              return ReportModal(widget.gathermsg["gatherId"],
+                              return widget.gathermsg["userNickname"]==user.userinfo["userNickname"]?
+                          AlertDialog(
+                            title:Text("확성기 삭제하기"),
+                            content:SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text('삭제하시겠습니까??')
+                                ]),
+                              ),
+                              actions:<Widget>[
+                                TextButton(
+                                  onPressed: (){
+                                    deleteGather(widget.gathermsg["gatherId"]);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("삭제")
+                                ),
+                                TextButton(onPressed: (){
+                                  Navigator.of(context).pop();
+                                  },
+                                child: Text("취소"))
+                                ]
+                          ):
+                            ReportModal(widget.gathermsg["gatherId"],
                                   user.userinfo["userId"]);
                             });
                       }
@@ -255,18 +290,19 @@ class _EventFootState extends State<EventFoot> {
                   ),
                   ElevatedButton(
                     onPressed: (){
-                      maindata.setAttendChat=true;
-                      
-                      // if (!user.isLogin()) {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => const SignIn()),
-                      //   );
-                      // }
-                      // else{
-                      //   ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
-                      // }
+                      setState(() {});
+                      if (!user.isLogin()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignIn()),
+                        );
+                      }
+                      else{
+                        maindata.setChatRoom=ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
+                        maindata.setAttendChat=true;
+                        pcontext.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.setState(() {});
+                      }
 
                     },
                     child: Text("채팅방참가"),)
@@ -336,7 +372,7 @@ class _EventFootState extends State<EventFoot> {
 
   void heartRequest(context, var heartInfo) async {
     final uri = Uri.parse(serverUrl +
-        "/" +
+        "gather/" +
         heartInfo +
         "/" +
         widget.gathermsg["gatherId"].toString() +
@@ -388,5 +424,24 @@ class _EventFootState extends State<EventFoot> {
       }
       heartRequest(context, heartInfo);
     });
+  }
+  void deleteGather(int gatherId)async{
+   
+    final uri=Uri.parse(serverUrl+'user/gather/'+'$gatherId');
+
+    print("확성기 삭제");
+    print(uri);
+    http.Response response=await http.delete(
+      uri
+    );
+    print(uri);
+    if(response.statusCode==200){
+      var decodedData=jsonDecode(response.body);
+      print(decodedData);
+    }
+    else{
+      print('실패패패패패패ㅐ퍂');
+      print(response.statusCode);
+    }
   }
 }

@@ -62,7 +62,7 @@ class CreateMarker extends GetxController {
     "gatherText": "모집합니다",
     "gatherWritedate": DateTime.now().toString(),
     "gatherFinishdate": "2022-11-03T01:37",
-    "gatherDesigncode" : 1,
+    "gatherDesigncode": 1,
     "userId": 1
   };
 
@@ -109,6 +109,8 @@ class CreateMarker extends GetxController {
 class UserData extends GetxController {
   //토큰들
   String _Token = "";
+  String _Mypayurl = "";
+  bool _isPayRequest = false;
 
   Map _userinfo = {
     "userId": null,
@@ -127,6 +129,8 @@ class UserData extends GetxController {
 
   //토큰들
   String get Token => _Token;
+  String get Mypayurl => _Mypayurl;
+  bool get isPayRequest => _isPayRequest;
 
   get userNickname => null;
 
@@ -142,6 +146,24 @@ class UserData extends GetxController {
       return false;
     } else
       return true;
+  }
+
+  void payRequest(){
+    _isPayRequest = true;
+  }
+
+  void paySuccess(){
+    _userinfo["userCash"]+=50000;
+    update();
+  }
+
+  void megaCost(){
+    _userinfo["userCash"]-=50000;
+    update();
+  }
+
+  void payRequestDone(){
+    _isPayRequest = false;
   }
 
   //payload 디코딩
@@ -163,6 +185,10 @@ class UserData extends GetxController {
 
   void userinfoSet(Map a) {
     _userinfo = a;
+  }
+  
+  void payurlSet(String url){
+    _Mypayurl = url;
   }
 }
 

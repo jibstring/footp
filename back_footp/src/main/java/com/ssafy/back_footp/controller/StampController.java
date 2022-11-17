@@ -1,10 +1,13 @@
 package com.ssafy.back_footp.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.ssafy.back_footp.entity.Message;
+import com.ssafy.back_footp.repository.MessageRepository;
 import com.ssafy.back_footp.request.MessagePostContent;
 import com.ssafy.back_footp.request.MessagePostReq;
 import com.ssafy.back_footp.request.StampboardPostReq;
@@ -16,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.back_footp.request.StampboardPostContent;
+import com.ssafy.back_footp.response.messagelistDTO;
 import com.ssafy.back_footp.response.myStampDTO;
 import com.ssafy.back_footp.response.stampboardDTO;
 import com.ssafy.back_footp.response.stamplikeDTO;
@@ -26,6 +30,7 @@ import com.ssafy.back_footp.service.StampboardService;
 import com.ssafy.back_footp.service.StampboardSpamService;
 import com.ssafy.back_footp.service.UserJoinedStampboardService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +51,9 @@ public class StampController {
 	
 	@Autowired
 	UserJoinedStampboardService userJoinedStampboardService;
+	
+	@Autowired
+	MessageRepository messageRepository;
 	
 	@PostMapping("/create")
 	@ApiOperation(value = "스탬푸 작성")
@@ -226,6 +234,16 @@ public class StampController {
 		int result = userJoinedStampboardService.deleteStamp(userId);
 		
 		return new ResponseEntity<Integer>(result,HttpStatus.OK);
+		
+	}
+	
+	@PostMapping("/info/{messageId1}/{messageId2}/{messageId3}/{userId}")
+	@ApiOperation(value = "스탬프 속 메시지에 대한 상세조회")
+	public ResponseEntity<List<messagelistDTO>> messagesInStamp(@PathVariable long messageId1, @PathVariable long messageId2, @PathVariable long messageId3, @PathVariable long userId){
+		
+		List<messagelistDTO> result = stampboardService.messageInStamp(messageId1, messageId2, messageId3, userId);
+		
+		return new ResponseEntity<List<messagelistDTO>>(result,HttpStatus.OK);
 		
 	}
 }

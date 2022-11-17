@@ -184,7 +184,7 @@ public class AuthService {
 
 	@Transactional
 	public KakaoLoginResponse kakaoLogin(KakaoLoginReq kakaoLoginReq) {
-		User kakaoUser = clientKakao.getUserData(kakaoLoginReq.getAccessToken());
+		User kakaoUser = clientKakao.getUserData(kakaoLoginReq.getAccess_token());
 		String socialEmail = kakaoUser.getUserEmail();
 		User usr = userRepository.findByUserEmail(socialEmail).orElse(null);
 

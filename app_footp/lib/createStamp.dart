@@ -330,7 +330,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
         fontSize: 20.0,
         textColor: Colors.black,
         toastLength: Toast.LENGTH_SHORT);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainMap()));
+    Navigator.pop(context);
   }
 
   // 유효성 검사

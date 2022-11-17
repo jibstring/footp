@@ -1,5 +1,6 @@
 package com.ssafy.back_footp.service;
 
+import com.ssafy.back_footp.entity.Gather;
 import com.ssafy.back_footp.entity.Message;
 import com.ssafy.back_footp.entity.Stampboard;
 import com.ssafy.back_footp.entity.User;
@@ -167,4 +168,15 @@ public class UserService {
         return "success";
     }
 
+    public String deleteGather(long gid) {
+        Gather gather = gatherRepository.findById(gid).get();
+
+        gatherLikeRepository.deleteAllByGatherId(gather);
+        gatherSpamRepository.deleteAllByGatherId(gather);
+        userJoinedGatherRepository.deleteAllByGatherId(gather);
+
+        gatherRepository.delete(gather);
+
+        return "success";
+    }
 }
