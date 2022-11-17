@@ -5,6 +5,9 @@ import com.ssafy.back_footp.request.NicknameUpdateReq;
 import com.ssafy.back_footp.request.PasswordUpdateReq;
 import com.ssafy.back_footp.service.AuthService;
 import com.ssafy.back_footp.service.UserService;
+
+import javax.transaction.Transactional;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -119,6 +122,15 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@Transactional
+	@DeleteMapping("/unsign/{userId}")
+	@ApiOperation(value = "회원 탈퇴")
+	public ResponseEntity<String> unsignUser(@PathVariable long userId){
+		String result = userService.deleteUser(userId);
+		
+		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 	
 }

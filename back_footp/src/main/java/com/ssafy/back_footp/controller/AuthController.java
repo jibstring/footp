@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 import com.ssafy.back_footp.request.KakaoLoginReq;
 import com.ssafy.back_footp.response.KakaoLoginResponse;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,18 @@ import org.springframework.web.util.WebUtils;
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.jwt.JwtService;
+import com.ssafy.back_footp.repository.ChatBlockRepository;
+import com.ssafy.back_footp.repository.GatherLikeRepository;
+import com.ssafy.back_footp.repository.GatherRepository;
+import com.ssafy.back_footp.repository.GatherSpamRepository;
+import com.ssafy.back_footp.repository.MessageLikeRepository;
+import com.ssafy.back_footp.repository.MessageRepository;
+import com.ssafy.back_footp.repository.MessageSpamRepository;
+import com.ssafy.back_footp.repository.StampboardLikeRepository;
+import com.ssafy.back_footp.repository.StampboardRepository;
+import com.ssafy.back_footp.repository.StampboardSpamRepository;
+import com.ssafy.back_footp.repository.UserJoinedGatherRepository;
+import com.ssafy.back_footp.repository.UserJoinedStampboardRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.UserSignInReq;
 import com.ssafy.back_footp.request.UserSignUpReq;
@@ -61,6 +75,33 @@ public class AuthController {
 	UserRepository userRepository;
 	@Autowired
 	AuthService authService;
+	
+	@Autowired
+	MessageLikeRepository messageLikeRepository;
+	@Autowired
+	MessageSpamRepository messageSpamRepository;
+	@Autowired
+	StampboardLikeRepository stampboardLikeRepository;
+	@Autowired
+	StampboardSpamRepository stampboardSpamRepository;
+	@Autowired
+	GatherLikeRepository gatherLikeRepository;
+	@Autowired
+	GatherSpamRepository gatherSpamRepository;
+	@Autowired
+	ChatBlockRepository chatBlockRepository;
+	@Autowired
+	UserJoinedGatherRepository userJoinedGatherRepository;
+	@Autowired
+	UserJoinedStampboardRepository userJoinedStampboardRepository;
+	@Autowired
+	StampboardRepository stampboardRepository;
+	@Autowired
+	MessageRepository messageRepository;
+	@Autowired
+	GatherRepository gatherRepository;
+	
+	
 
 	@PostMapping("/signup")
 	@ApiOperation(value = "회원 등록")
@@ -92,25 +133,6 @@ public class AuthController {
 
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
-
-//	@PostMapping("/autoCheck")
-//	@ApiOperation(value = "오토로그인 박스체크")
-//	public ResponseEntity<Integer> autoCheck(@RequestBody UserSignInReq user){
-//		
-//		if(userRepository.existsByUserEmail(user.getUserEmail())) {
-//		
-//		User userInfo = userRepository.findByUserEmailAndUserPassword(user.getUserEmail(), user.getUserPassword());
-//		
-//		userInfo.setUserAutologin(true);
-//		
-//		userRepository.save(userInfo);
-//		}
-//		
-//		return
-//		
-//		
-//		
-//	}
 
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인")
@@ -404,7 +426,6 @@ public class AuthController {
 				result = true;
 			}
 		}
-
 
 		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
