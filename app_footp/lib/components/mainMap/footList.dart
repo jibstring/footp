@@ -69,6 +69,8 @@ class _FootListState extends State<FootList> {
   final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
   final _filterList = ['hot', 'like', 'new'];
   var _selectedValue = "hot";
+  bool _searchClick=false;
+  TextEditingController searchController = TextEditingController();
 
   Widget build(BuildContext context) {
     listmaker.readFile();
@@ -86,7 +88,7 @@ class _FootListState extends State<FootList> {
                 itemCount: listmaker.messagelen + 2,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
-                    return Container(
+                    return maindata.searchFlag==false? Container(
                       color: Colors.white,
                       height: 50,
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -121,12 +123,51 @@ class _FootListState extends State<FootList> {
                             onPressed: listmaker.refresh,
                           ),
                           IconButton(
-                            // 검색
-                            onPressed: () {},
+                            // 검색창 띄기
+                            onPressed: () {
+                              setState(() {
+                                maindata.setSearchFlag=true;
+                                maindata.setListclean=true;
+                              });                              
+                            },
                             icon: Icon(Icons.search, size: 40),
                           ),
                         ],
                       ),
+                    ):
+                    Container(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                            child: TextField(
+                                controller: searchController,
+                                // decoration: InputDecoration(
+                                //   labelText: '검색',
+                                // )
+                            ),
+                          ),
+                          IconButton(
+                            // 검색완료
+                            onPressed: () {
+                              setState(() {
+                                maindata.setSearchFlag=true;
+                                maindata.setSearchKeyword=searchController.text;
+                              });                              
+                            },
+                            icon: Icon(Icons.search, size: 35),
+                          ),
+                          IconButton(
+                            // 취소
+                            onPressed: () {
+                              setState(() {
+                                maindata.setSearchFlag=false;
+                              });                              
+                            },
+                            icon: Icon(Icons.close, size: 30),
+                          ),
+                        ],),
                     );
                   } else if (index > listmaker.messagelen) {
                     return Container(color: Colors.white, height: 60);
