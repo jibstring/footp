@@ -74,6 +74,21 @@ public class UserController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	@DeleteMapping("/gather/{gatherId}")
+	@ApiOperation(value = "내가 남긴 확성기 삭제")
+	public ResponseEntity<String> mygatherDelete(@PathVariable long gatherId) {
+		String result = "fail";
+
+		try {
+			result = userService.deleteGather(gatherId);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 
 	@PutMapping("/password")
 	@ApiOperation(value = "비밀번호 수정")

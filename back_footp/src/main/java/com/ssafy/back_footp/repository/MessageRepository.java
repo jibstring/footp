@@ -22,6 +22,9 @@ public interface MessageRepository extends JpaRepository<Message, Long>, Message
 	@Query(value = sortHot, nativeQuery = true)
 	List<Message> findAllByHot();
 
+	@Query(value = "select * from message as m where m.message_text like %:keyword% ORDER BY ST_Distance(m.message_point , point(:lon, :lat))", nativeQuery = true)
+	List<Message> searchMessageSortingByDistance(String keyword, double lon, double lat);
+
 	@Transactional
 	public void deleteAllByUserId(User uid);
 

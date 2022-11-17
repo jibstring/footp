@@ -18,7 +18,7 @@ class ListMaker extends GetxController {
 
 class gatherList extends StatefulWidget {
   const gatherList({super.key});
-
+  
   State<gatherList> createState() => _gatherListState();
 }
 
@@ -40,6 +40,8 @@ class _gatherListState extends State<gatherList> {
   Map<String, dynamic> get jsonData => _jsonData;
   List<dynamic> get gatherData => _gatherData;
   DraggableScrollableController get listcontroller => _listcontroller;
+  bool _searchClick=false;
+  TextEditingController searchController = TextEditingController();
 
 
   void readFile() {
@@ -77,9 +79,11 @@ class _gatherListState extends State<gatherList> {
   }
 
   Widget build(BuildContext context) {
+    if(maindata.attendChat) {
+      return maindata.chatRoom;
+    }
     readFile();
     return
-    maindata.attendChat==false?
     DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -94,7 +98,8 @@ class _gatherListState extends State<gatherList> {
                 itemCount: gatherlen + 2,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
-                    return Container(
+                    return maindata.searchFlag==false? 
+                    Container(
                       color: Colors.white,
                       height: 50,
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -130,11 +135,50 @@ class _gatherListState extends State<gatherList> {
                           ),
                           IconButton(
                             // 검색
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                maindata.setSearchFlag=true;
+                                maindata.setListclean=true;
+                              });
+                            },
                             icon: Icon(Icons.search, size: 40),
                           ),
                         ],
                       ),
+                    ):
+                    Container(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                            child: TextField(
+                                controller: searchController,
+                                // decoration: InputDecoration(
+                                //   labelText: '검색',
+                                // )
+                            ),
+                          ),
+                          IconButton(
+                            // 검색완료
+                            onPressed: () {
+                              setState(() {
+                                maindata.setSearchFlag=true;
+                                maindata.setSearchKeyword=searchController.text;
+                              });                              
+                            },
+                            icon: Icon(Icons.search, size: 35),
+                          ),
+                          IconButton(
+                            // 취소
+                            onPressed: () {
+                              setState(() {
+                                maindata.setSearchFlag=false;
+                              });                              
+                            },
+                            icon: Icon(Icons.close, size: 30),
+                          ),
+                        ],),
                     );
                   } else if (index > gatherlen) {
                     return Container(color: Colors.white, height: 60);
@@ -144,9 +188,7 @@ class _gatherListState extends State<gatherList> {
                   }
                 }));
       },
-    )
-    :ChatRoom(0,1, "초코송이");
-
+    );
   }
 
   void initState() {
