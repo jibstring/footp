@@ -1,6 +1,7 @@
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
+import 'package:app_footp/components/stampDetailView.dart';
 import 'package:app_footp/createStamp.dart';
 import 'package:app_footp/signIn.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as DIO;
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 
 class StampList extends StatefulWidget {
   const StampList({super.key});
@@ -29,8 +33,12 @@ class _StampListState extends State<StampList> {
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
-  Map stampDetail = {};
+  Map stampDetail = {}; // 참가 중인 stamp
   TextEditingController searchTextController = TextEditingController();
+  JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
+  StampMessage stampMessage = Get.put(StampMessage());
+
+  int? selectedStamp;
 
   @override
   void initState() {
@@ -123,6 +131,21 @@ class _StampListState extends State<StampList> {
                           },
                         ),
                         IconButton(
+                          onPressed: () {
+                            joinedStamp.joinedStamp["stampboard_id"] == null
+                                ? showNotJoinedStamp()
+                                : showJoinedStamp();
+                          },
+                          icon: Icon(
+                            Icons.face,
+                            size: 40,
+                            color:
+                                joinedStamp.joinedStamp["stampboard_id"] == null
+                                    ? Colors.red
+                                    : Colors.green,
+                          ),
+                        ),
+                        IconButton(
                           // 검색
                           onPressed: () {
                             showDialog(
@@ -206,113 +229,19 @@ class _StampListState extends State<StampList> {
                                       ),
                                     ),
                                     onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              content: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Container(),
-                                                        flex: 1,
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(),
-                                                        flex: 1,
-                                                      ),
-                                                      Expanded(
-                                                        child: IconButton(
-                                                          icon:
-                                                              Icon(Icons.close),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                        flex: 1,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SingleChildScrollView(
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    child: Column(
-                                                        children:
-                                                            // Container(
-                                                            //   height: 200,
-                                                            //   decoration:
-                                                            //       BoxDecoration(
-                                                            //     image:
-                                                            //         DecorationImage(
-                                                            //       fit: BoxFit.cover,
-                                                            //       image: NetworkImage(
-                                                            //           _stampList[
-                                                            //                   index][
-                                                            //               'stampboard_designurl']),
-                                                            //     ),
-                                                            //   ),
-                                                            // ),
-                                                            // Container(
-                                                            //   child: Text('스탬푸 제목'),
-                                                            // ),
-                                                            // Container(
-                                                            //     decoration:
-                                                            //         BoxDecoration(
-                                                            //             border: Border
-                                                            //                 .all(
-                                                            //       width: 1,
-                                                            //       color: Colors.black,
-                                                            //     )),
-                                                            //     child:
-                                                            //         Text('스탬푸 내용')),
-                                                            List.generate(
-                                                                10,
-                                                                (index) =>
-                                                                    Container(
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              5),
-                                                                          color:
-                                                                              Colors.orange),
-                                                                    ))),
-                                                  ),
-                                                ],
-                                              ),
-                                              actions: [
-                                                _stampList[index]
-                                                            ["stampboard_id"] !=
-                                                        stampDetail[
-                                                            "stampboard_id"]
-                                                    ? TextButton(
-                                                        child: Text('참가하기'),
-                                                        onPressed: () {
-                                                          joinStamp(index);
-                                                        },
-                                                      )
-                                                    : TextButton(
-                                                        child: Text('참가 취소',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .red)),
-                                                        onPressed: () {
-                                                          cancleStamp(index);
-                                                        },
-                                                      ),
-                                                TextButton(
-                                                  child: Text('취소'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                )
-                                              ],
-                                            );
+                                      if (user.isLogin()) {
+                                        loadStampDetail(index);
+                                      } else {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => SignIn()))
+                                          ..then((value) {
+                                            loadStampList();
+                                            loadJoinStamp();
                                           });
+                                        ;
+                                      }
                                     },
                                   ),
                                   SizedBox(height: 10),
@@ -502,10 +431,6 @@ class _StampListState extends State<StampList> {
     var response =
         await dio.get('http://k7a108.p.ssafy.io:8080/stamp/sort/new/$userId');
 
-    print('#################################################');
-    print(response);
-    print('##########################################################');
-
     setState(() {
       _stampList = response.data;
     });
@@ -516,10 +441,6 @@ class _StampListState extends State<StampList> {
     var dio = DIO.Dio();
     var response = await dio.get(
         'http://k7a108.p.ssafy.io:8080/stamp/sort/like/${user.userinfo["userId"]}');
-
-    print('#################################################');
-    print(response);
-    print('##########################################################');
 
     setState(() {
       _stampList = response.data;
@@ -535,10 +456,6 @@ class _StampListState extends State<StampList> {
             'http://k7a108.p.ssafy.io:8080/stamp/unlike/${user.userinfo["userId"]}/${_stampList[index]["stampboard_id"]}')
         : await dio.post(
             'http://k7a108.p.ssafy.io:8080/stamp/like/${user.userinfo["userId"]}/${_stampList[index]["stampboard_id"]}');
-
-    print("*****************************************");
-    print(response.data);
-    print("********************************************");
 
     setState((() {
       if (_stampList[index]["isMylike"]) {
@@ -676,6 +593,10 @@ class _StampListState extends State<StampList> {
           fontSize: 20.0,
           textColor: Colors.white,
           toastLength: Toast.LENGTH_SHORT);
+      joinedStamp.joinedStamp = {};
+      joinedStamp.message1 = {};
+      joinedStamp.message2 = {};
+      joinedStamp.message3 = {};
     });
   }
 
@@ -686,21 +607,37 @@ class _StampListState extends State<StampList> {
     if (user.isLogin()) {
       var response = await dio.get(
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
-      print('----------------------------------------------------');
-      print(response.data);
-      print('--------------------------------------------------');
+      ;
       setState(() {
         stampDetail = response.data;
       });
 
-      print("################################################");
-      print("${response.data["stampboard_id"]}");
-      print('진행중');
-      print(stampDetail);
-      print('#############################################');
+      if (response.data != '') {
+        var firstMessage = response.data['stampboard_message1'];
+        var secondMessage = response.data['stampboard_message2'];
+        var thirdMessage = response.data['stampboard_message3'];
+        var joinStamp = response.data;
+        joinedStamp.joinedStamp = joinStamp;
+
+        print('#########################');
+        print(response.data);
+        print(response.data['stampboard_id']);
+        print(response.data['stampboard_id'].runtimeType);
+        print('##############################');
+
+        await dio
+            .post(
+                'http://k7a108.p.ssafy.io:8080/stamp/info/$firstMessage/$secondMessage/$thirdMessage/${user.userinfo["userId"]}')
+            .then((res) {
+          joinedStamp.message1 = res.data[0];
+          joinedStamp.message2 = res.data[1];
+          joinedStamp.message3 = res.data[2];
+        });
+      }
     }
   }
 
+// 스탬푸 검색
   void searchStamp(String searchText) async {
     var dio = DIO.Dio();
 
@@ -715,5 +652,110 @@ class _StampListState extends State<StampList> {
     }).catchError((e) {
       print(e);
     });
+  }
+
+  // 각 스탬프에 포함된 메세지 조회
+  void loadStampDetail(int index) async {
+    var dio = DIO.Dio();
+    var nowStamp = _stampList[index];
+    var userId = user.isLogin() ? user.userinfo["userId"] : 0;
+    var message1Id = _stampList[index]['stampboard_message1'];
+    var message2Id = _stampList[index]['stampboard_message2'];
+    var message3Id = _stampList[index]['stampboard_message3'];
+
+    await dio
+        .post(
+            'http://k7a108.p.ssafy.io:8080/stamp/info/$message1Id/$message2Id/$message3Id/$userId')
+        .then((res) {
+      print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+      print(res.data);
+      print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+      stampMessage.viewStamp = nowStamp;
+      stampMessage.stampMessage1 = res.data[0];
+      stampMessage.stampMessage2 = res.data[1];
+      stampMessage.stampMessage3 = res.data[2];
+    }).then((value) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => StampDetailView()));
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  void showJoinedStamp() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Alert Dialog'),
+              content: SingleChildScrollView(
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child: Column(
+                        children: [
+                          Image.network(
+                              '${joinedStamp.joinedStamp['stampboard_designurl']}'),
+                          Container(
+                            // width: MediaQuery.of(context).size.width,
+                            height: 100,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: 3,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedStamp = index + 1;
+                                          });
+                                        },
+                                        child: Container(
+                                            width: 50,
+                                            height: 50,
+                                            margin: EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                              border: Border.all(
+                                                  color:
+                                                      selectedStamp != index + 1
+                                                          ? Colors.grey.shade400
+                                                          : Colors.orange,
+                                                  width: 1),
+                                            ),
+                                            child: Text('$index번 상자')),
+                                      )
+                                    ],
+                                  );
+                                }),
+                          ),
+                        ],
+                      ))),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'))
+              ]);
+        });
+  }
+
+  void showNotJoinedStamp() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(content: Text('진행 중인 스탬푸가 없소'), actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('No'))
+          ]);
+        });
   }
 }
