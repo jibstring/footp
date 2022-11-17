@@ -26,6 +26,9 @@ public interface StampboardRepository extends JpaRepository<Stampboard, Long>{
 	@Transactional
 	public void deleteByStampboardIdAndUserId(long sid, User uid);
 	
+	@Transactional
+	public void deleteAllByUserId(User uid);
+	
 	// 이름으로 검색했을 때 결과
 	public List<Stampboard> findByStampboardTextContainingIgnoreCaseOrderByStampboardLikenumDesc(String text);
 	

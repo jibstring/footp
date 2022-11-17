@@ -11,8 +11,10 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:log_print/log_print.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -26,7 +28,9 @@ class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   UserData user = Get.put(UserData());
-  bool? _isAutoLogin = false;
+  bool _isAutoLogin = false;
+  static final storage = new FlutterSecureStorage();
+  dynamic loginInfo = '';
 
   Future signIn() async {
     var dio = Dio();
@@ -74,6 +78,10 @@ class _SignInState extends State<SignIn> {
       //user.userinfoSet(response.body);
       user.userinfoSet(qqqqq["userInfo"]);
       print("@@@@@@@@@@#################@@@@@@@@@@@${user.userinfo}");
+
+      if (_isAutoLogin) {
+        await storage.write(key: "login", value: "$aa");
+      }
 
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => mainMap()));
@@ -193,7 +201,7 @@ class _SignInState extends State<SignIn> {
                             borderRadius: BorderRadius.circular(15)),
                         onChanged: (Value) {
                           setState(() {
-                            _isAutoLogin = Value;
+                            _isAutoLogin = Value!;
                           });
                         }),
                     Text("로그인 상태 유지"),

@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	
 	//회원탈퇴
 	@Transactional
-	public void deleteByUserId(User uid);
+	public void deleteByUserId(long uid);
 	
 	
 	
