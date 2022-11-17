@@ -4,13 +4,17 @@ import 'dart:ffi';
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/mainMap.dart';
 import 'package:app_footp/signUp.dart';
+import 'package:app_footp/mailCertification.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:log_print/log_print.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -24,14 +28,16 @@ class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   UserData user = Get.put(UserData());
-  bool? _isAutoLogin = false;
+  bool _isAutoLogin = false;
+  static final storage = new FlutterSecureStorage();
+  dynamic loginInfo = '';
 
   Future signIn() async {
     var dio = Dio();
     var data = {
       'userEmail': emailController.text,
       'userPassword': passwordController.text,
-      'userAutologin' : _isAutoLogin,
+      'userAutologin': _isAutoLogin,
     };
 
     final response_login =
@@ -73,9 +79,19 @@ class _SignInState extends State<SignIn> {
       user.userinfoSet(qqqqq["userInfo"]);
       print("@@@@@@@@@@#################@@@@@@@@@@@${user.userinfo}");
 
+      if (_isAutoLogin) {
+        await storage.write(key: "login", value: "$aa");
+      }
+
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => mainMap()));
-      Navigator.pop(context);
+
+      if (identical(user.userinfo["userEmailKey"], "Y")) {
+        Navigator.pop(context);
+      } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MailCertification()));
+      }
     }
   }
 
@@ -170,19 +186,22 @@ class _SignInState extends State<SignIn> {
                               )),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 //자동 로그인
                 Row(
-                  
                   children: [
-                    SizedBox(width: 20,),
+                    SizedBox(
+                      width: 20,
+                    ),
                     Checkbox(
                         value: _isAutoLogin,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                         onChanged: (Value) {
                           setState(() {
-                            _isAutoLogin = Value;
+                            _isAutoLogin = Value!;
                           });
                         }),
                     Text("로그인 상태 유지"),

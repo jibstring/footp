@@ -4,12 +4,45 @@ import 'package:app_footp/myPage.dart';
 import 'package:app_footp/components/userSetting/agreement.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
+import 'package:log_print/log_print.dart';
 
 import 'custom_class/store_class/store.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SettingPage extends StatelessWidget {
   SettingPage({super.key});
   final controller = Get.put(UserData());
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
+
+  Future<void> _checkLogout(BuildContext context) async {
+    return showDialog<void>(
+        context: context,
+        // 사용자가 다이얼로그 바깥을 터치하면 닫히지 않음
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text("로그아웃 하시겠습니까?"),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('예'),
+                onPressed: () {
+                  // 다이얼로그 닫기
+                  LogOut();
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('아니요'),
+                onPressed: () {
+                  // 다이얼로그 닫기
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +104,13 @@ class SettingPage extends StatelessWidget {
                 removeUser();
               },
               title: Text('회원탈퇴'),
+            ),
+            ListTile(
+              leading: Icon(Icons.logout, color: Colors.grey[850]),
+              title: Text("로그아웃"),
+              onTap: (){
+                _checkLogout(context);
+              },
             )
           ],
         ),
@@ -90,5 +130,12 @@ class SettingPage extends StatelessWidget {
       print(response_login.data);
       print('####################################');
     }
+  }
+  
+  LogOut() async {
+    await storage.delete(key: 'login');
+    LogPrint("로그아웃");
+    // Navigator.pushNamed(context, '/');
+    controller.logout();
   }
 }

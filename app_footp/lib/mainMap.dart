@@ -4,8 +4,10 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:stomp_dart_client/stomp.dart';
@@ -32,12 +34,12 @@ class MainData extends GetxController {
   int _listsize = 0;
   int _selectedIndex = 0;
   bool _attendChat = false;
-  bool _seachFlag=false;
+  bool _searchFlag = false;
   String _baseURL = 'http://k7a108.p.ssafy.io:8080';
   String _apiKey = '';
   String _filter = 'hot';
   String _markerString = '';
-  String _searchKeyword='';
+  String _searchKeyword = '';
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
@@ -53,7 +55,7 @@ class MainData extends GetxController {
   int get listsize => _listsize;
   int get selectedIndex => _selectedIndex;
   bool get attendChat => _attendChat;
-  bool get searchFlag=>_seachFlag;
+  bool get searchFlag => _searchFlag;
   String get baseURL => _baseURL;
   String get apiKey => _apiKey;
   String get filter => _filter;
@@ -73,29 +75,29 @@ class MainData extends GetxController {
     _chatRoom = cr;
   }
 
-  set setSearchFlag(bool searchflag){
-    _seachFlag=searchflag;
+  set setSearchFlag(bool searchflag) {
+    _searchFlag = searchflag;
   }
 
   set fixFilter(String filter) {
     _filter = filter;
   }
 
-  set setmycontroller(dynamic mycontroller) {
+  set setMyController(dynamic mycontroller) {
     _mycontroller = mycontroller;
   }
 
   set setAttendChat(bool attend) {
     _attendChat = attend;
   }
-  
-  set setListclean(bool clear){
+
+  set setListClean(bool clear) {
     _dataList.clear();
     _markers.clear();
   }
 
-  set setSearchKeyword(String keyword){
-    _searchKeyword=keyword;
+  set setSearchKeyword(String keyword) {
+    _searchKeyword = keyword;
   }
 
   void getURL(
@@ -324,7 +326,7 @@ class MainData extends GetxController {
         break;
 
       case 1:
-        color = dataList[messageType][idx][id] % 7;
+        color = 9;
         break;
 
       case 2:
@@ -377,16 +379,13 @@ class MainData extends GetxController {
   void moveMapTogather(gathermsg, gathermsg2) {}
 
   void getSearch(String userid, String lng, String lat) async {
-
-    print("검색가장");
     _apiKey = '${userid}/${lng}/${lat}';
-
 
     switch (selectedIndex) {
       case 0:
         _mainDataUrl = Uri.parse('$baseURL/foot/search/$apiKey');
 
-        print(_mainDataUrl);
+        // print(_mainDataUrl);
         _dataList = await getSearchData();
 
         try {
@@ -429,35 +428,28 @@ class MainData extends GetxController {
     }
 
     update();
-
   }
 
   Future getSearchData() async {
-    print(searchKeyword);
+    // print(searchKeyword);
 
-    var body = jsonEncode( {
-          "keyword":searchKeyword
-        });
+    var body = jsonEncode({"keyword": searchKeyword});
     http.Response response = await http.post(_mainDataUrl,
-    headers: {
-  "Accept": "application/json",
-  "content-type":"application/json"
-},
-    body: body
-    );
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        },
+        body: body);
     if (response.statusCode == 200) {
       _dataList = jsonDecode(utf8.decode(response.bodyBytes));
-      print(_dataList);
+      // print(_dataList);
       update();
       return _dataList;
     } else {
       print(response.statusCode);
-      throw 'getMainData() error';
+      throw 'getSearchData() error';
     }
   }
-
-
-
 }
 
 class MainMap extends StatelessWidget {
@@ -491,6 +483,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = maindata.selectedIndex;
   List<Marker> markers = [];
   DateTime? currentBackPressTime;
+  static final storage = new FlutterSecureStorage();
+  dynamic loginInfo = '';
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -560,7 +554,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           radius: 25,
                           color: Colors.transparent,
                           outlineColor: Colors.orangeAccent,
-                          outlineWidth: 1)
+                          outlineWidth: 5)
                     ])),
             Align(
               alignment: Alignment.bottomRight,
@@ -622,12 +616,11 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedIndex = index;
         maindata._selectedIndex = index;
 
-
         markers.clear();
-        maindata.setListclean=true;
+        maindata.setListClean = true;
         maindata._address.clear();
-        maindata.setSearchFlag=false;
-        maindata.setSearchKeyword="";
+        maindata.setSearchFlag = false;
+        maindata.setSearchKeyword = "";
       });
     }
   }
@@ -699,6 +692,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ).then((image) {
         if (mounted) setState(() => maindata.footImage.add(image));
       });
+
+      OverlayImage.fromAssetImage(
+        assetName: 'imgs/megaphone.png',
+      ).then((image) {
+        if (mounted) setState(() => maindata.footImage.add(image));
+      });
     });
   }
 
@@ -711,25 +710,51 @@ class _MyHomePageState extends State<MyHomePage> {
           msg: "뒤로가기 버튼을 한번 더 누르면 종료됩니다.",
           gravity: ToastGravity.BOTTOM,
           backgroundColor: const Color(0xff6E6E6E),
-          fontSize: 10,
+          fontSize: 11,
           toastLength: Toast.LENGTH_SHORT);
       return false;
     }
     return true;
   }
 
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    loginInfo = await storage.read(key: 'login');
+
+    // user의 정보가 있다면 로그인 후 들어가는 첫 페이지로 넘어가게 합니다.
+    // if (userInfo != null) {
+    //   Navigator.pushNamed(context, '/main');
+    // } else {
+    //   print('로그인이 필요합니다');
+    // }
+    if (loginInfo != null) {
+      LogPrint("$loginInfo");
+      var url =
+          Uri.parse('http://k7a108.p.ssafy.io:8080/auth/info/${loginInfo}');
+      print(url);
+      var response = await http.post(url);
+      var qqqqq = json.decode(response.body);
+      user.login("자동로그인");
+      user.userinfoSet(qqqqq["userInfo"]);
+    }
+  }
+
   void initState() {
     _getImage();
     super.initState();
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
     Timer.periodic(Duration(seconds: 2), (v) {
       if (mounted) {
         setState(() {
           location.getCurrentLocation();
           if (maindata.mapEdge != null) {
-            if(maindata.searchFlag==false){
-              print("아니 리스트인데요");
+            if (maindata.searchFlag == false) {
               if (!user.isLogin()) {
-                // User ID는 null, 추후 수정
+                // 비회원일 경우 userId = 1
                 maindata.getURL(
                     "1",
                     maindata.mapEdge.northeast.longitude.toString(),
@@ -744,27 +769,34 @@ class _MyHomePageState extends State<MyHomePage> {
                     maindata.mapEdge.southwest.latitude.toString(),
                     maindata.mapEdge.northeast.latitude.toString());
               }
-            }
-            else{
-              print(maindata.searchKeyword);
-              if(maindata.searchKeyword!=""){
+            } else {
+              // print(maindata.searchKeyword);
+              if (maindata.searchKeyword != "") {
                 if (!user.isLogin()) {
                   maindata.getSearch(
-                    "1",
-                    ((maindata.mapEdge.northeast.longitude+maindata.mapEdge.southwest.longitude)/2).toString(),
-                    ((maindata.mapEdge.southwest.latitude+maindata.mapEdge.northeast.latitude)/2).toString()
-                  );
-                }
-                else{
+                      "1",
+                      ((maindata.mapEdge.northeast.longitude +
+                                  maindata.mapEdge.southwest.longitude) /
+                              2)
+                          .toString(),
+                      ((maindata.mapEdge.southwest.latitude +
+                                  maindata.mapEdge.northeast.latitude) /
+                              2)
+                          .toString());
+                } else {
                   maindata.getSearch(
-                    user.userinfo["userId"].toString(),
-                    ((maindata.mapEdge.northeast.longitude+maindata.mapEdge.southwest.longitude)/2).toString(),
-                    ((maindata.mapEdge.southwest.latitude+maindata.mapEdge.northeast.latitude)/2).toString()
-                  );
-                }                
-              }
-              else{
-                maindata.setListclean=true;
+                      user.userinfo["userId"].toString(),
+                      ((maindata.mapEdge.northeast.longitude +
+                                  maindata.mapEdge.southwest.longitude) /
+                              2)
+                          .toString(),
+                      ((maindata.mapEdge.southwest.latitude +
+                                  maindata.mapEdge.northeast.latitude) /
+                              2)
+                          .toString());
+                }
+              } else {
+                maindata.setListClean = true;
               }
             }
             markers = maindata.markers;

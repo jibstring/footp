@@ -78,7 +78,7 @@ class _NormalFootState extends State<NormalFoot> {
               msg: "해당 메세지로 지도를 이동하였습니다.",
               gravity: ToastGravity.BOTTOM,
               backgroundColor: const Color(0xff6E6E6E),
-              fontSize: 10,
+              fontSize: 11,
               toastLength: Toast.LENGTH_SHORT);
         },
         child: Card(

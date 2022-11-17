@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart' as DIO;
@@ -137,6 +138,11 @@ class UserData extends GetxController {
   //로그인 토큰저장
   void login(String a) {
     _Token = a;
+    LogPrint("$_Token");
+    update();
+  }
+  void logout(){
+    _Token = "";
     update();
   }
 
