@@ -4,8 +4,10 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:stomp_dart_client/stomp.dart';
@@ -481,6 +483,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = maindata.selectedIndex;
   List<Marker> markers = [];
   DateTime? currentBackPressTime;
+  static final storage = new FlutterSecureStorage();
+  dynamic loginInfo = '';
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -707,9 +711,36 @@ class _MyHomePageState extends State<MyHomePage> {
     return true;
   }
 
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    loginInfo = await storage.read(key: 'login');
+
+    // user의 정보가 있다면 로그인 후 들어가는 첫 페이지로 넘어가게 합니다.
+    // if (userInfo != null) {
+    //   Navigator.pushNamed(context, '/main');
+    // } else {
+    //   print('로그인이 필요합니다');
+    // }
+    if (loginInfo != null) {
+      LogPrint("$loginInfo");
+      var url =
+          Uri.parse('http://k7a108.p.ssafy.io:8080/auth/info/${loginInfo}');
+      print(url);
+      var response = await http.post(url);
+      var qqqqq = json.decode(response.body);
+      user.login("자동로그인");
+      user.userinfoSet(qqqqq["userInfo"]);
+    }
+  }
+
   void initState() {
     _getImage();
     super.initState();
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
     Timer.periodic(Duration(seconds: 2), (v) {
       if (mounted) {
         setState(() {
