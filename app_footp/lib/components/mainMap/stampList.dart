@@ -13,9 +13,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as DIO;
-import 'package:material_dialogs/material_dialogs.dart';
-import 'package:material_dialogs/widgets/buttons/icon_button.dart';
-import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 
 class StampList extends StatefulWidget {
   const StampList({super.key});
@@ -696,43 +693,85 @@ class _StampListState extends State<StampList> {
                         children: [
                           Image.network(
                               '${joinedStamp.joinedStamp['stampboard_designurl']}'),
-                          Container(
-                            // width: MediaQuery.of(context).size.width,
-                            height: 100,
-                            child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 3,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedStamp = index + 1;
-                                          });
-                                        },
-                                        child: Container(
-                                            width: 50,
-                                            height: 50,
-                                            margin: EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(3),
-                                              border: Border.all(
-                                                  color:
-                                                      selectedStamp != index + 1
-                                                          ? Colors.grey.shade400
-                                                          : Colors.orange,
-                                                  width: 1),
-                                            ),
-                                            child: Text('$index번 상자')),
-                                      )
-                                    ],
-                                  );
-                                }),
-                          ),
+                          // Container(
+                          //   // width: MediaQuery.of(context).size.width,
+                          //   height: 100,
+                          //   child: ListView.builder(
+                          //       scrollDirection: Axis.horizontal,
+                          //       itemCount: 3,
+                          //       itemBuilder: (BuildContext context, int index) {
+                          //         return Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceEvenly,
+                          //           children: [
+                          //             GestureDetector(
+                          //               onTap: () {
+                          //                 setState(() {
+                          //                   selectedStamp = index + 1;
+                          //                 });
+                          //               },
+                          //               child: Container(
+                          //                   width: 50,
+                          //                   height: 50,
+                          //                   margin: EdgeInsets.all(6),
+                          //                   decoration: BoxDecoration(
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(3),
+                          //                     border: Border.all(
+                          //                         color:
+                          //                             selectedStamp != index + 1
+                          //                                 ? Colors.grey.shade400
+                          //                                 : Colors.orange,
+                          //                         width: 1),
+                          //                   ),
+                          //                   child: Text('$index번 상자')),
+                          //             )
+                          //           ],
+                          //         );
+                          //       }),
+                          // ),
+                          // GridView.builder(
+                          //     shrinkWrap: false,
+                          //     scrollDirection: Axis.vertical,
+                          //     itemCount: 10,
+                          //     gridDelegate:
+                          //         new SliverGridDelegateWithFixedCrossAxisCount(
+                          //       crossAxisCount: 2,
+                          //       childAspectRatio: MediaQuery.of(context)
+                          //               .size
+                          //               .width /
+                          //           (MediaQuery.of(context).size.height / 3),
+                          //     ),
+                          //     itemBuilder: (BuildContext context, int index) {
+                          //       return GestureDetector(
+                          //         onTap: () {
+                          //           setState(() {
+                          //             // ontap of each card, set the defined int to the grid view index
+                          //             selectedStamp = index;
+                          //           });
+                          //         },
+                          //         child: Card(
+                          //           // check if the index is equal to the selected Card integer
+                          //           color: selectedStamp == index
+                          //               ? Colors.blue
+                          //               : Colors.amber,
+                          //           child: Container(
+                          //             height: 200,
+                          //             width: 200,
+                          //             child: Center(
+                          //               child: Text(
+                          //                 '$index',
+                          //                 style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   color: Colors.white,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       );
+                          //     })
                         ],
                       ))),
               actions: <Widget>[
