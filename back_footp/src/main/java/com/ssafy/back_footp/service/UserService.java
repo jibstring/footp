@@ -160,6 +160,7 @@ public class UserService {
         for(Gather g : glist) {
         	gatherLikeRepository.deleteAllByGatherId(g);
         	gatherSpamRepository.deleteAllByGatherId(g);
+            userJoinedGatherRepository.deleteAllByGatherId(g);
         }
         
         gatherRepository.deleteAllByUserId(usr);
