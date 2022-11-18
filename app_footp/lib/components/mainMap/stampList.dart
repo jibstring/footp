@@ -110,10 +110,7 @@ class _StampListState extends State<StampList> {
                         ),
                         // 새로운 스탬푸 작성
                         IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            size: 40,
-                          ),
+                          icon: Image.asset('imgs/스탬푸작성_p.png', height: 50),
                           onPressed: () {
                             if (!user.isLogin()) {
                               Navigator.push(

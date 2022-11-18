@@ -64,16 +64,15 @@ class _CreateStampFormState extends State<CreateStampForm> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Image.asset('imgs/logo.png', height: 45),
+          title: Image.asset('imgs/로고_기본.png', height: 45),
           elevation: 0,
           backgroundColor: Colors.white,
           centerTitle: true,
           actions: <Widget>[
             IconButton(
-              icon: Icon(
-                Icons.account_circle,
-                color: Color.fromARGB(255, 153, 181, 229),
-                size: 40,
+              icon: Image.asset(
+                'imgs/프로필_b.png',
+                height: 45,
               ),
               padding: const EdgeInsets.only(top: 5, right: 20.0),
               onPressed: () {
@@ -124,10 +123,11 @@ class _CreateStampFormState extends State<CreateStampForm> {
 
               // 스탬프 템플릿 + 내 게시글 끌어다 놓기
               Container(
-                height: 200,
+                height: MediaQuery.of(context).size.height * 0.25,
+                width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitWidth,
                     image: NetworkImage(
                         'https://s3.ap-northeast-2.amazonaws.com/footp-bucket/stampboard/frame$_selectedValue.png'),
                   ),
@@ -143,16 +143,18 @@ class _CreateStampFormState extends State<CreateStampForm> {
                         List<dynamic> rejected,
                       ) {
                         return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 252, 196, 192),
-                            border: Border.all(color: Colors.black),
-                          ),
-                          height: 100.0,
-                          width: 100.0,
-                          child: Center(
-                            child: Text('1번 장소: $selectedMessage1'),
-                          ),
+                          // decoration: BoxDecoration(
+                          //   shape: BoxShape.circle,
+                          //   color: Color.fromARGB(255, 252, 196, 192),
+                          //   border: Border.all(color: Colors.black),
+                          // ),
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: selectedMessage1 == null
+                              ? Image.asset('imgs/unknown_print.png')
+                              : Image.asset(
+                                  'imgs/발자국찍기_b.png',
+                                ),
                         );
                       },
                       onAccept: (int data) {
@@ -168,16 +170,22 @@ class _CreateStampFormState extends State<CreateStampForm> {
                         List<dynamic> rejected,
                       ) {
                         return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 252, 196, 192),
-                            border: Border.all(color: Colors.black),
-                          ),
-                          height: 100.0,
-                          width: 100.0,
-                          child: Center(
-                            child: Text('2번 장소: $selectedMessage2'),
-                          ),
+                          // decoration: BoxDecoration(
+                          //   shape: BoxShape.circle,
+                          //   color: Color.fromARGB(255, 252, 196, 192),
+                          //   border: Border.all(color: Colors.black),
+                          // ),
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: selectedMessage2 == null
+                              ?
+                              // Center(
+                              //     child: Text('2번 장소: $selectedMessage2'),
+                              //   )
+                              Image.asset('imgs/unknown_print.png')
+                              : Image.asset(
+                                  'imgs/발자국찍기_g.png',
+                                ),
                         );
                       },
                       onAccept: (int data) {
@@ -193,16 +201,18 @@ class _CreateStampFormState extends State<CreateStampForm> {
                         List<dynamic> rejected,
                       ) {
                         return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 252, 196, 192),
-                            border: Border.all(color: Colors.black),
-                          ),
-                          height: 100.0,
-                          width: 100.0,
-                          child: Center(
-                            child: Text('3번 장소: $selectedMessage3'),
-                          ),
+                          // decoration: BoxDecoration(
+                          //   shape: BoxShape.circle,
+                          //   color: Color.fromARGB(255, 252, 196, 192),
+                          //   border: Border.all(color: Colors.black),
+                          // ),
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: selectedMessage3 == null
+                              ? Image.asset('imgs/unknown_print.png')
+                              : Image.asset(
+                                  'imgs/발자국찍기_o.png',
+                                ),
                         );
                       },
                       onAccept: (int data) {
@@ -230,12 +240,16 @@ class _CreateStampFormState extends State<CreateStampForm> {
                           child: Draggable(
                             data: _myFootList[index]['messageId'],
                             feedback: Container(
-                              child: Text(_myFootList[index]['messageText']),
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.orange[50],
-                              ),
-                            ),
+                                // child: Text(_myFootList[index]['messageText']),
+                                // height: 40,
+                                // decoration: BoxDecoration(
+                                //   color: Colors.orange[50],
+                                // ),
+                                child: Image.asset(
+                              'imgs/스탬푸찍기_p.png',
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              // height: 50,
+                            )),
                             childWhenDragging: Container(
                               child: Text(_myFootList[index]['messageText']),
                               height: 40,
@@ -244,7 +258,21 @@ class _CreateStampFormState extends State<CreateStampForm> {
                               ),
                             ),
                             child: Container(
-                              child: Text(_myFootList[index]['messageText']),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(_myFootList[index]['messageText']),
+                                  _myFootList[index]['messageId'] ==
+                                              selectedMessage1 ||
+                                          _myFootList[index]['messageId'] ==
+                                              selectedMessage2 ||
+                                          _myFootList[index]['messageId'] ==
+                                              selectedMessage3
+                                      ? Image.asset('imgs/white_print.png')
+                                      : Container()
+                                ],
+                              ),
                               height: 40,
                               decoration: BoxDecoration(
                                 color: Colors.orange[200],
@@ -267,7 +295,8 @@ class _CreateStampFormState extends State<CreateStampForm> {
                       ),
                       hintText: '스탬프에 대해 설명해주세요'),
                 )),
-                ElevatedButton(
+                IconButton(
+                    iconSize: MediaQuery.of(context).size.width * 0.15,
                     onPressed: () {
                       if (createStampValidation() == 1) {
                         stampCreate();
@@ -282,7 +311,9 @@ class _CreateStampFormState extends State<CreateStampForm> {
                             toastLength: Toast.LENGTH_SHORT);
                       }
                     },
-                    child: Text('작성'))
+                    icon: Image.asset(
+                      'imgs/스탬푸작성_r.png',
+                    ))
               ])),
             ]))));
   }
