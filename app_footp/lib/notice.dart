@@ -48,8 +48,7 @@ class Notice extends GetxController {
     }
   }
 
-  Future<String> where(String lng, String lat) async {
-    print("where");
+  Future<String> where(double lng, double lat) async {
     String result = "";
     http.Response response = await http.get(
         Uri.parse(
@@ -71,7 +70,6 @@ class Notice extends GetxController {
   }
 
   void showToast(Map<String, dynamic> map) {
-    print("showToast");
     HapticFeedback.heavyImpact();
     List<String> _category = ['공연', '행사', '맛집', '관광', '친목'];
     Color color = Colors.yellow;
@@ -91,7 +89,7 @@ class Notice extends GetxController {
     }
     where(map["gatherLatitude"], map["gatherLongitude"]).then((here) {
       String str =
-          "${here} 에서 ${_category[map["gatherDesignCode"]]} 이벤트가 시작되었습니다!";
+          "$here 에서 ${_category[map["gatherDesigncode"]]} 이벤트가 시작되었습니다!";
       Fluttertoast.showToast(
         msg: str,
         gravity: ToastGravity.TOP,
