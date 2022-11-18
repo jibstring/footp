@@ -753,6 +753,7 @@ class _StampListState extends State<StampList> {
                                 null
                         ? () {
                             clearMessage(selectedStamp!);
+                            loadJoinStamp();
                           }
                         : null, // 여기 조건에 지금 있는 위치가 해당 장소의 근처인지 넣을거임
                     child: Text(clearButtonMessage(selectedStamp)),
@@ -824,12 +825,7 @@ class _StampListState extends State<StampList> {
   void clearMessage(int index) async {
     LogPrint('${joinedStamp.joinedMessages[index]["messageId"]}');
     var dio = DIO.Dio();
-    await dio
-        .post(
-            'http://k7a108.p.ssafy.io:8080/stamp/clear/${user.userinfo["userId"]}/${joinedStamp.joinedMessages[index]["messageId"]}')
-        .then((res) {
-      joinedStamp.joinedStamp['userjoinedStampboard_cleardate${index + 1}'] =
-          DateTime.now().toString();
-    });
+    await dio.post(
+        'http://k7a108.p.ssafy.io:8080/stamp/clear/${user.userinfo["userId"]}/${joinedStamp.joinedMessages[index]["messageId"]}');
   }
 }
