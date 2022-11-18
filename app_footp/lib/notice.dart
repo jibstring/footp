@@ -74,8 +74,6 @@ class Notice extends GetxController {
     print("showToast");
     HapticFeedback.heavyImpact();
     List<String> _category = ['공연', '행사', '맛집', '관광', '친목'];
-    String str =
-        "${where(map["gatherLatitude"], map["gatherLongitude"])} 에서 ${_category[map["gatherDesignCode"]]} 이벤트가 시작되었습니다!";
     Color color = Colors.yellow;
     switch (map["gatherDesignCode"]) {
       case "1":
@@ -91,13 +89,17 @@ class Notice extends GetxController {
         color = Colors.red;
         break;
     }
-    Fluttertoast.showToast(
-      msg: str,
-      gravity: ToastGravity.TOP,
-      backgroundColor: color,
-      fontSize: 20.0,
-      textColor: Colors.white,
-      toastLength: Toast.LENGTH_LONG,
-    );
+    where(map["gatherLatitude"], map["gatherLongitude"]).then((here) {
+      String str =
+          "${here} 에서 ${_category[map["gatherDesignCode"]]} 이벤트가 시작되었습니다!";
+      Fluttertoast.showToast(
+        msg: str,
+        gravity: ToastGravity.TOP,
+        backgroundColor: color,
+        fontSize: 20.0,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_LONG,
+      );
+    });
   }
 }
