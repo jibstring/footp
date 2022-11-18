@@ -123,10 +123,14 @@ class _NormalFootState extends State<NormalFoot> {
                 height: 5,
               ),
               Divider(color: Colors.black, thickness: 3.0),
-              
+              SizedBox(
+                height: 15,
+              ),
               //중간
-              Container(
-                  child: (widget.normalmsg["messageFileurl"] != 'empty')
+              Container( 
+                padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
+                // color: Colors.red,
+                  child: (widget.normalmsg["messageFileurl"] != "empty")
                       ? Row(
                           children: [
                             fileCheck(widget.normalmsg["messageFileurl"]) != -1
@@ -138,11 +142,12 @@ class _NormalFootState extends State<NormalFoot> {
                                           widget.normalmsg["messageFileurl"]);
                                       if (flag == 0) {
                                         //이미지
+                                        print("이미지");
                                         return Image.network(
                                             widget.normalmsg["messageFileurl"]);
                                       } else if (flag == 1) {
                                         //비디오
-                                        // print("비디오");
+                                        print("비디오");
                                         // print(_videocontroller);
                                         return FutureBuilder(
                                             future:
@@ -216,8 +221,8 @@ class _NormalFootState extends State<NormalFoot> {
                                   )
                                 : Text(""),
                             Container(
-                                padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                width: width,
+                                padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                //width: width,
                                 child: Text(
                                   widget.normalmsg["messageText"], //100자로 제한
                                   style: const TextStyle(
@@ -227,27 +232,22 @@ class _NormalFootState extends State<NormalFoot> {
                                 ))
                           ],
                         )
-                      : Row(
-                          children: [
-                            Container(
-                              height: 100,
-                              padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Text(
-                                widget.normalmsg["messageText"], //100자로 제한
-                                style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color.fromARGB(255, 110, 110, 110)),
-                              ),
-                            )
-                          ],
-                        )),
+                      : Container(
+                        alignment: Alignment.centerLeft,
+                        //height: 100,
+                        child: Text(
+                          widget.normalmsg["messageText"], //100자로 제한
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 110, 110, 110)),
+                        ),
+                      )),
               // 비밀글
               (maindata.hiddenMessage[widget.normalmsg["messageId"]] != null)
                   ? Container(
                       height: 50,
-                      padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      width: width,
+                      //width: width,
                       child: Text(
                         maindata.hiddenMessage[
                             widget.normalmsg["messageId"]] ??= "",
@@ -256,12 +256,12 @@ class _NormalFootState extends State<NormalFoot> {
                             fontWeight: FontWeight.w500,
                             color: Color.fromARGB(255, 110, 110, 110)),
                       ))
-                  : Container(),
+                  : Container(color: Colors.pink),
               // 주소
               Container(
+                // color: Colors.green,
                   height: 40,
-                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                  width: width,
+                  // width: width,
                   child: Text(
                     maindata.address[widget.normalmsg["messageId"]] ??= "",
                     style: const TextStyle(
@@ -316,7 +316,7 @@ class _NormalFootState extends State<NormalFoot> {
                     icon: Icon(Icons.more_horiz, size: 30),
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    // padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
                     child: Row(children: [
                       InkWell(
                           child: Image.asset(
@@ -360,7 +360,7 @@ class _NormalFootState extends State<NormalFoot> {
     // print("########파일체크크#####");
     // print(file);
 
-    if (file.endsWith('jpg')) {
+    if (file.endsWith('jpg') || file.endsWith('jpeg')) {
       return 0;
     } else if (file.endsWith('mp4')) {
       return 1;

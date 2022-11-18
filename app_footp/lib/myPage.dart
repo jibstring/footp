@@ -57,6 +57,7 @@ class _MyHompageStateState extends State<MyHompageState> {
     http.Response response = await http.get(_mainDataUrl);
     if (response.statusCode == 200) {
       dataList = jsonDecode(utf8.decode(response.bodyBytes));
+      // print(dataList);
       return dataList;
       // update();
     } else {
@@ -184,8 +185,6 @@ class _MyHompageStateState extends State<MyHompageState> {
                         future: post,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            print("데이터있데에에에에에");
-                            print(dataList["message"].length);
                             return dataList["message"].length != 0
                                 ? MyFootPage(dataList)
                                 : Text("발자국을 남겨보세요!");

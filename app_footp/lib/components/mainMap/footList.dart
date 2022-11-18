@@ -46,6 +46,7 @@ class ListMaker extends GetxController {
         footData[i] = jsonData["message"][i];
       }
     }
+    // print(footData);
   }
 
   void refresh() {
