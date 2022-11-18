@@ -81,6 +81,7 @@ class _EventFootState extends State<EventFoot> {
         },
         child: Card(
             child: Container(
+              
               // height: 40,
                     decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black, width: 3),
@@ -122,8 +123,9 @@ class _EventFootState extends State<EventFoot> {
               ),
               Divider(color: Colors.black, thickness: 3.0),
               Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 18, 0),
                 alignment: Alignment.centerRight,
-                child: Text("종료시점  :  "+changeDate(widget.gathermsg["gatherFinishdate"]),
+                child: Text("종료시간 :  "+changeDate(widget.gathermsg["gatherFinishdate"]),
                   style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -134,6 +136,7 @@ class _EventFootState extends State<EventFoot> {
               ),
               //중간
               Container(
+                width: MediaQuery.of(context).size.width * 0.9,
                   child: (widget.gathermsg["gatherFileurl"] != 'empty')
                       ? Row(
                           children: [
@@ -225,7 +228,7 @@ class _EventFootState extends State<EventFoot> {
                                 : Text(""),
                             Container(
                                 padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                width: width,
+                                //width: width,
                                 child: Text(
                                   widget.gathermsg["gatherText"], //100자로 제한
                                   style: const TextStyle(
@@ -235,21 +238,17 @@ class _EventFootState extends State<EventFoot> {
                                 ))
                           ],
                         )
-                      : Row(
-                          children: [
-                            Container(
-                              height: 100,
-                              padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Text(
-                                widget.gathermsg["gatherText"], //100자로 제한
-                                style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color.fromARGB(255, 110, 110, 110)),
-                              ),
-                            )
-                          ],
-                        )),
+                      : Container(
+                        height: 100,
+                        padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                        child: Text(
+                          widget.gathermsg["gatherText"], //100자로 제한
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 110, 110, 110)),
+                        ),
+                      )),
                         // 주소
               Container(
                   height: 40,
@@ -385,7 +384,7 @@ class _EventFootState extends State<EventFoot> {
                   )
                   ,
                   Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: Row(children: [
                       InkWell(
                           child: Image.asset(
