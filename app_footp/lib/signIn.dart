@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/mainMap.dart';
