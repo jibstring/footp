@@ -1,0 +1,93 @@
+	plugins {
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+}
+
+group = 'com.ssafy'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation'org.springframework.boot:spring-boot-starter-webflux'
+	compileOnly 'org.springframework.boot:spring-boot-starter-webflux:2.6.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.6.12.Final'
+	//websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:sockjs-client:1.5.1'
+	implementation 'org.webjars:stomp-websocket:2.3.4'
+	// json
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+	// swagger
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	// mysql
+	implementation 'mysql:mysql-connector-java'
+	// amazon
+	implementation "software.amazon.awssdk:s3:2.13.0"
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.753'
+	implementation 'com.amazonaws:aws-java-sdk-bom:1.11.1000'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//Thanks for using https://jar-download.com
+
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+		
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'	
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+	
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-context-support
+	implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.23'
+	
+
+	// https://mvnrepository.com/artifact/javax.mail/mail
+	
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.1'
+
+	// https://mvnrepository.com/artifact/javax.mail/mail
+	implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
+	
+	// jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.1'
+	
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+	
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4.2'
+
+	
+	
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+bootRun {
+	String activeProfile = System.properties['spring.profiles.active']
+	systemProperty "spring.profiles.active", activeProfile
+}
