@@ -136,14 +136,14 @@ class _EventFootState extends State<EventFoot> {
               ),
               //중간
               Container(
-                width: MediaQuery.of(context).size.width * 0.9,
+                padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
                   child: (widget.gathermsg["gatherFileurl"] != 'empty')
                       ? Row(
                           children: [
                             fileCheck(widget.gathermsg["gatherFileurl"]) != -1
                                 ? SizedBox(
-                                    width: 100,
-                                    height: 100,
+                                    width: MediaQuery.of(context).size.width * 0.3,
+                                    height: MediaQuery.of(context).size.width * 0.3,
                                     child: (() {
                                       int flag = fileCheck(
                                           widget.gathermsg["gatherFileurl"]);
@@ -227,8 +227,8 @@ class _EventFootState extends State<EventFoot> {
                                   )
                                 : Text(""),
                             Container(
-                                padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                //width: width,
+                                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                width: MediaQuery.of(context).size.width * 0.5,
                                 child: Text(
                                   widget.gathermsg["gatherText"], //100자로 제한
                                   style: const TextStyle(
@@ -239,8 +239,9 @@ class _EventFootState extends State<EventFoot> {
                           ],
                         )
                       : Container(
-                        height: 100,
-                        padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                        // height: 100,
+                        alignment: Alignment.centerLeft,
+                        // padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
                         child: Text(
                           widget.gathermsg["gatherText"], //100자로 제한
                           style: const TextStyle(
@@ -252,8 +253,8 @@ class _EventFootState extends State<EventFoot> {
                         // 주소
               Container(
                   height: 40,
-                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                  width: width,
+                  // padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                  //width: width,
                   child: Text(
                     maindata.address[widget.gathermsg["gatherId"]] ??= "",
                     style: const TextStyle(

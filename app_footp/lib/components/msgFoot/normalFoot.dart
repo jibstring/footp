@@ -135,8 +135,8 @@ class _NormalFootState extends State<NormalFoot> {
                           children: [
                             fileCheck(widget.normalmsg["messageFileurl"]) != -1
                                 ? SizedBox(
-                                    width: 100,
-                                    height: 100,
+                                    width: MediaQuery.of(context).size.width * 0.3,
+                                    height: MediaQuery.of(context).size.width * 0.3,
                                     child: (() {
                                       int flag = fileCheck(
                                           widget.normalmsg["messageFileurl"]);
@@ -222,7 +222,7 @@ class _NormalFootState extends State<NormalFoot> {
                                 : Text(""),
                             Container(
                                 padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                //width: width,
+                                width: MediaQuery.of(context).size.width * 0.5,
                                 child: Text(
                                   widget.normalmsg["messageText"], //100자로 제한
                                   style: const TextStyle(
