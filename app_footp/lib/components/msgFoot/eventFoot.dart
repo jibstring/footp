@@ -15,6 +15,7 @@ import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/components/userSetting/myFoot.dart';
 import 'package:app_footp/components/mainMap/chatRoom.dart';
 
+
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/';
 
 class EventFoot extends StatefulWidget {
@@ -38,6 +39,9 @@ class _EventFootState extends State<EventFoot> {
 
   bool click_play = false;
   final _player = AudioPlayer();
+  List<String> _category=['공연','행사','맛집','관광','친목'];
+  List<Color> _colorSelect=[Color.fromARGB(255, 190, 223, 178),Color.fromARGB(255, 255, 234, 246),Color.fromARGB(255, 164, 185, 237),Color.fromARGB(255, 182, 114, 205),Color.fromARGB(255, 252, 169, 45),Color.fromARGB(255, 20, 98, 186)];
+
 
   void initState() {
     _videocontroller = VideoPlayerController.network(
@@ -77,23 +81,30 @@ class _EventFootState extends State<EventFoot> {
         },
         child: Card(
             child: Container(
+              // height: 40,
+                    decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black, width: 3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    ),
+              
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
               SizedBox(
-                height: 20,
+                height: 12,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  // Text("# ${_category[widget.gathermsg["gatherDesigncode"]]}"),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       widget.gathermsg["userNickname"],
                       style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          fontSize:18,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 110, 110, 110)),
                     ),
                   ),
                   Container(
@@ -103,14 +114,23 @@ class _EventFootState extends State<EventFoot> {
                       changeDate(widget.gathermsg["gatherWritedate"]),
                       style: const TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 110, 110, 110)),
                     ),
                   ),
                 ],
               ),
+              Divider(color: Colors.black, thickness: 3.0),
+              Container(
+                alignment: Alignment.centerRight,
+                child: Text("종료시점  :  "+changeDate(widget.gathermsg["gatherFinishdate"]),
+                  style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 43, 55, 123))),
+              ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               //중간
               Container(
@@ -209,9 +229,9 @@ class _EventFootState extends State<EventFoot> {
                                 child: Text(
                                   widget.gathermsg["gatherText"], //100자로 제한
                                   style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color.fromARGB(255, 110, 110, 110)),
                                 ))
                           ],
                         )
@@ -223,9 +243,9 @@ class _EventFootState extends State<EventFoot> {
                               child: Text(
                                 widget.gathermsg["gatherText"], //100자로 제한
                                 style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 110, 110, 110)),
                               ),
                             )
                           ],
@@ -238,9 +258,9 @@ class _EventFootState extends State<EventFoot> {
                   child: Text(
                     maindata.address[widget.gathermsg["gatherId"]] ??= "",
                     style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 110, 110, 110)),
                   )),
               //하단
               Row(
@@ -288,24 +308,81 @@ class _EventFootState extends State<EventFoot> {
                     },
                     icon: Icon(Icons.more_horiz, size: 30),
                   ),
-                  ElevatedButton(
-                    onPressed: (){
-                      setState(() {});
-                      if (!user.isLogin()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignIn()),
-                        );
-                      }
-                      else{
-                        maindata.setChatRoom=ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
-                        maindata.setAttendChat=true;
-                        pcontext.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.setState(() {});
-                      }
+                  // Text("# ${_category[widget.gathermsg["gatherDesigncode"]]}",style: const TextStyle(
+                  //         fontSize: 15,
+                  //         fontWeight: FontWeight.w500,
+                  //         color: Color.fromARGB(255, 110, 110, 110))
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black, width: 3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    ),
+                    child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                          Colors.white),
+                                      backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                          _colorSelect[widget.gathermsg["gatherDesigncode"]]),
+                                      shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius:
+                                        BorderRadius.circular(20.0),
+                                      )),
+                                    ),
+                                    onPressed: () {  },
+                                    child: Text("# ${_category[widget.gathermsg["gatherDesigncode"]]}",
+                                    style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                      ),
+                  ),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black, width: 3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    ),
+                    child: ElevatedButton(style: ButtonStyle(
+                                      foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                          Colors.white),
+                                      backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                          Color.fromARGB(255, 206, 233, 255)),
+                                      shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius:
+                                        BorderRadius.circular(20.0),
+                                      )),
+                                    ),
+                      onPressed: (){
+                        setState(() {});
+                        if (!user.isLogin()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignIn()),
+                          );
+                        }
+                        else{
+                          maindata.setChatRoom=ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
+                          maindata.setAttendChat=true;
+                          pcontext.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.setState(() {});
+                        }
 
-                    },
-                    child: Text("채팅방참가"),)
+                      },
+                      child: Text("채팅방참가", style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black)),),
+                  )
                   ,
                   Container(
                     padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -369,7 +446,6 @@ class _EventFootState extends State<EventFoot> {
 
     return newDate;
   }
-
   void heartRequest(context, var heartInfo) async {
     final uri = Uri.parse(serverUrl +
         "gather/" +
