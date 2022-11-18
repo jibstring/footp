@@ -24,6 +24,9 @@ class _gatherListState extends State<gatherList> {
   final _valueList = ['HOT', '좋아요', 'NEW', 'EVENT'];
   final _filterList = ['hot', 'like', 'new'];
   var _selectedValue = "hot";
+  int clickCategory=0;
+  List<String> category=['전체','공연','행사','맛집','관광','친목'];
+  List<Color> colorSelect=[Color.fromARGB(255, 190, 212, 255),Color.fromARGB(255, 190, 223, 178),Color.fromARGB(255, 255, 234, 246),Color.fromARGB(255, 155, 169, 99),Color.fromARGB(255, 182, 114, 205),Color.fromARGB(255, 252, 169, 45),Color.fromARGB(255, 20, 98, 186)];
 
   int _gatherlen = 0;
   bool _music_on = false;
@@ -39,7 +42,7 @@ class _gatherListState extends State<gatherList> {
   DraggableScrollableController get listcontroller => _listcontroller;
   bool _searchClick = false;
   TextEditingController searchController = TextEditingController();
-
+  
   void readFile() {
     //서버 통신으로 받아온 메시지 파싱
     try {
@@ -62,7 +65,7 @@ class _gatherListState extends State<gatherList> {
       }
     }
     print("gather이야아아아아ㅏ아아아");
-    print(gatherData);
+    print(_gatherlen);
   }
 
   void refresh() {
@@ -90,7 +93,7 @@ class _gatherListState extends State<gatherList> {
             color: Colors.white,
             child: ListView.builder(
                 controller: scrollController,
-                itemCount: gatherlen + 2,
+                itemCount: gatherlen + 3,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return maindata.searchFlag == false
@@ -103,11 +106,18 @@ class _gatherListState extends State<gatherList> {
                               children: <Widget>[
                                 // 필터
                                 DropdownButton(
+                                  icon: Image.asset("./imgs/화살표_o.png",
+                                    width: 40,
+                                    height:40,
+                                  ),
                                   value: _selectedValue,
                                   items: _filterList.map(
                                     (value) {
                                       return DropdownMenuItem(
-                                          value: value, child: Text(value));
+                                          value: value, child: Text(value,style:TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black)));
                                     },
                                   ).toList(),
                                   onChanged: (value) {
@@ -122,9 +132,9 @@ class _gatherListState extends State<gatherList> {
                                 ),
                                 // 새로고침
                                 IconButton(
-                                  icon: Icon(
-                                    Icons.refresh,
-                                    size: 40,
+                                  icon: Image.asset("./imgs/새로고침_r.png",width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
                                   ),
                                   onPressed: refresh,
                                 ),
@@ -136,7 +146,10 @@ class _gatherListState extends State<gatherList> {
                                       maindata.setListClean = true;
                                     });
                                   },
-                                  icon: Icon(Icons.search, size: 40),
+                                  icon: Image.asset("./imgs/검색_b.png",width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ],
                             ),
@@ -150,9 +163,6 @@ class _gatherListState extends State<gatherList> {
                                   padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
                                   child: TextField(
                                     controller: searchController,
-                                    // decoration: InputDecoration(
-                                    //   labelText: '검색',
-                                    // )
                                   ),
                                 ),
                                 IconButton(
@@ -164,7 +174,10 @@ class _gatherListState extends State<gatherList> {
                                           searchController.text;
                                     });
                                   },
-                                  icon: Icon(Icons.search, size: 35),
+                                  icon: Image.asset("./imgs/검색_b.png",width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                                 IconButton(
                                   // 취소
@@ -178,10 +191,62 @@ class _gatherListState extends State<gatherList> {
                               ],
                             ),
                           );
-                  } else if (index > gatherlen) {
+                  }
+                  else if(index==1){
+                    return Container(
+                      color:Colors.white,
+                        height: 50,
+                         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: category.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Row(
+                              children: [
+                                SizedBox(width: 8,),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black, width: 3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    ), 
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                       //테두리
+                                      foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                          Colors.white),
+                                      backgroundColor:
+                                        MaterialStateProperty.all<Color>(clickCategory==index?
+                                          colorSelect[index]:Colors.white),
+                                      shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                            BorderRadius.circular(20.0),
+                                        )),
+                                    ),
+                                    onPressed: (){
+                                      setState(() {
+                                        clickCategory=index;
+                                      });
+                                    },
+                                    child: Text("# ${category[index]}",style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black)),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        )
+                      );
+                  } 
+                  else if (index > gatherlen+1) {
                     return Container(color: Colors.white, height: 60);
                   } else {
-                    return EventFoot(gatherData[index - 1]);
+                    return EventFoot(gatherData[index - 2]);
                   }
                 }));
       },
