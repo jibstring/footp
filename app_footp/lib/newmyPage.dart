@@ -184,8 +184,8 @@ class _MyHompageStateState extends State<MyHompageState> {
                         future: post,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            print("데이터있데에에에에에");
-                            print(dataList["message"].length);
+                            // print("데이터있데에에에에에");
+                            // print(dataList["message"]);
                             return dataList["message"].length != 0
                                 ? newMyFootPage(dataList)
                                 : Text("발자국을 남겨보세요!");

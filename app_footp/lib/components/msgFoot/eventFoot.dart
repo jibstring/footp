@@ -81,6 +81,7 @@ class _EventFootState extends State<EventFoot> {
         },
         child: Card(
             child: Container(
+              
               // height: 40,
                     decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black, width: 3),
@@ -122,8 +123,9 @@ class _EventFootState extends State<EventFoot> {
               ),
               Divider(color: Colors.black, thickness: 3.0),
               Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 18, 0),
                 alignment: Alignment.centerRight,
-                child: Text("종료시점  :  "+changeDate(widget.gathermsg["gatherFinishdate"]),
+                child: Text("종료시간 :  "+changeDate(widget.gathermsg["gatherFinishdate"]),
                   style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -134,13 +136,14 @@ class _EventFootState extends State<EventFoot> {
               ),
               //중간
               Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
                   child: (widget.gathermsg["gatherFileurl"] != 'empty')
                       ? Row(
                           children: [
                             fileCheck(widget.gathermsg["gatherFileurl"]) != -1
                                 ? SizedBox(
-                                    width: 100,
-                                    height: 100,
+                                    width: MediaQuery.of(context).size.width * 0.3,
+                                    height: MediaQuery.of(context).size.width * 0.3,
                                     child: (() {
                                       int flag = fileCheck(
                                           widget.gathermsg["gatherFileurl"]);
@@ -224,8 +227,8 @@ class _EventFootState extends State<EventFoot> {
                                   )
                                 : Text(""),
                             Container(
-                                padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                                width: width,
+                                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                width: MediaQuery.of(context).size.width * 0.5,
                                 child: Text(
                                   widget.gathermsg["gatherText"], //100자로 제한
                                   style: const TextStyle(
@@ -235,26 +238,23 @@ class _EventFootState extends State<EventFoot> {
                                 ))
                           ],
                         )
-                      : Row(
-                          children: [
-                            Container(
-                              height: 100,
-                              padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Text(
-                                widget.gathermsg["gatherText"], //100자로 제한
-                                style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color.fromARGB(255, 110, 110, 110)),
-                              ),
-                            )
-                          ],
-                        )),
+                      : Container(
+                        // height: 100,
+                        alignment: Alignment.centerLeft,
+                        // padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                        child: Text(
+                          widget.gathermsg["gatherText"], //100자로 제한
+                          style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 110, 110, 110)),
+                        ),
+                      )),
                         // 주소
               Container(
                   height: 40,
-                  padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
-                  width: width,
+                  // padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+                  //width: width,
                   child: Text(
                     maindata.address[widget.gathermsg["gatherId"]] ??= "",
                     style: const TextStyle(
@@ -385,7 +385,7 @@ class _EventFootState extends State<EventFoot> {
                   )
                   ,
                   Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: Row(children: [
                       InkWell(
                           child: Image.asset(
