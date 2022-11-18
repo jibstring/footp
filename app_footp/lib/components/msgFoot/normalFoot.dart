@@ -83,23 +83,27 @@ class _NormalFootState extends State<NormalFoot> {
         },
         child: Card(
             child: Container(
+              decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black, width: 3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    ),
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
               SizedBox(
-                height: 20,
+                height: 12,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       widget.normalmsg["userNickname"],
                       style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 110, 110, 110)),
                     ),
                   ),
                   Container(
@@ -109,15 +113,17 @@ class _NormalFootState extends State<NormalFoot> {
                       changeDate(widget.normalmsg["messageWritedate"]),
                       style: const TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 110, 110, 110)),
                     ),
                   ),
                 ],
               ),
               SizedBox(
-                height: 20,
+                height: 5,
               ),
+              Divider(color: Colors.black, thickness: 3.0),
+              
               //중간
               Container(
                   child: (widget.normalmsg["messageFileurl"] != 'empty')
@@ -215,9 +221,9 @@ class _NormalFootState extends State<NormalFoot> {
                                 child: Text(
                                   widget.normalmsg["messageText"], //100자로 제한
                                   style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color.fromARGB(255, 110, 110, 110)),
                                 ))
                           ],
                         )
@@ -229,9 +235,9 @@ class _NormalFootState extends State<NormalFoot> {
                               child: Text(
                                 widget.normalmsg["messageText"], //100자로 제한
                                 style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 110, 110, 110)),
                               ),
                             )
                           ],
@@ -247,8 +253,8 @@ class _NormalFootState extends State<NormalFoot> {
                             widget.normalmsg["messageId"]] ??= "",
                         style: const TextStyle(
                             fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromARGB(255, 110, 110, 110)),
                       ))
                   : Container(),
               // 주소
@@ -259,9 +265,9 @@ class _NormalFootState extends State<NormalFoot> {
                   child: Text(
                     maindata.address[widget.normalmsg["messageId"]] ??= "",
                     style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 110, 110, 110)),
                   )),
               //하단
               Row(
