@@ -141,7 +141,8 @@ class UserData extends GetxController {
     LogPrint("$_Token");
     update();
   }
-  void logout(){
+
+  void logout() {
     _Token = "";
     update();
   }
@@ -210,16 +211,19 @@ class JoinStampInfo extends GetxController {
   Map<String, dynamic> _message1 = {};
   Map<String, dynamic> _message2 = {};
   Map<String, dynamic> _message3 = {};
+  List _joinedMessages = [];
 
   Map<String, dynamic> get message1 => _message1;
   Map<String, dynamic> get message2 => _message2;
   Map<String, dynamic> get message3 => _message3;
   Map get joinedStamp => _joinedStamp;
+  List get joinedMessages => _joinedMessages;
 
   set message1(value) => _message1 = value;
   set message2(value) => _message2 = value;
   set message3(value) => _message3 = value;
   set joinedStamp(value) => _joinedStamp = value;
+  set joinedMessages(value) => _joinedMessages = value;
 }
 
 class StampMessage extends GetxController {
