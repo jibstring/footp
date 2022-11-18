@@ -505,17 +505,13 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Image.asset('imgs/logo.png', height: 45),
+            title: Image.asset('imgs/로고_기본.png', height: 45),
             backgroundColor: Colors.white,
             centerTitle: true,
             elevation: 0,
             actions: <Widget>[
               IconButton(
-                icon: Icon(
-                  Icons.account_circle,
-                  color: Color.fromARGB(255, 153, 181, 229),
-                  size: 40,
-                ),
+                icon:Image.asset('imgs/프로필_b.png', ),
                 padding: const EdgeInsets.only(top: 5.0, right: 20.0),
                 onPressed: () {
                   if (!user.isLogin()) {
@@ -557,50 +553,48 @@ class _MyHomePageState extends State<MyHomePage> {
                           outlineWidth: 5)
                     ])),
             Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  color: Color.fromARGB(255, 153, 181, 229),
-                  size: 55,
+              alignment: Alignment.topRight,
+              
+              child: Container(
+                height:70,
+                width:70,
+                child: IconButton(
+                  icon: Image.asset('imgs/글쓰기_o.png', fit: BoxFit.cover,height: double.infinity,width: double.infinity,
+                  ),
+                  onPressed: () {
+                    if (!user.isLogin()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignIn()),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CreateFoot()),
+                      );
+                    }
+                  },
                 ),
-                padding: EdgeInsets.only(
-                    right: 50.0,
-                    bottom: (MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.35),
-                onPressed: () {
-                  if (!user.isLogin()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignIn()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateFoot()),
-                    );
-                  }
-                },
               ),
             ),
             widgetOptions.elementAt(selectedIndex),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
+                  items: <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.list),
-                      label: 'List',
+                      icon: Image.asset("./imgs/하단바-메세지_b.png", width: 45, height: 45,),
+                      label:''
+                      
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.location_pin),
-                      label: 'Alarm',
+                      icon: Image.asset("./imgs/하단바-확성기_o.png", width: 45, height: 45,),
+                      label:''
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.linear_scale),
-                      label: 'Stamp',
+                      icon: Image.asset("./imgs/하단바-스탬푸_p.png", width: 45, height: 45,),
+                      label:''
                     )
                   ],
                   currentIndex: selectedIndex,
