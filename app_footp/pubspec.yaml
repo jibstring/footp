@@ -95,6 +95,14 @@ flutter:
     - asset/catagories_food.png
     - asset/catagories_friend.png
     - asset/catagories_travel.png
+    - asset/foot_1.png
+    - asset/foot_2.png
+    - asset/megaphon_1.png
+    - asset/megaphone_2.png
+    - asset/media.png
+    - asset/open.png
+    - asset/myself.png
+    - asset/question.png
 
   #   - images/a_dot_ham.jpeg
 

@@ -97,10 +97,10 @@ class CreateMarker extends GetxController {
   Future<void> createImage(BuildContext context, int i) async {
     if (i == 0) {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/normalfoot.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/foot_2.png");
     } else {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/megaphone.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/megaphone_2.png");
     }
     update();
   }
