@@ -506,12 +506,13 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Image.asset('imgs/로고_기본.png', height: 45),
+            title: Image.asset('imgs/로고_기본.png', height: 50),
             backgroundColor: Colors.white,//Color.fromARGB(255, 255, 253, 241),
             centerTitle: true,
             elevation: 2,
             actions: <Widget>[
               IconButton(
+                iconSize: 50,
                 icon:Image.asset('imgs/프로필_b.png', ),
                 // padding: const EdgeInsets.only(top: 5.0, right: 20.0),
                 onPressed: () {
