@@ -175,10 +175,12 @@ class _NormalFormState extends State<NormalForm> {
                           children: [
                             TextField(
                               maxLines: 3,
+                              style: TextStyle(fontFamily: 'footp'),
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 alignLabelWithHint: true,
                                 hintText: '  메세지를 입력하세요',
+                                
                               ),
                               controller: myText,
                             ),
@@ -191,6 +193,7 @@ class _NormalFormState extends State<NormalForm> {
                             ),
                             TextField(
                               maxLines: 3,
+                              style: TextStyle(fontFamily: 'footp'),
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 alignLabelWithHint: true,
@@ -203,6 +206,7 @@ class _NormalFormState extends State<NormalForm> {
                       )
                     : TextField(
                         maxLines: 7,
+                        style: TextStyle(fontFamily: 'footp'),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           alignLabelWithHint: true,

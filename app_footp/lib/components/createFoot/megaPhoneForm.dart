@@ -277,7 +277,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         Text(
           "$_categoryresult",
           style: TextStyle(
-              fontSize: 20, color: Colors.blue, fontFamily: 'footp'),
+              fontSize: 20, color: Colors.amber[900], fontFamily: 'footp'),
         ),
         SizedBox(height: 20),
         Container(
@@ -295,6 +295,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                 TextField(
                   autofocus: false,
                   maxLines: 7,
+                  style: TextStyle(fontFamily: 'footp'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     // border: const OutlineInputBorder(
@@ -406,7 +407,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         CupertinoButton(
           child: Text(
             "$_timeresult",
-            style: TextStyle(fontFamily: 'footp'),
+            style: TextStyle(fontFamily: 'footp', color: Colors.amber[900]),
           ),
           onPressed: () {
             _neverSatisfied(context);
