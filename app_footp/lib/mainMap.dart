@@ -504,37 +504,31 @@ class _MyHomePageState extends State<MyHomePage> {
           return await Future.value(result);
         },
         child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: AppBar(
-              title: Image.asset('imgs/로고_기본.png', height: 45),
-              backgroundColor: Colors.white,
-              shape: Border(bottom: BorderSide(color: Colors.black, width: 5)),
-              centerTitle: true,
-              elevation: 0,
-              actions: <Widget>[
-                IconButton(
-                  icon: Image.asset(
-                    'imgs/프로필_b.png',
-                  ),
-                  padding: const EdgeInsets.only(top: 5.0, right: 20.0),
-                  onPressed: () {
-                    if (!user.isLogin()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignIn()),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const newMyPage()),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
+          appBar: AppBar(
+            title: Image.asset('imgs/로고_기본.png', height: 45),
+            backgroundColor: Colors.white,//Color.fromARGB(255, 255, 253, 241),
+            centerTitle: true,
+            elevation: 2,
+            actions: <Widget>[
+              IconButton(
+                icon:Image.asset('imgs/프로필_b.png', ),
+                // padding: const EdgeInsets.only(top: 5.0, right: 20.0),
+                onPressed: () {
+                  if (!user.isLogin()) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignIn()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const newMyPage()),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
           body: SizedBox.expand(
               child: Stack(children: <Widget>[
@@ -559,10 +553,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           outlineWidth: 5)
                     ])),
             Align(
-              alignment: Alignment.topRight,
+              alignment: Alignment(0.9, 0.3),
+              
               child: Container(
-                height: 70,
-                width: 70,
+                height:75,
+                width:75,
                 child: IconButton(
                   icon: Image.asset(
                     'imgs/글쓰기_o.png',
@@ -593,26 +588,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: BottomNavigationBar(
                   items: <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                        icon: Image.asset(
-                          "./imgs/하단바-메세지_b.png",
-                          width: 45,
-                          height: 45,
-                        ),
-                        label: ''),
+                      icon: Image.asset("./imgs/하단바-메세지_b_off.png", width: 45, height: 45,),
+                      activeIcon:Image.asset("./imgs/하단바-메세지_b.png", width: 45, height: 45,),
+                      label:''
+                      
+                    ),
                     BottomNavigationBarItem(
-                        icon: Image.asset(
-                          "./imgs/하단바-확성기_o.png",
-                          width: 45,
-                          height: 45,
-                        ),
-                        label: ''),
+                      icon: Image.asset("./imgs/하단바-확성기_o_off.png", width: 45, height: 45,),
+                      activeIcon:Image.asset("./imgs/하단바-확성기_o.png", width: 45, height: 45,),
+                      label:''
+                    ),
                     BottomNavigationBarItem(
-                        icon: Image.asset(
-                          "./imgs/하단바-스탬푸_p.png",
-                          width: 45,
-                          height: 45,
-                        ),
-                        label: '')
+                      icon: Image.asset("./imgs/하단바-스탬푸_p_off.png", width: 45, height: 45,),
+                      activeIcon:Image.asset("./imgs/하단바-스탬푸_p.png", width: 45, height: 45,),
+                      label:''
+                    )
                   ],
                   currentIndex: selectedIndex,
                   onTap: _onItemTapped,
