@@ -463,6 +463,7 @@ class MainMap extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'footp'
       ),
       home: const MyHomePage(title: 'Footp Main Page'),
     );
