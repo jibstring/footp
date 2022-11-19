@@ -115,7 +115,7 @@ class _gatherListState extends State<gatherList> {
                                     (value) {
                                       return DropdownMenuItem(
                                           value: value, child: Text(value,style:TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 22,
                                             fontWeight: FontWeight.w500,
                                             color: Colors.black)));
                                     },
