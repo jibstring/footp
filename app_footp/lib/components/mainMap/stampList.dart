@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:app_footp/components/joinStampDetail.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
@@ -134,7 +135,15 @@ class _StampListState extends State<StampList> {
                           onPressed: () {
                             stampDetail["stampboard_id"] == null
                                 ? showNotJoinedStamp()
-                                : showJoinedStamp();
+                                : Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const JoinStampDetail()),
+                                  ).then((value) {
+                                    loadJoinStamp();
+                                    loadStampList();
+                                  });
                           },
                           icon: Icon(
                             Icons.face,
@@ -749,95 +758,6 @@ class _StampListState extends State<StampList> {
     }
   }
 
-  void showJoinedStamp() {
-    showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return StatefulBuilder(builder: (context, setState) {
-                return AlertDialog(
-                    title: Text('진행 중인 스탬푸'),
-                    content: SingleChildScrollView(
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.5,
-                            child: Column(
-                              children: [
-                                Image.network(
-                                    '${stampDetail['stampboard_designurl']}'),
-                                Container(
-                                  // width: MediaQuery.of(context).size.width,
-                                  height: 100,
-                                  child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      // itemCount: joinedStamp.joinedMessages.length,
-                                      itemCount: stampDetailMessages.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedStamp = index;
-                                                });
-                                              },
-                                              child: Container(
-                                                  width: 50,
-                                                  height: 50,
-                                                  margin: EdgeInsets.all(6),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        selectedStamp == index
-                                                            ? Colors.lightBlue
-                                                            : Colors.orange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3),
-                                                    border: Border.all(
-                                                        color: Colors
-                                                            .grey.shade400,
-                                                        width: 1),
-                                                  ),
-                                                  child: Text('$index번 상자')),
-                                            )
-                                          ],
-                                        );
-                                      }),
-                                ),
-                                Container(
-                                    child: selectedStamp != null
-                                        ? Text(getDistance(selectedStamp!)
-                                            .toString())
-                                        : Text('hi')),
-                              ],
-                            ))),
-                    actions: <Widget>[
-                      ElevatedButton(
-                        onPressed: isNearMessage(selectedStamp) &&
-                                stampDetail[
-                                        'userjoinedStampboard_cleardate${selectedStamp! + 1}'] ==
-                                    null
-                            ? () {
-                                clearMessage(selectedStamp!);
-                              }
-                            : null, // 여기 조건에 지금 있는 위치가 해당 장소의 근처인지 넣을거임
-                        child: Text(clearButtonMessage(selectedStamp)),
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            loadJoinStamp();
-                          },
-                          child: Text('OK'))
-                    ]);
-              });
-            })
-        .then((value) => selectedStamp = null)
-        .then((value) => loadJoinStamp());
-  }
-
   void showNotJoinedStamp() {
     showDialog(
         context: context,
@@ -904,6 +824,20 @@ class _StampListState extends State<StampList> {
         .then((value) {
       stampDetail['userjoinedStampboard_cleardate${index + 1}'] =
           DateTime.now().toString();
+    }).then((value) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                content: Text('클리어!'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: Navigator.of(context).pop, child: Text('OK'))
+                ],
+              );
+            });
+          }).then((value) => selectedStamp = null);
     });
   }
 }
