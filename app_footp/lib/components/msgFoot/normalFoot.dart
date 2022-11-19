@@ -78,281 +78,284 @@ class _NormalFootState extends State<NormalFoot> {
               msg: "해당 메세지로 지도를 이동하였습니다.",
               gravity: ToastGravity.BOTTOM,
               backgroundColor: const Color(0xff6E6E6E),
-              fontSize: 11,
+              fontSize: 13,
               toastLength: Toast.LENGTH_SHORT);
         },
-        child: Card(
-            child: Container(
-              decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black, width: 3),
-                                    borderRadius: BorderRadius.circular(20),
-                                    ),
-          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 12,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: Text(
-                      widget.normalmsg["userNickname"],
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 110, 110, 110)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Card(
+              child: Container(
+                decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black, width: 3),
+                                      borderRadius: BorderRadius.circular(20),
+                                      ),
+            // padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 12,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: Text(
+                        widget.normalmsg["userNickname"],
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromARGB(255, 110, 110, 110)),
+                      ),
                     ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    width: MediaQuery.of(context).size.width * 0.33,
+                    Container(
+                      alignment: Alignment.centerRight,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: Text(
+                        changeDate(widget.normalmsg["messageWritedate"]),
+                        style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromARGB(255, 110, 110, 110)),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Divider(color: Colors.black, thickness: 3.0),
+                SizedBox(
+                  height: 15,
+                ),
+                //중간
+                Container( 
+                  padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
+                  // color: Colors.red,
+                    child: (widget.normalmsg["messageFileurl"] != "empty")
+                        ? Row(
+                            children: [
+                              fileCheck(widget.normalmsg["messageFileurl"]) != -1
+                                  ? SizedBox(
+                                      width: MediaQuery.of(context).size.width * 0.3,
+                                      height: MediaQuery.of(context).size.width * 0.3,
+                                      child: (() {
+                                        int flag = fileCheck(
+                                            widget.normalmsg["messageFileurl"]);
+                                        if (flag == 0) {
+                                          //이미지
+                                          print("이미지");
+                                          return Image.network(
+                                              widget.normalmsg["messageFileurl"]);
+                                        } else if (flag == 1) {
+                                          //비디오
+                                          print("비디오");
+                                          // print(_videocontroller);
+                                          return FutureBuilder(
+                                              future:
+                                                  _initializeVideoPlayerFuture,
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.done) {
+                                                  return AspectRatio(
+                                                    aspectRatio: _videocontroller
+                                                        .value.aspectRatio,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          print(_videocontroller
+                                                              .value.isPlaying);
+                                                          if (_videocontroller
+                                                              .value.isPlaying) {
+                                                            print("중지");
+                                                            _videocontroller
+                                                                .pause();
+                                                          } else {
+                                                            print("시작");
+                                                            print(
+                                                                _videocontroller);
+                                                            _videocontroller
+                                                                .play();
+                                                          }
+                                                        });
+                                                      },
+                                                      child: VideoPlayer(
+                                                          _videocontroller),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                }
+                                              });
+                                        } else if (flag == 2) {
+                                          //오디오
+                                          return click_play == false
+                                              ? IconButton(
+                                                  icon: Icon(Icons.play_arrow,
+                                                      size: 30),
+                                                  onPressed: () {
+                                                    _player.stop();
+                                                    // print("재생!!");
+
+                                                    click_play = true;
+                                                    _player.setUrl(
+                                                        widget.normalmsg[
+                                                            "messageFileurl"]);
+                                                    _player.play();
+
+                                                    print(click_play);
+                                                  },
+                                                )
+                                              : IconButton(
+                                                  icon:
+                                                      Icon(Icons.pause, size: 30),
+                                                  onPressed: () {
+                                                    _player.stop();
+                                                    // print("멈춰!!");
+                                                    click_play = false;
+                                                    print(click_play);
+                                                  },
+                                                );
+                                        }
+                                      })(),
+                                    )
+                                  : Text(""),
+                              Container(
+                                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  width: MediaQuery.of(context).size.width * 0.5,
+                                  child: Text(
+                                    widget.normalmsg["messageText"], //100자로 제한
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color.fromARGB(255, 110, 110, 110)),
+                                  ))
+                            ],
+                          )
+                        : Container(
+                          alignment: Alignment.centerLeft,
+                          //height: 100,
+                          child: Text(
+                            widget.normalmsg["messageText"], //100자로 제한
+                            style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 110, 110, 110)),
+                          ),
+                        )),
+                // 비밀글
+                (maindata.hiddenMessage[widget.normalmsg["messageId"]] != null)
+                    ? Container(
+                        height: 50,
+                        //width: width,
+                        child: Text(
+                          maindata.hiddenMessage[
+                              widget.normalmsg["messageId"]] ??= "",
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 110, 110, 110)),
+                        ))
+                    : Container(color: Colors.pink),
+                // 주소
+                Container(
+                  // color: Colors.green,
+                    height: 30,
+                    // width: width,
                     child: Text(
-                      changeDate(widget.normalmsg["messageWritedate"]),
+                      maindata.address[widget.normalmsg["messageId"]] ??= "",
                       style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Color.fromARGB(255, 110, 110, 110)),
+                    )),
+                //하단
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        if (!user.isLogin()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignIn()),
+                          );
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return widget.normalmsg["userNickname"] ==
+                                        user.userinfo["userNickname"]
+                                    ? AlertDialog(
+                                        title: Text("확성기 삭제하기"),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(children: <Widget>[
+                                            Text('삭제하시겠습니까??')
+                                          ]),
+                                        ),
+                                        actions: <Widget>[
+                                            TextButton(
+                                                onPressed: () {
+                                                  deleteMessage(widget
+                                                      .normalmsg["messageId"]);
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("삭제")),
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("취소"))
+                                          ])
+                                    : ReportModal(widget.normalmsg["messageId"],
+                                        user.userinfo["userId"]);
+                              });
+                        }
+                      },
+                      icon: Icon(Icons.more_horiz, size: 30),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Divider(color: Colors.black, thickness: 3.0),
-              SizedBox(
-                height: 15,
-              ),
-              //중간
-              Container( 
-                padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
-                // color: Colors.red,
-                  child: (widget.normalmsg["messageFileurl"] != "empty")
-                      ? Row(
-                          children: [
-                            fileCheck(widget.normalmsg["messageFileurl"]) != -1
-                                ? SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.3,
-                                    height: MediaQuery.of(context).size.width * 0.3,
-                                    child: (() {
-                                      int flag = fileCheck(
-                                          widget.normalmsg["messageFileurl"]);
-                                      if (flag == 0) {
-                                        //이미지
-                                        print("이미지");
-                                        return Image.network(
-                                            widget.normalmsg["messageFileurl"]);
-                                      } else if (flag == 1) {
-                                        //비디오
-                                        print("비디오");
-                                        // print(_videocontroller);
-                                        return FutureBuilder(
-                                            future:
-                                                _initializeVideoPlayerFuture,
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                return AspectRatio(
-                                                  aspectRatio: _videocontroller
-                                                      .value.aspectRatio,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        print(_videocontroller
-                                                            .value.isPlaying);
-                                                        if (_videocontroller
-                                                            .value.isPlaying) {
-                                                          print("중지");
-                                                          _videocontroller
-                                                              .pause();
-                                                        } else {
-                                                          print("시작");
-                                                          print(
-                                                              _videocontroller);
-                                                          _videocontroller
-                                                              .play();
-                                                        }
-                                                      });
-                                                    },
-                                                    child: VideoPlayer(
-                                                        _videocontroller),
-                                                  ),
-                                                );
-                                              } else {
-                                                return Center(
-                                                    child:
-                                                        CircularProgressIndicator());
-                                              }
-                                            });
-                                      } else if (flag == 2) {
-                                        //오디오
-                                        return click_play == false
-                                            ? IconButton(
-                                                icon: Icon(Icons.play_arrow,
-                                                    size: 30),
-                                                onPressed: () {
-                                                  _player.stop();
-                                                  // print("재생!!");
-
-                                                  click_play = true;
-                                                  _player.setUrl(
-                                                      widget.normalmsg[
-                                                          "messageFileurl"]);
-                                                  _player.play();
-
-                                                  print(click_play);
-                                                },
-                                              )
-                                            : IconButton(
-                                                icon:
-                                                    Icon(Icons.pause, size: 30),
-                                                onPressed: () {
-                                                  _player.stop();
-                                                  // print("멈춰!!");
-                                                  click_play = false;
-                                                  print(click_play);
-                                                },
-                                              );
-                                      }
-                                    })(),
-                                  )
-                                : Text(""),
-                            Container(
-                                padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                child: Text(
-                                  widget.normalmsg["messageText"], //100자로 제한
-                                  style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 110, 110, 110)),
-                                ))
-                          ],
+                    Container(
+                      // padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                      child: Row(children: [
+                        InkWell(
+                            child: Image.asset(
+                              heartList[heartnum],
+                              width: 30,
+                              height: 30,
+                            ),
+                            onTap: () {
+                              if (!user.isLogin()) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const SignIn()),
+                                );
+                              } else {
+                                heartChange();
+                              }
+                            }),
+                        SizedBox(width: 10),
+                        SizedBox(
+                          width: 40,
+                          //height:30,
+                          child: Text(
+                            widget.normalmsg["messageLikenum"].toString(),
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
                         )
-                      : Container(
-                        alignment: Alignment.centerLeft,
-                        //height: 100,
-                        child: Text(
-                          widget.normalmsg["messageText"], //100자로 제한
-                          style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromARGB(255, 110, 110, 110)),
-                        ),
-                      )),
-              // 비밀글
-              (maindata.hiddenMessage[widget.normalmsg["messageId"]] != null)
-                  ? Container(
-                      height: 50,
-                      //width: width,
-                      child: Text(
-                        maindata.hiddenMessage[
-                            widget.normalmsg["messageId"]] ??= "",
-                        style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromARGB(255, 110, 110, 110)),
-                      ))
-                  : Container(color: Colors.pink),
-              // 주소
-              Container(
-                // color: Colors.green,
-                  height: 40,
-                  // width: width,
-                  child: Text(
-                    maindata.address[widget.normalmsg["messageId"]] ??= "",
-                    style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromARGB(255, 110, 110, 110)),
-                  )),
-              //하단
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      if (!user.isLogin()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignIn()),
-                        );
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return widget.normalmsg["userNickname"] ==
-                                      user.userinfo["userNickname"]
-                                  ? AlertDialog(
-                                      title: Text("확성기 삭제하기"),
-                                      content: SingleChildScrollView(
-                                        child: ListBody(children: <Widget>[
-                                          Text('삭제하시겠습니까??')
-                                        ]),
-                                      ),
-                                      actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () {
-                                                deleteMessage(widget
-                                                    .normalmsg["messageId"]);
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text("삭제")),
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text("취소"))
-                                        ])
-                                  : ReportModal(widget.normalmsg["messageId"],
-                                      user.userinfo["userId"]);
-                            });
-                      }
-                    },
-                    icon: Icon(Icons.more_horiz, size: 30),
-                  ),
-                  Container(
-                    // padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
-                    child: Row(children: [
-                      InkWell(
-                          child: Image.asset(
-                            heartList[heartnum],
-                            width: 30,
-                            height: 30,
-                          ),
-                          onTap: () {
-                            if (!user.isLogin()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignIn()),
-                              );
-                            } else {
-                              heartChange();
-                            }
-                          }),
-                      SizedBox(width: 10),
-                      SizedBox(
-                        width: 40,
-                        //height:30,
-                        child: Text(
-                          widget.normalmsg["messageLikenum"].toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      )
-                    ]),
-                  )
-                ],
-              )
-            ],
-          ),
-        )));
+                      ]),
+                    )
+                  ],
+                )
+              ],
+            ),
+          )),
+        ));
   }
 
   int fileCheck(String file) {
