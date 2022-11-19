@@ -10,11 +10,13 @@ import 'custom_class/store_class/store.dart';
 const List<Widget> types = <Widget>[
   Text(
     '발자국',
-    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    style: TextStyle(
+        fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'footp'),
   ),
   Text(
     '확성기',
-    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    style: TextStyle(
+        fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'footp'),
   )
 ];
 

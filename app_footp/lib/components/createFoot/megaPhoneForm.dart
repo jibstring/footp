@@ -277,7 +277,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         Text(
           "$_categoryresult",
           style: TextStyle(
-              fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+              fontSize: 20, color: Colors.blue, fontFamily: 'footp'),
         ),
         SizedBox(height: 20),
         Container(
@@ -406,7 +406,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         CupertinoButton(
           child: Text(
             "$_timeresult",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontFamily: 'footp'),
           ),
           onPressed: () {
             _neverSatisfied(context);

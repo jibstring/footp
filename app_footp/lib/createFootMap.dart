@@ -12,7 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as DIO;
 
-import 'notice.dart'as notice;
+import 'notice.dart' as notice;
 
 class CreateFootMap extends StatefulWidget {
   CreateMarker image = Get.put(CreateMarker());
@@ -263,12 +263,16 @@ class _CreateFootMapState extends State<CreateFootMap> {
                   ),
                   Text("지도를 탭하여 \n발자국을 찍으세요!",
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      )),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'footp')),
                   ElevatedButton(
                     onPressed: onpress,
-                    child: Text("쿵!"),
+                    child: Text(
+                      "쿵!",
+                      style:
+                          TextStyle(fontFamily: 'footp', color: Colors.black),
+                    ),
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.deepPurple[100])),
