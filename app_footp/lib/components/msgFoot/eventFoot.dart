@@ -15,7 +15,6 @@ import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:app_footp/components/userSetting/myFoot.dart';
 import 'package:app_footp/components/mainMap/chatRoom.dart';
 
-
 const serverUrl = 'http://k7a108.p.ssafy.io:8080/';
 
 class EventFoot extends StatefulWidget {
@@ -39,9 +38,15 @@ class _EventFootState extends State<EventFoot> {
 
   bool click_play = false;
   final _player = AudioPlayer();
-  List<String> _category=['공연','행사','맛집','관광','친목'];
-  List<Color> _colorSelect=[Color.fromARGB(255, 190, 223, 178),Color.fromARGB(255, 255, 234, 246),Color.fromARGB(255, 164, 185, 237),Color.fromARGB(255, 182, 114, 205),Color.fromARGB(255, 252, 169, 45),Color.fromARGB(255, 20, 98, 186)];
-
+  List<String> _category = ['공연', '행사', '맛집', '관광', '친목'];
+  List<Color> _colorSelect = [
+    Color.fromARGB(255, 190, 223, 178),
+    Color.fromARGB(255, 255, 234, 246),
+    Color.fromARGB(255, 164, 185, 237),
+    Color.fromARGB(255, 182, 114, 205),
+    Color.fromARGB(255, 252, 169, 45),
+    Color.fromARGB(255, 20, 98, 186)
+  ];
 
   void initState() {
     _videocontroller = VideoPlayerController.network(
@@ -81,13 +86,12 @@ class _EventFootState extends State<EventFoot> {
         },
         child: Card(
             child: Container(
-              
-              // height: 40,
-                    decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black, width: 3),
-                                    borderRadius: BorderRadius.circular(20),
-                                    ),
-              
+          // height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 3),
+            borderRadius: BorderRadius.circular(20),
+          ),
+
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
@@ -136,14 +140,16 @@ class _EventFootState extends State<EventFoot> {
               ),
               //중간
               Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
+                  padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
                   child: (widget.gathermsg["gatherFileurl"] != 'empty')
                       ? Row(
                           children: [
                             fileCheck(widget.gathermsg["gatherFileurl"]) != -1
                                 ? SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.3,
-                                    height: MediaQuery.of(context).size.width * 0.3,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    height:
+                                        MediaQuery.of(context).size.width * 0.3,
                                     child: (() {
                                       int flag = fileCheck(
                                           widget.gathermsg["gatherFileurl"]);
@@ -234,7 +240,8 @@ class _EventFootState extends State<EventFoot> {
                                   style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 110, 110, 110)),
+                                      color:
+                                          Color.fromARGB(255, 110, 110, 110)),
                                 ))
                           ],
                         )
@@ -275,34 +282,34 @@ class _EventFootState extends State<EventFoot> {
                               builder: (context) => const SignIn()),
                         );
                       } else {
-                         showDialog(
+                        showDialog(
                             context: context,
                             builder: (context) {
-                              return widget.gathermsg["userNickname"]==user.userinfo["userNickname"]?
-                          AlertDialog(
-                            title:Text("확성기 삭제하기"),
-                            content:SingleChildScrollView(
-                              child: ListBody(
-                                children: <Widget>[
-                                  Text('삭제하시겠습니까??')
-                                ]),
-                              ),
-                              actions:<Widget>[
-                                TextButton(
-                                  onPressed: (){
-                                    deleteGather(widget.gathermsg["gatherId"]);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("삭제")
-                                ),
-                                TextButton(onPressed: (){
-                                  Navigator.of(context).pop();
-                                  },
-                                child: Text("취소"))
-                                ]
-                          ):
-                            ReportModal(widget.gathermsg["gatherId"],
-                                  user.userinfo["userId"]);
+                              return widget.gathermsg["userNickname"] ==
+                                      user.userinfo["userNickname"]
+                                  ? AlertDialog(
+                                      title: Text("확성기 삭제하기"),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(children: <Widget>[
+                                          Text('삭제하시겠습니까??')
+                                        ]),
+                                      ),
+                                      actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () {
+                                                deleteGather(widget
+                                                    .gathermsg["gatherId"]);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("삭제")),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("취소"))
+                                        ])
+                                  : ReportModal(widget.gathermsg["gatherId"],
+                                      user.userinfo["userId"]);
                             });
                       }
                     },
@@ -315,9 +322,9 @@ class _EventFootState extends State<EventFoot> {
                   Container(
                     height: 40,
                     decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black, width: 3),
-                                    borderRadius: BorderRadius.circular(20),
-                                    ),
+                      border: Border.all(color: Colors.black, width: 3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     child: ElevatedButton(
                                     style: ButtonStyle(
                                       foregroundColor:
@@ -340,29 +347,27 @@ class _EventFootState extends State<EventFoot> {
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
                       ),
-                      ),
+                    ),
                   ),
                   Container(
                     height: 40,
                     decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black, width: 3),
-                                    borderRadius: BorderRadius.circular(20),
-                                    ),
-                    child: ElevatedButton(style: ButtonStyle(
-                                      foregroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                          Colors.white),
-                                      backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                          Color.fromARGB(255, 206, 233, 255)),
-                                      shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                      borderRadius:
-                                        BorderRadius.circular(20.0),
-                                      )),
-                                    ),
-                      onPressed: (){
+                      border: Border.all(color: Colors.black, width: 3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Color.fromARGB(255, 206, 233, 255)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        )),
+                      ),
+                      onPressed: () {
                         setState(() {});
                         if (!user.isLogin()) {
                           Navigator.push(
@@ -370,13 +375,29 @@ class _EventFootState extends State<EventFoot> {
                             MaterialPageRoute(
                                 builder: (context) => const SignIn()),
                           );
+                        } else {
+                          maindata.setChatRoom = ChatRoom(
+                              widget.gathermsg["gatherId"],
+                              user.userinfo["userId"],
+                              user.userinfo["userNickname"],
+                              _category[widget.gathermsg["gatherDesigncode"]]);
+                          maindata.setAttendChat = true;
+                          pcontext
+                              .findAncestorStateOfType()
+                              ?.context
+                              .findAncestorStateOfType()
+                              ?.context
+                              .findAncestorStateOfType()
+                              ?.context
+                              .findAncestorStateOfType()
+                              ?.context
+                              .findAncestorStateOfType()
+                              ?.context
+                              .findAncestorStateOfType()
+                              ?.context
+                              .findAncestorStateOfType()
+                              ?.setState(() {});
                         }
-                        else{
-                          maindata.setChatRoom=ChatRoom(widget.gathermsg["gatherId"],user.userinfo["userId"],user.userinfo["userNickname"]);
-                          maindata.setAttendChat=true;
-                          pcontext.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.context.findAncestorStateOfType()?.setState(() {});
-                        }
-
                       },
                       child: Text("채팅방참가", style: const TextStyle(
                             fontSize: 18,
@@ -446,6 +467,7 @@ class _EventFootState extends State<EventFoot> {
 
     return newDate;
   }
+
   void heartRequest(context, var heartInfo) async {
     final uri = Uri.parse(serverUrl +
         "gather/" +
@@ -501,21 +523,18 @@ class _EventFootState extends State<EventFoot> {
       heartRequest(context, heartInfo);
     });
   }
-  void deleteGather(int gatherId)async{
-   
-    final uri=Uri.parse(serverUrl+'user/gather/'+'$gatherId');
+
+  void deleteGather(int gatherId) async {
+    final uri = Uri.parse(serverUrl + 'user/gather/' + '$gatherId');
 
     print("확성기 삭제");
     print(uri);
-    http.Response response=await http.delete(
-      uri
-    );
+    http.Response response = await http.delete(uri);
     print(uri);
-    if(response.statusCode==200){
-      var decodedData=jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
       print(decodedData);
-    }
-    else{
+    } else {
       print('실패패패패패패ㅐ퍂');
       print(response.statusCode);
     }
