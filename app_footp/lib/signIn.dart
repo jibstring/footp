@@ -195,7 +195,6 @@ class _SignInState extends State<SignIn> {
                 Container(
                   padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: TextField(
-                    
                       controller: emailController,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
