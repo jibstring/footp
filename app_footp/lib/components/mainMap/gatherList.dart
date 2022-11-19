@@ -64,8 +64,8 @@ class _gatherListState extends State<gatherList> {
         gatherData[i] = jsonData["gather"][i];
       }
     }
-    print("gather이야아아아아ㅏ아아아");
-    print(_gatherlen);
+    // print("gather이야아아아아ㅏ아아아");
+    // print(_gatherlen);
   }
 
   void refresh() {
