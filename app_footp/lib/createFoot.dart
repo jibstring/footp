@@ -7,7 +7,16 @@ import 'package:get/get.dart';
 
 import 'custom_class/store_class/store.dart';
 
-const List<Widget> types = <Widget>[Text('발자국'), Text('확성기')];
+const List<Widget> types = <Widget>[
+  Text(
+    '발자국',
+    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  ),
+  Text(
+    '확성기',
+    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  )
+];
 
 class CreateFoot extends StatelessWidget {
   const CreateFoot({super.key});
@@ -91,13 +100,15 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                         modeController1.press(index);
                       });
                     },
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    selectedBorderColor: Colors.indigo[100],
+                    borderRadius: const BorderRadius.all(Radius.circular(50)),
+                    borderWidth: 5,
+                    borderColor: Colors.black,
+                    selectedBorderColor: Colors.black,
                     selectedColor: Colors.black,
-                    fillColor: Colors.indigo[100],
-                    color: Colors.black45,
+                    fillColor: Colors.amber,
+                    color: Colors.black,
                     constraints: const BoxConstraints(
-                      minHeight: 30.0,
+                      minHeight: 40.0,
                       minWidth: 80.0,
                     ),
                     isSelected: _selectedTypes,
