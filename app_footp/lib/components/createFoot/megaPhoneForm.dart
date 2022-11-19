@@ -276,7 +276,8 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         SizedBox(height: 20),
         Text(
           "$_categoryresult",
-          style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 20),
         Container(
@@ -295,6 +296,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                   autofocus: false,
                   maxLines: 7,
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     // border: const OutlineInputBorder(
                     //   borderSide: BorderSide(color: Colors.black,width: 10),
                     //   borderRadius: const BorderRadius.all(Radius.circular(0)),
@@ -303,6 +305,13 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                     hintText: '  메세지를 입력하세요',
                   ),
                   controller: myMegaText,
+                ),
+                Divider(
+                  height: 5,
+                  color: Colors.black,
+                  thickness: 5,
+                  indent: 5,
+                  endIndent: 5,
                 ),
                 SizedBox(height: 20),
                 Row(

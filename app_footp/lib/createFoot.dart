@@ -60,27 +60,29 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
     ModeController modeController1 = Get.put(ModeController());
 
     return Scaffold(
-        appBar: AppBar(
-          title: Image.asset('imgs/logo.png', height: 45),
-          elevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.account_circle,
-                color: Color.fromARGB(255, 153, 181, 229),
-                size: 40,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60.0),
+          child: AppBar(
+            title: Image.asset('imgs/로고_기본.png', height: 45),
+            elevation: 0,
+            backgroundColor: Colors.white,
+            shape: Border(bottom: BorderSide(color: Colors.black, width: 5)),
+            centerTitle: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Image.asset(
+                  'imgs/프로필_b.png',
+                ),
+                padding: const EdgeInsets.only(top: 5, right: 20.0),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyPage()),
+                  );
+                },
               ),
-              padding: const EdgeInsets.only(top: 5, right: 20.0),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyPage()),
-                );
-              },
-            ),
-          ],
+            ],
+          ),
         ),
         body: Padding(
             padding: const EdgeInsets.all(40.0),

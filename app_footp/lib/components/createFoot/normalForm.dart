@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_this
 
+// import 'dart:js_util';
+
 import 'package:app_footp/createFootMap.dart';
 import 'package:app_footp/main.dart';
 import 'package:app_footp/myLocation.dart';
@@ -174,14 +176,23 @@ class _NormalFormState extends State<NormalForm> {
                             TextField(
                               maxLines: 3,
                               decoration: InputDecoration(
+                                border: InputBorder.none,
                                 alignLabelWithHint: true,
                                 hintText: '  메세지를 입력하세요',
                               ),
                               controller: myText,
                             ),
+                            Divider(
+                              height: 5,
+                              color: Colors.black,
+                              thickness: 5,
+                              indent: 5,
+                              endIndent: 5,
+                            ),
                             TextField(
                               maxLines: 3,
                               decoration: InputDecoration(
+                                border: InputBorder.none,
                                 alignLabelWithHint: true,
                                 hintText: '  멀리서 볼 수 없는 메시지 입니다',
                               ),
@@ -193,11 +204,19 @@ class _NormalFormState extends State<NormalForm> {
                     : TextField(
                         maxLines: 7,
                         decoration: InputDecoration(
+                          border: InputBorder.none,
                           alignLabelWithHint: true,
                           hintText: '  메세지를 입력하세요',
                         ),
                         controller: myText,
                       ),
+                Divider(
+                  height: 5,
+                  color: Colors.black,
+                  thickness: 5,
+                  indent: 5,
+                  endIndent: 5,
+                ),
                 SizedBox(height: 20),
                 Row(
                     // mainAxisAlignment: MainAxisAlignment.center,

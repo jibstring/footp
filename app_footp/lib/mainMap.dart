@@ -559,7 +559,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 height:75,
                 width:75,
                 child: IconButton(
-                  icon: Image.asset('imgs/글쓰기_o.png', fit: BoxFit.cover,height: double.infinity,width: double.infinity,
+                  icon: Image.asset(
+                    'imgs/글쓰기_o.png',
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    width: double.infinity,
                   ),
                   onPressed: () {
                     if (!user.isLogin()) {
