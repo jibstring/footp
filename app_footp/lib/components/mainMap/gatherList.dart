@@ -195,8 +195,8 @@ class _gatherListState extends State<gatherList> {
                   else if(index==1){
                     return Container(
                       color:Colors.white,
-                        height: 50,
-                         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        height: 65,
+                         padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
                         
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
@@ -232,7 +232,7 @@ class _gatherListState extends State<gatherList> {
                                       });
                                     },
                                     child: Text("# ${category[index]}",style: const TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.black)),
                                   ),

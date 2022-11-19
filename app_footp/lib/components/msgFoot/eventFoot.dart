@@ -103,18 +103,18 @@ class _EventFootState extends State<EventFoot> {
                     child: Text(
                       widget.gathermsg["userNickname"],
                       style: const TextStyle(
-                          fontSize:18,
+                          fontSize:20,
                           fontWeight: FontWeight.w700,
                           color: Color.fromARGB(255, 110, 110, 110)),
                     ),
                   ),
                   Container(
                     alignment: Alignment.centerRight,
-                    width: MediaQuery.of(context).size.width * 0.33,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       changeDate(widget.gathermsg["gatherWritedate"]),
                       style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 17,
                           fontWeight: FontWeight.w500,
                           color: Color.fromARGB(255, 110, 110, 110)),
                     ),
@@ -123,11 +123,11 @@ class _EventFootState extends State<EventFoot> {
               ),
               Divider(color: Colors.black, thickness: 3.0),
               Container(
-                padding: EdgeInsets.fromLTRB(0, 0, 18, 0),
+                padding: EdgeInsets.fromLTRB(0, 0, 9, 0),
                 alignment: Alignment.centerRight,
                 child: Text("종료시간 :  "+changeDate(widget.gathermsg["gatherFinishdate"]),
                   style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 17,
                           fontWeight: FontWeight.w500,
                           color: Color.fromARGB(255, 43, 55, 123))),
               ),
@@ -232,7 +232,7 @@ class _EventFootState extends State<EventFoot> {
                                 child: Text(
                                   widget.gathermsg["gatherText"], //100자로 제한
                                   style: const TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w500,
                                       color: Color.fromARGB(255, 110, 110, 110)),
                                 ))
@@ -245,20 +245,20 @@ class _EventFootState extends State<EventFoot> {
                         child: Text(
                           widget.gathermsg["gatherText"], //100자로 제한
                           style: const TextStyle(
-                              fontSize: 17,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                               color: Color.fromARGB(255, 110, 110, 110)),
                         ),
                       )),
-                        // 주소
+              SizedBox(height:20),         // 주소
               Container(
-                  height: 40,
+                  height: 30,
                   // padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
                   //width: width,
                   child: Text(
                     maindata.address[widget.gathermsg["gatherId"]] ??= "",
                     style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w500,
                         color: Color.fromARGB(255, 110, 110, 110)),
                   )),
@@ -336,7 +336,7 @@ class _EventFootState extends State<EventFoot> {
                                     onPressed: () {  },
                                     child: Text("# ${_category[widget.gathermsg["gatherDesigncode"]]}",
                                     style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
                       ),
@@ -379,7 +379,7 @@ class _EventFootState extends State<EventFoot> {
 
                       },
                       child: Text("채팅방참가", style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500,
                             color: Colors.black)),),
                   )
@@ -411,7 +411,7 @@ class _EventFootState extends State<EventFoot> {
                         child: Text(
                           widget.gathermsg["gatherLikenum"].toString(),
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 18,
                           ),
                         ),
                       )

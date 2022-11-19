@@ -109,6 +109,7 @@ class _SignInState extends State<SignIn> {
                   child: Image.asset("./imgs/로고_기본.png"),
                 ),
                 // 앱 이름
+                SizedBox(height: 10,),
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
@@ -195,6 +196,7 @@ class _SignInState extends State<SignIn> {
                 Container(
                   padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: TextField(
+                    style: TextStyle(fontSize: 20.0,  color: Colors.black),
                       controller: emailController,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
@@ -212,6 +214,7 @@ class _SignInState extends State<SignIn> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: TextField(
+                    style: TextStyle(fontSize: 20.0,  color: Colors.black),
                     obscureText: obscurePassword,
                     controller: passwordController,
                     decoration: InputDecoration(
@@ -258,7 +261,7 @@ class _SignInState extends State<SignIn> {
                             _isAutoLogin = Value!;
                           });
                         }),
-                    Text("로그인 상태 유지"),
+                    Text("로그인 상태 유지",style:TextStyle(fontSize: 18)),
                   ],
                 ),
                 SizedBox(height: 10,),
@@ -271,8 +274,8 @@ class _SignInState extends State<SignIn> {
                       '로그인',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     onPressed: () {
@@ -300,8 +303,8 @@ class _SignInState extends State<SignIn> {
                       '회원가입',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     onPressed: () {

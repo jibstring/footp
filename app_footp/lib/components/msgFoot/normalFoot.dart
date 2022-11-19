@@ -78,7 +78,7 @@ class _NormalFootState extends State<NormalFoot> {
               msg: "해당 메세지로 지도를 이동하였습니다.",
               gravity: ToastGravity.BOTTOM,
               backgroundColor: const Color(0xff6E6E6E),
-              fontSize: 11,
+              fontSize: 13,
               toastLength: Toast.LENGTH_SHORT);
         },
         child: Padding(
@@ -103,18 +103,18 @@ class _NormalFootState extends State<NormalFoot> {
                       child: Text(
                         widget.normalmsg["userNickname"],
                         style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: Color.fromARGB(255, 110, 110, 110)),
                       ),
                     ),
                     Container(
                       alignment: Alignment.centerRight,
-                      width: MediaQuery.of(context).size.width * 0.33,
+                      width: MediaQuery.of(context).size.width * 0.4,
                       child: Text(
                         changeDate(widget.normalmsg["messageWritedate"]),
                         style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: 17,
                             fontWeight: FontWeight.w500,
                             color: Color.fromARGB(255, 110, 110, 110)),
                       ),
@@ -228,7 +228,7 @@ class _NormalFootState extends State<NormalFoot> {
                                   child: Text(
                                     widget.normalmsg["messageText"], //100자로 제한
                                     style: const TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w500,
                                         color: Color.fromARGB(255, 110, 110, 110)),
                                   ))
@@ -240,7 +240,7 @@ class _NormalFootState extends State<NormalFoot> {
                           child: Text(
                             widget.normalmsg["messageText"], //100자로 제한
                             style: const TextStyle(
-                                fontSize: 17,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w500,
                                 color: Color.fromARGB(255, 110, 110, 110)),
                           ),
@@ -254,7 +254,7 @@ class _NormalFootState extends State<NormalFoot> {
                           maindata.hiddenMessage[
                               widget.normalmsg["messageId"]] ??= "",
                           style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                               color: Color.fromARGB(255, 110, 110, 110)),
                         ))
@@ -262,12 +262,12 @@ class _NormalFootState extends State<NormalFoot> {
                 // 주소
                 Container(
                   // color: Colors.green,
-                    height: 40,
+                    height: 30,
                     // width: width,
                     child: Text(
                       maindata.address[widget.normalmsg["messageId"]] ??= "",
                       style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Color.fromARGB(255, 110, 110, 110)),
                     )),
@@ -344,7 +344,7 @@ class _NormalFootState extends State<NormalFoot> {
                           child: Text(
                             widget.normalmsg["messageLikenum"].toString(),
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 18,
                             ),
                           ),
                         )
