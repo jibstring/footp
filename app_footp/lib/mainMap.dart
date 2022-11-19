@@ -43,7 +43,7 @@ class MainData extends GetxController {
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
-  ChatRoom _chatRoom = ChatRoom(0, 0, "");
+  ChatRoom _chatRoom = ChatRoom(0, 0, "", "");
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
   Map<int, double> _distances = {};
