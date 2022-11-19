@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   Notice mainNotice = notice.notice;
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'footp'),
       debugShowCheckedModeBanner: false,
       home: MainMap(),
     );
