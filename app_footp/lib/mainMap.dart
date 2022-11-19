@@ -24,6 +24,9 @@ import 'package:app_footp/components/mainMap/gatherList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
 import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:app_footp/createStamp.dart';
+import 'package:app_footp/components/joinStampDetail.dart';
+import 'package:app_footp/components/stampDetailView.dart';
 
 MainData maindata = Get.put(MainData());
 MyPosition location = Get.put(MyPosition());
@@ -560,7 +563,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 height:75,
                 width:75,
-                child: IconButton(
+                child: 
+                selectedIndex!=2?
+                IconButton(
                   icon: Image.asset(
                     'imgs/글쓰기_o.png',
                     fit: BoxFit.cover,
@@ -581,7 +586,26 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     }
                   },
-                ),
+                ):
+                IconButton(
+                          icon: Image.asset('imgs/글쓰기_o.png', height: 50),
+                          onPressed: () {
+                            if (!user.isLogin()) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignIn()),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const CreateStamp()),
+                              ).then((value) {
+                              });
+                            }
+                          },
+                        ),
               ),
             ),
             widgetOptions.elementAt(selectedIndex),
