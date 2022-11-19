@@ -82,7 +82,7 @@ class _StampListState extends State<StampList> {
                           items: _filterList.map(
                             (value) {
                               return DropdownMenuItem(
-                                  value: value, child: Text(value));
+                                  value: value, child: Text(value,style: TextStyle(fontSize: 20),));
                             },
                           ).toList(),
                           onChanged: (value) {

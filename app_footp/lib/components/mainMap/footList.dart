@@ -108,7 +108,7 @@ class _FootListState extends State<FootList> {
                                     (value) {
                                       return DropdownMenuItem(
                                           value: value, child: Text(value,style:TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 22,
                                             fontWeight: FontWeight.w500,
                                             color: Colors.black)));
                                     },

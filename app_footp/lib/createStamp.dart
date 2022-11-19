@@ -15,8 +15,11 @@ class CreateStamp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: '',
+      theme: ThemeData(
+        fontFamily: 'footp'
+      ),
       debugShowCheckedModeBanner: false,
       home: CreateStampForm(),
     );
@@ -68,7 +71,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
     return Scaffold(
         appBar: AppBar(
           title: Image.asset('imgs/로고_기본.png', height: 45),
-          elevation: 0,
+          elevation: 2,
           backgroundColor: Colors.white,
           centerTitle: true,
           // 
@@ -80,6 +83,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
               // 제목
               Container(
                 child: TextField(
+                  style: TextStyle(fontSize: 24),
                   maxLength: 30,
                   controller: stampboardTitle,
                   decoration: InputDecoration(
@@ -95,7 +99,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
               // 스탬프지 선택
               Row(
                 children: [
-                  Text("스탬프지 디자인",style: TextStyle(fontSize: 15),),
+                  Text("스탬프지 디자인",style: TextStyle(fontSize: 22),),
                   SizedBox(width: 20,),
                   DropdownButton(
                     icon: Image.asset("./imgs/화살표_o.png",
@@ -107,7 +111,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                       (value) {
                         return DropdownMenuItem(
                           value: value,
-                          child: Text(stampSheetName[value-2]),
+                          child: Text(stampSheetName[value-2],style: TextStyle(fontSize: 22)),
                         );
                       },
                     ).toList(),
@@ -223,121 +227,133 @@ class _CreateStampFormState extends State<CreateStampForm> {
                   ],
                 )),
               ),
-
-              // 나의 게시글 목록
+                          // 나의 게시글 목록
               SizedBox(height: 10),
               SingleChildScrollView(
-                child: Column(children: <Widget>[
-                  Text('나의 글 목록',
-                    style:
-                      TextStyle(fontSize: 20),
-                  ),
-                  Container(
-                    height: 200,
-                    child: ListView.builder(
-                      itemCount: _myFootList.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            SizedBox(height:10),
-                            Draggable(
-                              data: _myFootList[index]['messageId'],
-                              feedback: Container(
-                                  // child: Text(_myFootList[index]['messageText']),
-                                  // height: 40,
-                                  // decoration: BoxDecoration(
-                                  //   color: Colors.orange[50],
-                                  // ),
-                                  child: Image.asset(
-                                  'imgs/스탬푸찍기_p.png',
-                                // height: 50,
-                              )),
-                              childWhenDragging:
-                                Container(
-                                child: Text(_myFootList[index]['messageText'],
-                                  overflow: TextOverflow.clip,
-                                  maxLines: 1,),
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange[100],
-                                ),
-                              ),
-                              child: Container(
-                                padding:EdgeInsets.fromLTRB(0, 0, 2, 0),
-                                child: Row(
-                                  mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      width:MediaQuery.of(context).size.width * 0.65,
-                                      padding:EdgeInsets.fromLTRB(10, 2, 0, 2),
-                                      child: Text(_myFootList[index]['messageText'],
-                                        overflow: TextOverflow.clip)
-                                    ),
-                                    _myFootList[index]['messageId'] == selectedMessage1
-                                    ? Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Image.asset(footImg[0]))
-                                    : 
-                                    _myFootList[index]['messageId'] == selectedMessage2 
-                                    ? Align(
-                                        alignment: Alignment.centerRight,
-                                      child: Image.asset(footImg[1]))
-                                    : 
-                                    _myFootList[index]['messageId'] == selectedMessage3
-                                    ? Align(
-                                        alignment: Alignment.centerRight,
-                                      child: Image.asset(footImg[2]))
-                                    : Container()
-                                  ],
-                                ),
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange[200],
-                                  border: Border.all(color: Colors.black, width: 3),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                        },
-                      ),
+                child: Container(
+                  width:MediaQuery.of(context).size.width * 0.9,
+                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.black, width: 3),
+                                      borderRadius: BorderRadius.circular(20),
+                                      ),
+                  child: Column(children: <Widget>[
+                    Text('나의 글 목록',
+                      style:
+                        TextStyle(fontSize: 28),
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height:10),
                     Container(
-                      child: TextField(
-                      maxLines: 5,
-                      maxLength: 255,
-                      controller: stampboardMessage,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(width: 3, color: Colors.black), //<-- SEE HERE
-                        borderRadius: BorderRadius.circular(20.0),
+                      height: 200,
+                      child: ListView.builder(
+                        itemCount: _myFootList.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              SizedBox(height:10),
+                              Draggable(
+                                data: _myFootList[index]['messageId'],
+                                feedback: Container(
+                                    // child: Text(_myFootList[index]['messageText']),
+                                    // height: 40,
+                                    // decoration: BoxDecoration(
+                                    //   color: Colors.orange[50],
+                                    // ),
+                                    child: Image.asset(
+                                    'imgs/스탬푸찍기_p.png',
+                                  // height: 50,
+                                )),
+                                childWhenDragging:
+                                  Container(
+                                  child: Text(_myFootList[index]['messageText'],
+                                  style: TextStyle(fontSize: 20),
+                                    overflow: TextOverflow.clip,
+                                    maxLines: 1,),
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange[100],
+                                  ),
+                                ),
+                                child: Container(
+                                  padding:EdgeInsets.fromLTRB(0, 0, 2, 0),
+                                  child: Row(
+                                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width:MediaQuery.of(context).size.width * 0.65,
+                                        padding:EdgeInsets.fromLTRB(10, 2, 0, 2),
+                                        child: Text(_myFootList[index]['messageText'],
+                                        style: TextStyle(fontSize: 18),
+                                          overflow: TextOverflow.clip)
+                                      ),
+                                      _myFootList[index]['messageId'] == selectedMessage1
+                                      ? Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Image.asset(footImg[0]))
+                                      : 
+                                      _myFootList[index]['messageId'] == selectedMessage2 
+                                      ? Align(
+                                          alignment: Alignment.centerRight,
+                                        child: Image.asset(footImg[1]))
+                                      : 
+                                      _myFootList[index]['messageId'] == selectedMessage3
+                                      ? Align(
+                                          alignment: Alignment.centerRight,
+                                        child: Image.asset(footImg[2]))
+                                      : Container()
+                                    ],
+                                  ),
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange[200],
+                                    border: Border.all(color: Colors.black, width: 3),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                          },
+                        ),
                       ),
-                          
-                          hintText: '스탬프에 대해 설명해주세요'),
-                    )),
-                    IconButton(
-                      iconSize: MediaQuery.of(context).size.width * 0.15,
-                      onPressed: () {
-                        if (createStampValidation() == 1) {
-                          stampCreate();
-                          Navigator.pop(context);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: validationMessage[createStampValidation()],
-                              gravity: ToastGravity.CENTER,
-                              backgroundColor: Colors.redAccent,
-                              fontSize: 20.0,
-                              textColor: Colors.white,
-                              toastLength: Toast.LENGTH_SHORT);
-                        }
-                      },
-                      icon: Image.asset(
-                        'imgs/스탬푸작성_r.png',
-                      ))
-                ])),
+                      SizedBox(height: 15),
+                  ]),
+                )),
+                SizedBox(height: 20),
+                Container(
+                        child: TextField(
+                        style: TextStyle(fontSize: 20),
+                        maxLines: 5,
+                        maxLength: 255,
+                        controller: stampboardMessage,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(width: 3, color: Colors.black), //<-- SEE HERE
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                            
+                            hintText: '스탬프에 대해 설명해주세요'),
+                      )),
+                      IconButton(
+                        iconSize: MediaQuery.of(context).size.width * 0.2,
+                        onPressed: () {
+                          if (createStampValidation() == 1) {
+                            stampCreate();
+                            Navigator.pop(context);
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: validationMessage[createStampValidation()],
+                                gravity: ToastGravity.CENTER,
+                                backgroundColor: Colors.redAccent,
+                                fontSize: 20.0,
+                                textColor: Colors.white,
+                                toastLength: Toast.LENGTH_SHORT);
+                          }
+                        },
+                        icon: Image.asset(
+                          'imgs/스탬푸작성_r.png',
+                        )),
+                        SizedBox(height:50),
             ]))));
   }
 
