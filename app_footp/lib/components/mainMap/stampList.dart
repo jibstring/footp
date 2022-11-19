@@ -132,27 +132,29 @@ class _StampListState extends State<StampList> {
                           },
                         ),
                         IconButton(
-                          onPressed: () {
-                            stampDetail["stampboard_id"] == null
-                                ? showNotJoinedStamp()
-                                : Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const JoinStampDetail()),
-                                  ).then((value) {
-                                    loadJoinStamp();
-                                    loadStampList();
-                                  });
-                          },
-                          icon: Icon(
-                            Icons.face,
-                            size: 40,
-                            color: stampDetail["stampboard_id"] == null
-                                ? Colors.red
-                                : Colors.green,
-                          ),
-                        ),
+                            onPressed: () {
+                              stampDetail["stampboard_id"] == null
+                                  ? showNotJoinedStamp()
+                                  : Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const JoinStampDetail()),
+                                    ).then((value) {
+                                      loadJoinStamp();
+                                      loadStampList();
+                                    });
+                            },
+                            // icon: Icon(
+                            //   Icons.face,
+                            //   size: 40,
+                            //   color: stampDetail["stampboard_id"] == null
+                            //       ? Colors.red
+                            //       : Colors.green,
+                            // ),
+                            icon: stampDetail["stampboard_id"] == null
+                                ? Image.asset('imgs/스탬푸도전중.png')
+                                : Image.asset('imgs/스탬푸작성_p.png')),
                         IconButton(
                           // 검색
                           onPressed: () {
