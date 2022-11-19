@@ -219,13 +219,16 @@ class _StampListState extends State<StampList> {
                             child: Container(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  SizedBox(height: 15),
                                   // 스탬푸 제목
                                   Text(
-                                    _stampList[index]['stampboard_title'],
+                                    _stampList[index]['stampboard_title'],style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 110, 110, 110))
                                   ),
                                   Divider(color: Colors.black, thickness: 3.0),
-                                  SizedBox(height: 10),
+                                  SizedBox(height: 15),
 
                                   // 스탬푸 시트
                                   GestureDetector(
@@ -413,7 +416,7 @@ class _StampListState extends State<StampList> {
                                                       ['stampboard_likenum']
                                                   .toString(),
                                               style: TextStyle(
-                                                fontSize: 15,
+                                                fontSize: 18,
                                               ),
                                             ),
                                           )
@@ -718,42 +721,60 @@ class _StampListState extends State<StampList> {
       );
     } else if (_stampList[index]["stampboard_id"] ==
         stampDetail["stampboard_id"]) {
-      return ElevatedButton(
-        onPressed: () {
-          cancleStamp(index);
-        },
-        child: Text('참가 취소'),
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.red),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(
-                      color: Colors.red,
-                    )))),
-        // style: ElevatedButton.styleFrom(
-        //   primary: Colors.red,
-        //   textStyle: TextStyle(
-        //     color: Colors.white,
-        //   ),
-        //   shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(18.0),
-        //   ),
-        // ),
-      );
+      return Container(
+          height: 45,
+          width: 110,
+          decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 3.3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+        child :ElevatedButton(
+          onPressed: () {
+            cancleStamp(index);
+          },
+          child: Text(' 취소 ', style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black)),
+          style: ButtonStyle(
+          foregroundColor:
+            MaterialStateProperty.all<Color>(Colors.orange),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.orange),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+          )),),
+      ));
     } else {
-      return ElevatedButton(
-        onPressed: () {
-          joinStamp(index);
-        },
-        child: Text('참가하기'),
-        style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(
-                      color: Colors.lightBlueAccent,
-                    )))),
+      return Container(
+        height: 45,
+        width: 110,
+        decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+        child: ElevatedButton(
+          onPressed: () {
+            joinStamp(index);
+          },
+          child: Text('참가하기', style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black)),
+          style: ButtonStyle(
+            foregroundColor:
+                              MaterialStateProperty.all<Color>(Colors.white),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Color.fromARGB(255, 206, 233, 255)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          )),
+          ),
+        ),
       );
     }
   }

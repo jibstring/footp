@@ -104,7 +104,7 @@ class _NormalFootState extends State<NormalFoot> {
                         widget.normalmsg["userNickname"],
                         style: const TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
                             color: Color.fromARGB(255, 110, 110, 110)),
                       ),
                     ),
