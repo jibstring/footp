@@ -89,7 +89,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                                                   0.2),
                                       stampDetail['userjoinedStampboard_cleardate1'] !=
                                               null
-                                          ? Image.asset('imgs/heart_color.png',
+                                          ? Image.asset('imgs/스탬푸도장.png',
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -121,7 +121,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                                                   0.2),
                                       stampDetail['userjoinedStampboard_cleardate2'] !=
                                               null
-                                          ? Image.asset('imgs/heart_color.png',
+                                          ? Image.asset('imgs/스탬푸도장.png',
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -153,7 +153,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                                                   0.2),
                                       stampDetail['userjoinedStampboard_cleardate3'] !=
                                               null
-                                          ? Image.asset('imgs/heart_color.png',
+                                          ? Image.asset('imgs/스탬푸도장.png',
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -184,8 +184,14 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
             ElevatedButton(
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromARGB(255, 164, 185, 237)),
+                backgroundColor: isNearMessage(selectedStamp) &&
+                        stampDetail[
+                                'userjoinedStampboard_cleardate${selectedStamp! + 1}'] ==
+                            null
+                    ? MaterialStateProperty.all<Color>(
+                        Color.fromARGB(255, 146, 221, 140))
+                    : MaterialStateProperty.all<Color>(
+                        Color.fromARGB(255, 164, 185, 237)),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
@@ -336,7 +342,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
       return '선택된 메세지가 없음';
     } else if (stampDetail['userjoinedStampboard_cleardate${index + 1}'] !=
         null) {
-      return '이미 클리어';
+      return '방문 완료';
     } else if (isNearMessage(index) &&
         stampDetail['userjoinedStampboard_cleardate${index + 1}'] == null) {
       return '${index + 1}번 클리어하기';
