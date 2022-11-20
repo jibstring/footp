@@ -70,20 +70,20 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
             backgroundColor: Colors.white,
             shape: Border(bottom: BorderSide(color: Colors.black, width: 5)),
             centerTitle: true,
-            actions: <Widget>[
-              IconButton(
-                icon: Image.asset(
-                  'imgs/프로필_b.png',
-                ),
-                padding: const EdgeInsets.only(top: 5, right: 20.0),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MyPage()),
-                  );
-                },
-              ),
-            ],
+            // actions: <Widget>[
+            //   IconButton(
+            //     icon: Image.asset(
+            //       'imgs/프로필_b.png',
+            //     ),
+            //     padding: const EdgeInsets.only(top: 5, right: 20.0),
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(builder: (context) => const MyPage()),
+            //       );
+            //     },
+            //   ),
+            // ],
           ),
         ),
         body: Padding(

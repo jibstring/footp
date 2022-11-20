@@ -31,7 +31,7 @@ class _StampListState extends State<StampList> {
   int _selectedIndex = 0;
   final _valueList = ['NEW', '좋아요'];
   final _filterList = ['NEW', '좋아요'];
-  var _selectedValue = "NEW";
+  var _selectedValue = "좋아요";
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
@@ -49,7 +49,7 @@ class _StampListState extends State<StampList> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadStampList();
+      loadStampLike();
       loadJoinStamp();
     });
   }
