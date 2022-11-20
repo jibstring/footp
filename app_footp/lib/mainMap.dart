@@ -145,8 +145,8 @@ class MainData extends GetxController {
 
         break;
 
-      case 2:
-        break;
+      // case 2:
+      //   break;
 
       default:
     }
@@ -209,8 +209,8 @@ class MainData extends GetxController {
         longitude = "gatherLongitude";
         break;
 
-      case 2:
-        break;
+      // case 2:
+      //   break;
 
       default:
         messageType = "message";
@@ -227,27 +227,31 @@ class MainData extends GetxController {
       "X-NCP-APIGW-API-KEY": "scvqRxQKoZo5vULsFL1vrE56tqKcOl7u1z16iWz2"
     };
 
-    http.Response response = await http.get(
-        Uri.parse(
-            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
-        headers: clientkey);
-    if (response.statusCode == 200) {
-      var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsondata["status"]["code"] == 0) {
-        if (jsondata["results"].length > 1) {
-          _address[dataList[messageType][idx][id]] =
-              "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
-        } else {
-          _address[dataList[messageType][idx][id]] =
-              "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
-        }
-      } else {
-        _address[dataList[messageType][idx][id]] = "";
-      }
-      update();
+    if (address.containsKey(dataList[messageType][idx][id])) {
+      // print("continue");
     } else {
-      print(response.statusCode);
-      throw 'getAddress() error';
+      http.Response response = await http.get(
+          Uri.parse(
+              "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+          headers: clientkey);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsondata["status"]["code"] == 0) {
+          if (jsondata["results"].length > 1) {
+            _address[dataList[messageType][idx][id]] =
+                "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+          } else {
+            _address[dataList[messageType][idx][id]] =
+                "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+          }
+        } else {
+          _address[dataList[messageType][idx][id]] = "";
+        }
+        update();
+      } else {
+        print(response.statusCode);
+        throw 'getAddress() error';
+      }
     }
   }
 
@@ -291,8 +295,8 @@ class MainData extends GetxController {
         writedate = "gatherWritedate";
         break;
 
-      case 2:
-        break;
+      // case 2:
+      //   break;
 
       default:
         messageType = "message";
@@ -332,9 +336,8 @@ class MainData extends GetxController {
         color = 9;
         break;
 
-      case 2:
-        color = dataList[messageType][idx][id] % 7;
-        break;
+      // case 2:
+      //   break;
 
       default:
     }
@@ -424,8 +427,8 @@ class MainData extends GetxController {
 
         break;
 
-      case 2:
-        break;
+      // case 2:
+      //   break;
 
       default:
     }
@@ -464,10 +467,7 @@ class MainMap extends StatelessWidget {
     return MaterialApp(
       title: 'FootP',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'footp'
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'footp'),
       home: const MyHomePage(title: 'Footp Main Page'),
     );
   }
@@ -510,13 +510,15 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Scaffold(
           appBar: AppBar(
             title: Image.asset('imgs/로고_기본.png', height: 50),
-            backgroundColor: Colors.white,//Color.fromARGB(255, 255, 253, 241),
+            backgroundColor: Colors.white, //Color.fromARGB(255, 255, 253, 241),
             centerTitle: true,
             elevation: 2,
             actions: <Widget>[
               IconButton(
                 iconSize: 50,
-                icon:Image.asset('imgs/프로필_b.png', ),
+                icon: Image.asset(
+                  'imgs/프로필_b.png',
+                ),
                 // padding: const EdgeInsets.only(top: 5.0, right: 20.0),
                 onPressed: () {
                   if (!user.isLogin()) {
@@ -559,53 +561,51 @@ class _MyHomePageState extends State<MyHomePage> {
                     ])),
             Align(
               alignment: Alignment(0.9, 0.3),
-              
               child: Container(
-                height:75,
-                width:75,
-                child: 
-                selectedIndex!=2?
-                IconButton(
-                  icon: Image.asset(
-                    'imgs/글쓰기_o.png',
-                    fit: BoxFit.cover,
-                    height: double.infinity,
-                    width: double.infinity,
-                  ),
-                  onPressed: () {
-                    if (!user.isLogin()) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignIn()),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CreateFoot()),
-                      );
-                    }
-                  },
-                ):
-                IconButton(
-                          icon: Image.asset('imgs/글쓰기_o.png', height: 50),
-                          onPressed: () {
-                            if (!user.isLogin()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignIn()),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const CreateStamp()),
-                              ).then((value) {
-                              });
-                            }
-                          },
+                height: 75,
+                width: 75,
+                child: selectedIndex != 2
+                    ? IconButton(
+                        icon: Image.asset(
+                          'imgs/글쓰기_o.png',
+                          fit: BoxFit.cover,
+                          height: double.infinity,
+                          width: double.infinity,
                         ),
+                        onPressed: () {
+                          if (!user.isLogin()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignIn()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateFoot()),
+                            );
+                          }
+                        },
+                      )
+                    : IconButton(
+                        icon: Image.asset('imgs/글쓰기_o.png', height: 50),
+                        onPressed: () {
+                          if (!user.isLogin()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignIn()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateStamp()),
+                            ).then((value) {});
+                          }
+                        },
+                      ),
               ),
             ),
             widgetOptions.elementAt(selectedIndex),
@@ -614,21 +614,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: BottomNavigationBar(
                   items: <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                      icon: Image.asset("./imgs/하단바-메세지_b_off.png", width: 45, height: 45,),
-                      activeIcon:Image.asset("./imgs/하단바-메세지_b.png", width: 45, height: 45,),
-                      label:''
-                      
-                    ),
+                        icon: Image.asset(
+                          "./imgs/하단바-메세지_b_off.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        activeIcon: Image.asset(
+                          "./imgs/하단바-메세지_b.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        label: ''),
                     BottomNavigationBarItem(
-                      icon: Image.asset("./imgs/하단바-확성기_o_off.png", width: 45, height: 45,),
-                      activeIcon:Image.asset("./imgs/하단바-확성기_o.png", width: 45, height: 45,),
-                      label:''
-                    ),
+                        icon: Image.asset(
+                          "./imgs/하단바-확성기_o_off.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        activeIcon: Image.asset(
+                          "./imgs/하단바-확성기_o.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        label: ''),
                     BottomNavigationBarItem(
-                      icon: Image.asset("./imgs/하단바-스탬푸_p_off.png", width: 45, height: 45,),
-                      activeIcon:Image.asset("./imgs/하단바-스탬푸_p.png", width: 45, height: 45,),
-                      label:''
-                    )
+                        icon: Image.asset(
+                          "./imgs/하단바-스탬푸_p_off.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        activeIcon: Image.asset(
+                          "./imgs/하단바-스탬푸_p.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        label: '')
                   ],
                   currentIndex: selectedIndex,
                   onTap: _onItemTapped,

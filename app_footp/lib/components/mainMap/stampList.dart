@@ -83,7 +83,11 @@ class _StampListState extends State<StampList> {
                           items: _filterList.map(
                             (value) {
                               return DropdownMenuItem(
-                                  value: value, child: Text(value,style: TextStyle(fontSize: 20),));
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(fontSize: 20),
+                                  ));
                             },
                           ).toList(),
                           onChanged: (value) {
@@ -110,7 +114,7 @@ class _StampListState extends State<StampList> {
                             loadJoinStamp();
                           },
                         ),
-                        
+
                         IconButton(
                             onPressed: () {
                               stampDetail["stampboard_id"] == null
@@ -203,12 +207,12 @@ class _StampListState extends State<StampList> {
                                 children: [
                                   SizedBox(height: 15),
                                   // 스탬푸 제목
-                                  Text(
-                                    _stampList[index]['stampboard_title'],style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color.fromARGB(255, 110, 110, 110))
-                                  ),
+                                  Text(_stampList[index]['stampboard_title'],
+                                      style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color.fromARGB(
+                                              255, 110, 110, 110))),
                                   Divider(color: Colors.black, thickness: 3.0),
                                   SizedBox(height: 15),
 
@@ -685,6 +689,14 @@ class _StampListState extends State<StampList> {
       stampMessage.stampMessage1 = res.data[0];
       stampMessage.stampMessage2 = res.data[1];
       stampMessage.stampMessage3 = res.data[2];
+
+      stampMessage.getStampAddress(res.data[0]);
+      stampMessage.getStampAddress(res.data[1]);
+      stampMessage.getStampAddress(res.data[2]);
+
+      stampMessage.createStampMarker(res.data[0]);
+      stampMessage.createStampMarker(res.data[1]);
+      stampMessage.createStampMarker(res.data[2]);
     }).then((value) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => StampDetailView()));
@@ -707,54 +719,52 @@ class _StampListState extends State<StampList> {
           height: 45,
           width: 110,
           decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 3.3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-        child :ElevatedButton(
-          onPressed: () {
-            cancleStamp(index);
-          },
-          child: Text(' 취소 ', style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
-          style: ButtonStyle(
-          foregroundColor:
-            MaterialStateProperty.all<Color>(Colors.orange),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.orange),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-          )),),
-      ));
+            border: Border.all(color: Colors.black, width: 3.3),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ElevatedButton(
+            onPressed: () {
+              cancleStamp(index);
+            },
+            child: Text(' 취소 ',
+                style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black)),
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.orange),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.orange),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+              )),
+            ),
+          ));
     } else {
       return Container(
         height: 45,
         width: 110,
         decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+          border: Border.all(color: Colors.black, width: 3),
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: ElevatedButton(
           onPressed: () {
             joinStamp(index);
           },
-          child: Text('참가하기', style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
+          child: Text('참가하기',
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
           style: ButtonStyle(
-            foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Color.fromARGB(255, 206, 233, 255)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          )),
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(
+                Color.fromARGB(255, 206, 233, 255)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            )),
           ),
         ),
       );

@@ -69,9 +69,7 @@ class _MyHompageStateState extends State<MyHompageState> {
   Widget build(BuildContext context) {
     post = getURL();
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
+      appBar: AppBar(backgroundColor: Colors.white, elevation: 0,
           // leading: IconButton(
           //   icon: Icon(
           //     Icons.keyboard_backspace,
