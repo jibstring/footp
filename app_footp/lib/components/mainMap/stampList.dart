@@ -685,10 +685,13 @@ class _StampListState extends State<StampList> {
       print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
       print(res.data);
       print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+
       stampMessage.viewStamp = nowStamp;
       stampMessage.stampMessage1 = res.data[0];
       stampMessage.stampMessage2 = res.data[1];
       stampMessage.stampMessage3 = res.data[2];
+
+      maindata.markers.clear();
 
       stampMessage.getStampAddress(res.data[0]);
       stampMessage.getStampAddress(res.data[1]);
@@ -725,6 +728,7 @@ class _StampListState extends State<StampList> {
           child: ElevatedButton(
             onPressed: () {
               cancleStamp(index);
+              maindata.markers.clear();
             },
             child: Text(' 취소 ',
                 style: const TextStyle(

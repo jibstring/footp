@@ -82,7 +82,7 @@ class _StampDetailViewState extends State<StampDetailView> {
                       target: LatLng(
                           stampMessage.stampMessage1["messageLatitude"],
                           stampMessage.stampMessage1["messageLongitude"]),
-                      zoom: 18.0),
+                      zoom: 11.0),
                   minZoom: 5.0,
                   locationButtonEnable: true,
                   markers: markers,
