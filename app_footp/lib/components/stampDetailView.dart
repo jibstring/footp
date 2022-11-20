@@ -67,18 +67,55 @@ class _StampDetailViewState extends State<StampDetailView> {
             children: [
               Container(
                 height: 400,
-                child: Center(
-                  child: Text('지도들어가요'),
-                ),
+                child: Image.network(
+                    'https://image.zdnet.co.kr/2021/01/15/e3b89e63a5a4a7d0bd44e4e9bb06e54c.png'),
               ),
-              Container(child: Text('제목')),
-              SizedBox(height: 10),
-              Container(
-                  child: Text(stampMessage.viewStamp["stampboard_title"])),
-              SizedBox(height: 10),
-              Container(child: Text('설명')),
-              SizedBox(height: 10),
-              Container(child: Text(stampMessage.viewStamp["stampboard_text"])),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  child: Card(
+                      child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 3),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          // padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 12),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child: Text(
+                                  stampMessage.viewStamp["stampboard_title"],
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          Color.fromARGB(255, 110, 110, 110)),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Divider(color: Colors.black, thickness: 3.0),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Container(
+                                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: Text(
+                                    stampMessage.viewStamp[
+                                        "stampboard_text"], //100자로 제한
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color:
+                                            Color.fromARGB(255, 110, 110, 110)),
+                                  )),
+                              SizedBox(height: 20),
+                            ],
+                          )))),
               SizedBox(height: 10),
               NormalFoot(stampMessage.stampMessage1),
               SizedBox(height: 10),
