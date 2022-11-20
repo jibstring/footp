@@ -19,7 +19,34 @@
 
 ---
 
-## II. 서비스 미리보기
+## 기능 요약
+
+<img src="https://lab.ssafy.com/s07-final/S07P31A108/-/raw/master/doc_media/%EB%A1%9C%EA%B3%A0_%EA%B8%B0%EB%B3%B8.png" width="30%" height="30%"/>
+
+### 발자국 찍기
+- 특정 위치에 메세지를 기록
+- 사진, 짧은 영상, 음성 첨부 가능
+- 물음표 발자국 - 메세지 일부분이 블러 처리
+
+
+<img src="https://lab.ssafy.com/s07-final/S07P31A108/-/raw/master/doc_media/%EB%A1%9C%EA%B3%A0_%EA%B8%B0%EB%B3%B8.png" width="30%" height="30%"/>
+
+### 이벤트 확성기
+- 사람을 특정 장소로 불러 모으기 위한 특별한 마커
+- 푸프 이용자에게 동시에 알림 발송
+- 함께 즐기고 싶은 이벤트가 있다면 간편하게 즉석 공지 가능
+
+
+<img src="https://lab.ssafy.com/s07-final/S07P31A108/-/raw/master/doc_media/%EB%A1%9C%EA%B3%A0_%EA%B8%B0%EB%B3%B8.png" width="30%" height="30%"/>
+
+### 스탬푸
+- 스탬프 투어를 직접 디자인/참가
+- 스탬프 목적지에 가까이 다가가 스탬프 시트에 도장 찍기
+
+
+---
+
+## II. 앱 미리보기
 
 
 ### 서비스 화면
