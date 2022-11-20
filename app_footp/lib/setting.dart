@@ -1,6 +1,9 @@
+import 'package:app_footp/mainMap.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_footp/myPage.dart';
+import 'package:app_footp/unsigned.dart';
 import 'package:app_footp/components/userSetting/agreement.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
@@ -14,6 +17,38 @@ class SettingPage extends StatelessWidget {
   final controller = Get.put(UserData());
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
+
+  Future<void> _checkUnsign(BuildContext context) async {
+    return showDialog<void>(
+        context: context,
+        // 사용자가 다이얼로그 바깥을 터치하면 닫히지 않음
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text("정말로 탈퇴하시겠습니까?"),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('예'),
+                onPressed: () {
+                  // 다이얼로그 닫기
+                  removeUser();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Unsigned()));
+                },
+              ),
+              TextButton(
+                child: const Text('아니요'),
+                onPressed: () {
+                  // 다이얼로그 닫기
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 
   Future<void> _checkLogout(BuildContext context) async {
     return showDialog<void>(
@@ -102,8 +137,7 @@ class SettingPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.list, color: Colors.grey[850]),
               onTap: () {
-                print('회원탈퇴');
-                removeUser();
+                _checkUnsign(context);
               },
               title: Text('회원탈퇴'),
             ),
@@ -120,18 +154,28 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-  void removeUser() async {
+  Future removeUser() async {
     var dio = Dio();
-    String userId = controller.userinfo["userNickname"];
-    final response_login =
-        await dio.delete('http://k7a108.p.ssafy.io:8080/user/leave/${userId}');
+    int userId = controller.userinfo["userId"];
+    final response =
+        await dio.delete('http://k7a108.p.ssafy.io:8080/user/unsign/${userId}');
 
-    if (response_login.data['message'] == 'fail') {
-      print('회원탈퇴 실패');
+    if (response.data == "success") {
+      Fluttertoast.showToast(
+          msg: "회원 탈퇴가 완료되었습니다.",
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: const Color(0xff6E6E6E),
+          fontSize: 11,
+          toastLength: Toast.LENGTH_SHORT);
+      return 1;
     } else {
-      print('####################################');
-      print(response_login.data);
-      print('####################################');
+      Fluttertoast.showToast(
+          msg: "오류로 인해 탈퇴에 실패하였습니다.",
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: const Color(0xff6E6E6E),
+          fontSize: 11,
+          toastLength: Toast.LENGTH_SHORT);
+      return 0;
     }
   }
 

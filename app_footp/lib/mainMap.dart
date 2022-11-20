@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as DIO;
 import 'package:flutter/material.dart';
 import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -44,6 +45,7 @@ class MainData extends GetxController {
   String _markerString = '';
   String _searchKeyword = '';
   dynamic _mainDataUrl;
+  dynamic _mainDataUrl2;
   dynamic _mycontroller;
   dynamic _mapEdge;
   ChatRoom _chatRoom = ChatRoom(0, 0, "", "");
@@ -65,6 +67,7 @@ class MainData extends GetxController {
   String get searchKeyword => _searchKeyword;
   String get markerString => _markerString;
   dynamic get mainDataUrl => _mainDataUrl;
+  dynamic get mainDataUrl2 => _mainDataUrl2;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
   ChatRoom get chatRoom => _chatRoom;
@@ -111,6 +114,7 @@ class MainData extends GetxController {
       case 0:
         _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
         _dataList = await getMainData();
+        print(dataList);
 
         try {
           _listsize = await _dataList["message"].length;
@@ -145,8 +149,45 @@ class MainData extends GetxController {
 
         break;
 
-      // case 2:
-      //   break;
+      case 2:
+        var dio = DIO.Dio();
+
+        _mainDataUrl = Uri.parse('$baseURL/stamp/joinList/$userid');
+        _dataList = await getMainData();
+
+        String stampId1 = dataList['stampboard_message1'].toString();
+        String stampId2 = dataList['stampboard_message2'].toString();
+        String stampId3 = dataList['stampboard_message3'].toString();
+
+        if (stampId1 == "0") {
+        } else {
+          await dio
+              .post('$baseURL/stamp/info/$stampId1/$stampId2/$stampId3/$userid')
+              .then((res) {
+                _dataList = [res.data];
+                try {
+                  _listsize = _dataList[0].length;
+                } catch (e) {
+                  _listsize = 0;
+                }
+              })
+              .then((value) {})
+              .catchError((e) {
+                print(e);
+              });
+
+          print(dataList[0][0]);
+          print(dataList[0][1]);
+          print(dataList[0][2]);
+          print(listsize);
+
+          for (int i = 0; i < _listsize; i++) {
+            getAddress(i);
+            createMarker(i);
+          }
+        }
+
+        break;
 
       default:
     }
@@ -189,7 +230,7 @@ class MainData extends GetxController {
   }
 
   void getAddress(int idx) async {
-    String messageType = "";
+    dynamic messageType;
     String id = "";
     String latitude = "";
     String longitude = "";
@@ -209,14 +250,14 @@ class MainData extends GetxController {
         longitude = "gatherLongitude";
         break;
 
-      // case 2:
-      //   break;
-
-      default:
-        messageType = "message";
+      case 2:
+        messageType = 0;
         id = "messageId";
         latitude = "messageLatitude";
         longitude = "messageLongitude";
+        break;
+
+      default:
     }
 
     String lat = dataList[messageType][idx][latitude].toString();
@@ -229,6 +270,30 @@ class MainData extends GetxController {
 
     if (address.containsKey(dataList[messageType][idx][id])) {
       // print("continue");
+      if (address[dataList[messageType][idx][id]] == "") {
+        http.Response response = await http.get(
+            Uri.parse(
+                "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+            headers: clientkey);
+        if (response.statusCode == 200) {
+          var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+          if (jsondata["status"]["code"] == 0) {
+            if (jsondata["results"].length > 1) {
+              _address[dataList[messageType][idx][id]] =
+                  "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+            } else {
+              _address[dataList[messageType][idx][id]] =
+                  "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+            }
+          } else {
+            _address[dataList[messageType][idx][id]] = "-";
+          }
+          update();
+        } else {
+          print(response.statusCode);
+          throw 'getAddress() error';
+        }
+      }
     } else {
       http.Response response = await http.get(
           Uri.parse(
@@ -245,7 +310,7 @@ class MainData extends GetxController {
                 "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
           }
         } else {
-          _address[dataList[messageType][idx][id]] = "";
+          _address[dataList[messageType][idx][id]] = "-";
         }
         update();
       } else {
@@ -263,7 +328,7 @@ class MainData extends GetxController {
   }
 
   void createMarker(int idx) {
-    String messageType = "";
+    dynamic messageType;
     String id = "";
     String nickname = "";
     String text = "";
@@ -295,11 +360,8 @@ class MainData extends GetxController {
         writedate = "gatherWritedate";
         break;
 
-      // case 2:
-      //   break;
-
-      default:
-        messageType = "message";
+      case 2:
+        messageType = 0;
         id = "messageId";
         nickname = "userNickname";
         text = "messageText";
@@ -307,6 +369,9 @@ class MainData extends GetxController {
         longitude = "messageLongitude";
         likenum = "messageLikenum";
         writedate = "messageWritedate";
+        break;
+
+      default:
     }
 
     int like = (dataList[messageType][idx][likenum] / 5).toInt();
@@ -320,9 +385,8 @@ class MainData extends GetxController {
 
     switch (selectedIndex) {
       case 0:
-        if (dataList["message"][idx]["isBlurred"] == true) {
-          if ((distances[dataList["message"][idx]["messageId"]] ??= 1) <
-              0.025) {
+        if (dataList[messageType][idx]["isBlurred"] == true) {
+          if ((distances[dataList[messageType][idx][id]] ??= 1) < 0.025) {
             color = 8;
           } else {
             color = 7;
@@ -336,8 +400,17 @@ class MainData extends GetxController {
         color = 9;
         break;
 
-      // case 2:
-      //   break;
+      case 2:
+        if (dataList[messageType][idx]["isBlurred"] == true) {
+          if ((distances[dataList[messageType][idx][id]] ??= 1) < 0.025) {
+            color = 8;
+          } else {
+            color = 7;
+          }
+        } else {
+          color = dataList[messageType][idx][id] % 7;
+        }
+        break;
 
       default:
     }
@@ -665,7 +738,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         markers.clear();
         maindata.setListClean = true;
-        maindata._address.clear();
+        // maindata._address.clear();
         maindata.setSearchFlag = false;
         maindata.setSearchKeyword = "";
       });
