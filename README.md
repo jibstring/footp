@@ -30,16 +30,17 @@
 
 ## 프로젝트 개발환경 및 기술 스택
 
-백엔드
-▶ Spring
-▶ Java 11
-▶ gradle
-▶ JPA
-▶ SockJS
-▶ MySql
-▶ IntelliJ
+백엔드  
+▶ Spring  
+▶ Java 11  
+▶ gradle  
+▶ JPA  
+▶ SockJS  
+▶ MySql  
+▶ IntelliJ  
 
-프론트엔드
+프론트엔드  
+▶ Dart 2.18.2     
 ▶ Flutter 3.3.8  
 ▶ Visual Studio Code  
 ▶ Android Studio  
