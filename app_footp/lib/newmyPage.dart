@@ -17,6 +17,7 @@ class newMyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'newMyPage',
+      theme: ThemeData(fontFamily: 'footp'),
       debugShowCheckedModeBanner: false,
       home: const MyHompageState(),
     );
@@ -68,20 +69,18 @@ class _MyHompageStateState extends State<MyHompageState> {
   Widget build(BuildContext context) {
     post = getURL();
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.keyboard_backspace,
-              color: Colors.blue[100],
-              size: 40,
-            ),
-            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+      appBar: AppBar(backgroundColor: Colors.white, elevation: 0,
+          // leading: IconButton(
+          //   icon: Icon(
+          //     Icons.keyboard_backspace,
+          //     color: Colors.blue[100],
+          //     size: 40,
+          //   ),
+          //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+          //   onPressed: () {
+          //     Navigator.of(context).pop();
+          //   },
+          // ),
           actions: [
             IconButton(
               icon: Icon(
@@ -113,7 +112,7 @@ class _MyHompageStateState extends State<MyHompageState> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: Text(
                   '${controller.userinfo["userNickname"]}',
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(fontSize: 32),
                 ),
               ),
               IconButton(
@@ -154,7 +153,7 @@ class _MyHompageStateState extends State<MyHompageState> {
                       },
                       child: Text(
                         "내 글 보기",
-                        style: TextStyle(color: Colors.black, fontSize: 20),
+                        style: TextStyle(color: Colors.black, fontSize: 24),
                       )),
                 ),
                 SizedBox(
@@ -173,7 +172,7 @@ class _MyHompageStateState extends State<MyHompageState> {
                       },
                       child: Text(
                         "스탬푸",
-                        style: TextStyle(color: Colors.black, fontSize: 20),
+                        style: TextStyle(color: Colors.black, fontSize: 24),
                       )),
                 ),
               ],
@@ -184,8 +183,8 @@ class _MyHompageStateState extends State<MyHompageState> {
                         future: post,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            print("데이터있데에에에에에");
-                            print(dataList["message"].length);
+                            // print("데이터있데에에에에에");
+                            // print(dataList["message"]);
                             return dataList["message"].length != 0
                                 ? newMyFootPage(dataList)
                                 : Text("발자국을 남겨보세요!");

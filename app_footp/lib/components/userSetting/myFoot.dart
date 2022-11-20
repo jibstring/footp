@@ -52,6 +52,7 @@ class MyFootPageState extends State<MyFootPage> {
         _myfootData[i] = widget._jsonData["message"][i];
       }
     }
+    print(_myfootData);
   }
 
   String changeDate(String date) {

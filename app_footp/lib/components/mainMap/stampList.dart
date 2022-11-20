@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:app_footp/components/joinStampDetail.dart';
 import 'package:app_footp/components/mainMap/footList.dart';
 import 'package:app_footp/components/msgFoot/normalFoot.dart';
 import 'package:app_footp/components/msgFoot/reportModal.dart';
@@ -13,6 +16,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as DIO;
+import 'package:log_print/log_print.dart';
+import 'package:vector_math/vector_math.dart' as vect;
 
 class StampList extends StatefulWidget {
   const StampList({super.key});
@@ -26,29 +31,32 @@ class _StampListState extends State<StampList> {
   int _selectedIndex = 0;
   final _valueList = ['NEW', '좋아요'];
   final _filterList = ['NEW', '좋아요'];
-  var _selectedValue = "NEW";
+  var _selectedValue = "좋아요";
   var _stampList = [];
   List<String> heartList = ["imgs/heart_empty.png", "imgs/heart_color.png"];
   // StampDetailInfo stampDetail = Get.put(StampDetailInfo());
   Map stampDetail = {}; // 참가 중인 stamp
+  List stampDetailMessages = [];
   TextEditingController searchTextController = TextEditingController();
   JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
   StampMessage stampMessage = Get.put(StampMessage());
 
   int? selectedStamp;
+  MyPosition myPosition = Get.put(MyPosition());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadStampList();
+      loadStampLike();
       loadJoinStamp();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // loadJoinStamp();
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -69,11 +77,17 @@ class _StampListState extends State<StampList> {
                       children: <Widget>[
                         // 필터
                         DropdownButton(
+                          icon: Image.asset('imgs/화살표_o.png',
+                              width: 40, height: 40),
                           value: _selectedValue,
                           items: _filterList.map(
                             (value) {
                               return DropdownMenuItem(
-                                  value: value, child: Text(value));
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(fontSize: 20),
+                                  ));
                             },
                           ).toList(),
                           onChanged: (value) {
@@ -93,55 +107,38 @@ class _StampListState extends State<StampList> {
 
                         // 새로고침
                         IconButton(
-                          icon: Icon(
-                            Icons.refresh,
-                            size: 40,
-                          ),
+                          icon: Image.asset('imgs/새로고침_r.png'),
+                          iconSize: 40,
                           onPressed: () {
                             loadStampList();
                             loadJoinStamp();
                           },
                         ),
-                        // 새로운 스탬푸 작성
+
                         IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            size: 40,
-                          ),
-                          onPressed: () {
-                            if (!user.isLogin()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignIn()),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const CreateStamp()),
-                              ).then((value) {
-                                loadStampList();
-                                loadJoinStamp();
-                              });
-                            }
-                          },
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            joinedStamp.joinedStamp["stampboard_id"] == null
-                                ? showNotJoinedStamp()
-                                : showJoinedStamp();
-                          },
-                          icon: Icon(
-                            Icons.face,
-                            size: 40,
-                            color:
-                                joinedStamp.joinedStamp["stampboard_id"] == null
-                                    ? Colors.red
-                                    : Colors.green,
-                          ),
-                        ),
+                            onPressed: () {
+                              stampDetail["stampboard_id"] == null
+                                  ? showNotJoinedStamp()
+                                  : Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const JoinStampDetail()),
+                                    ).then((value) {
+                                      loadJoinStamp();
+                                      loadStampList();
+                                    });
+                            },
+                            // icon: Icon(
+                            //   Icons.face,
+                            //   size: 40,
+                            //   color: stampDetail["stampboard_id"] == null
+                            //       ? Colors.red
+                            //       : Colors.green,
+                            // ),
+                            icon: stampDetail["stampboard_id"] == null
+                                ? Image.asset('imgs/스탬푸도전중.png')
+                                : Image.asset('imgs/스탬푸작성_p.png')),
                         IconButton(
                           // 검색
                           onPressed: () {
@@ -181,7 +178,8 @@ class _StampListState extends State<StampList> {
                                   );
                                 });
                           },
-                          icon: Icon(Icons.search, size: 40),
+                          icon: Image.asset('imgs/검색_b.png'),
+                          iconSize: 40,
                         ),
                       ],
                     )),
@@ -194,37 +192,120 @@ class _StampListState extends State<StampList> {
                     itemCount: _stampList.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                          padding: EdgeInsets.all(10.0),
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                           child: Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(20.0),
                               side: BorderSide(
-                                color: Colors.orangeAccent,
+                                color: Colors.black,
+                                width: 3,
                               ),
                             ),
                             elevation: 2.0,
                             child: Container(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  SizedBox(height: 15),
                                   // 스탬푸 제목
-                                  Text(
-                                    _stampList[index]['stampboard_title'],
-                                  ),
-                                  SizedBox(height: 10),
+                                  Text(_stampList[index]['stampboard_title'],
+                                      style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color.fromARGB(
+                                              255, 110, 110, 110))),
+                                  Divider(color: Colors.black, thickness: 3.0),
+                                  SizedBox(height: 15),
 
                                   // 스탬푸 시트
                                   GestureDetector(
-                                    child: Container(
-                                      height: 200,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(_stampList[index]
-                                              ['stampboard_designurl']),
-                                        ),
-                                      ),
-                                    ),
+                                    // child: Container(
+                                    //   height: 200,
+                                    //   decoration: BoxDecoration(
+                                    //     image: DecorationImage(
+                                    //       fit: BoxFit.cover,
+                                    //       image: NetworkImage(_stampList[index]
+                                    //           ['stampboard_designurl']),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    child: _stampList[index]["isMyclear"] ==
+                                            false
+                                        ? Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Image.network(_stampList[index]
+                                                  ['stampboard_designurl']),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Image.asset(
+                                                    'imgs/white_print.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/white_print.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/white_print.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          )
+                                        : Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Image.network(_stampList[index]
+                                                  ['stampboard_designurl']),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Image.asset(
+                                                    'imgs/새발자국_o.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/새발자국_b.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/새발자국_o.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                     onTap: () {
                                       if (user.isLogin()) {
                                         loadStampDetail(index);
@@ -246,7 +327,7 @@ class _StampListState extends State<StampList> {
                                   // 스탬푸 버튼 모음
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       PopupMenuButton(
                                         icon: Icon(
@@ -343,22 +424,23 @@ class _StampListState extends State<StampList> {
                                       ),
 
                                       // 참가하기 버튼
-                                      _stampList[index]["stampboard_id"] !=
-                                              stampDetail["stampboard_id"]
-                                          ? TextButton(
-                                              child: Text('참가하기'),
-                                              onPressed: () {
-                                                joinStamp(index);
-                                              },
-                                            )
-                                          : TextButton(
-                                              child: Text('참가 취소',
-                                                  style: TextStyle(
-                                                      color: Colors.red)),
-                                              onPressed: () {
-                                                cancleStamp(index);
-                                              },
-                                            ),
+                                      // _stampList[index]["stampboard_id"] !=
+                                      //         stampDetail["stampboard_id"]
+                                      //     ? TextButton(
+                                      //         child: Text('참가하기'),
+                                      //         onPressed: () {
+                                      //           joinStamp(index);
+                                      //         },
+                                      //       )
+                                      //     : TextButton(
+                                      //         child: Text('참가 취소',
+                                      //             style: TextStyle(
+                                      //                 color: Colors.red)),
+                                      //         onPressed: () {
+                                      //           cancleStamp(index);
+                                      //         },
+                                      //       ),
+                                      joinButton(index),
 
                                       // 좋아요
                                       Row(
@@ -398,7 +480,7 @@ class _StampListState extends State<StampList> {
                                                       ['stampboard_likenum']
                                                   .toString(),
                                               style: TextStyle(
-                                                fontSize: 15,
+                                                fontSize: 18,
                                               ),
                                             ),
                                           )
@@ -414,6 +496,7 @@ class _StampListState extends State<StampList> {
                     },
                   ),
                 )),
+                SizedBox(height: 100),
               ],
             ));
       },
@@ -594,6 +677,11 @@ class _StampListState extends State<StampList> {
       joinedStamp.message1 = {};
       joinedStamp.message2 = {};
       joinedStamp.message3 = {};
+    }).then((value) {
+      setState(() {
+        stampDetail = {};
+        stampDetailMessages = [];
+      });
     });
   }
 
@@ -606,7 +694,7 @@ class _StampListState extends State<StampList> {
           'http://k7a108.p.ssafy.io:8080/stamp/joinList/${user.userinfo["userId"]}');
       ;
       setState(() {
-        stampDetail = response.data;
+        stampDetail = response.data == '' ? {} : response.data;
       });
 
       if (response.data != '') {
@@ -629,6 +717,14 @@ class _StampListState extends State<StampList> {
           joinedStamp.message1 = res.data[0];
           joinedStamp.message2 = res.data[1];
           joinedStamp.message3 = res.data[2];
+          joinedStamp.joinedMessages = [res.data[0], res.data[1], res.data[2]];
+          setState(() {
+            stampDetailMessages = [res.data[0], res.data[1], res.data[2]];
+          });
+        });
+      } else {
+        setState(() {
+          stampDetailMessages = [];
         });
       }
     }
@@ -667,10 +763,21 @@ class _StampListState extends State<StampList> {
       print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
       print(res.data);
       print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+
       stampMessage.viewStamp = nowStamp;
       stampMessage.stampMessage1 = res.data[0];
       stampMessage.stampMessage2 = res.data[1];
       stampMessage.stampMessage3 = res.data[2];
+
+      maindata.markers.clear();
+
+      stampMessage.getStampAddress(res.data[0]);
+      stampMessage.getStampAddress(res.data[1]);
+      stampMessage.getStampAddress(res.data[2]);
+
+      stampMessage.createStampMarker(res.data[0]);
+      stampMessage.createStampMarker(res.data[1]);
+      stampMessage.createStampMarker(res.data[2]);
     }).then((value) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => StampDetailView()));
@@ -679,77 +786,71 @@ class _StampListState extends State<StampList> {
     });
   }
 
-  void showJoinedStamp() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-                title: Text('진행 중인 스탬푸'),
-                content: SingleChildScrollView(
-                    child: Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child: Column(
-                          children: [
-                            Image.network(
-                                '${joinedStamp.joinedStamp['stampboard_designurl']}'),
-                            Container(
-                              // width: MediaQuery.of(context).size.width,
-                              height: 100,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: 3,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedStamp = index + 1;
-                                            });
-                                          },
-                                          child: Container(
-                                              width: 50,
-                                              height: 50,
-                                              margin: EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    selectedStamp == index + 1
-                                                        ? Colors.lightBlue
-                                                        : Colors.orange,
-                                                borderRadius:
-                                                    BorderRadius.circular(3),
-                                                border: Border.all(
-                                                    color: Colors.grey.shade400,
-                                                    width: 1),
-                                              ),
-                                              child: Text('${index + 1}번 상자')),
-                                        )
-                                      ],
-                                    );
-                                  }),
-                            ),
-                          ],
-                        ))),
-                actions: <Widget>[
-                  ElevatedButton(
-                      onPressed: selectedStamp == 1
-                          ? () {}
-                          : null, // 여기 조건에 지금 있는 위치가 해당 장소의 근처인지 넣을거임
-                      child: Text('$selectedStamp번 장소 클리어')),
-                  TextButton(
-                      onPressed: () {
-                        selectedStamp = null;
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('OK'))
-                ]);
-          });
-        });
+  Widget joinButton(int index) {
+    // _stampList[index]["stampboard_id"] != stampDetail["stampboard_id"]
+    if (_stampList[index]["isMyclear"] == true) {
+      return Icon(
+        Icons.check_circle,
+        color: Colors.greenAccent,
+        size: 40,
+      );
+    } else if (_stampList[index]["stampboard_id"] ==
+        stampDetail["stampboard_id"]) {
+      return Container(
+          height: 45,
+          width: 110,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 3.3),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ElevatedButton(
+            onPressed: () {
+              cancleStamp(index);
+              maindata.markers.clear();
+            },
+            child: Text(' 취소 ',
+                style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black)),
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.orange),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.orange),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18.0),
+              )),
+            ),
+          ));
+    } else {
+      return Container(
+        height: 45,
+        width: 110,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 3),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            joinStamp(index);
+          },
+          child: Text('참가하기',
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black)),
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            backgroundColor: MaterialStateProperty.all<Color>(
+                Color.fromARGB(255, 206, 233, 255)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            )),
+          ),
+        ),
+      );
+    }
   }
 
   void showNotJoinedStamp() {
@@ -764,5 +865,74 @@ class _StampListState extends State<StampList> {
                 child: Text('No'))
           ]);
         });
+  }
+
+  double getDistance(int index) {
+    double distance = (6371 *
+        acos(cos(vect.radians(myPosition.latitude)) *
+                cos(vect
+                    .radians(stampDetailMessages[index]['messageLatitude'])) *
+                cos(vect.radians(
+                        stampDetailMessages[index]['messageLongitude']) -
+                    vect.radians(myPosition.longitude)) +
+            sin(vect.radians(myPosition.latitude)) *
+                sin(vect
+                    .radians(stampDetailMessages[index]['messageLatitude']))));
+
+    return distance;
+  }
+
+  bool isNearMessage(int? index) {
+    if (index != null && getDistance(index) < 0.03) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  String clearButtonMessage(int? index) {
+    if (stampDetail['userjoinedStampboard_cleardate1'] != null &&
+        stampDetail['userjoinedStampboard_cleardate2'] != null &&
+        stampDetail['userjoinedStampboard_cleardate3'] != null) {
+      return 's';
+    } else if (index == null) {
+      return '선택된 메세지가 없음';
+    } else if (stampDetail['userjoinedStampboard_cleardate${index + 1}'] !=
+        null) {
+      return '이미 클리어';
+    } else if (isNearMessage(index) &&
+        stampDetail['userjoinedStampboard_cleardate${index + 1}'] == null) {
+      return '$index번 클리어하기';
+    } else {
+      return '거리가 멀어용';
+    }
+  }
+
+  void clearMessage(int index) async {
+    var dio = DIO.Dio();
+    //   await dio.post(
+    //       'http://k7a108.p.ssafy.io:8080/stamp/clear/${user.userinfo["userId"]}/${joinedStamp.joinedMessages[index]["messageId"]}');
+    // }
+    await dio
+        .post(
+            'http://k7a108.p.ssafy.io:8080/stamp/clear/${user.userinfo["userId"]}/${stampDetailMessages[index]["messageId"]}')
+        .then((value) {
+      stampDetail['userjoinedStampboard_cleardate${index + 1}'] =
+          DateTime.now().toString();
+    }).then((value) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                content: Text('클리어!'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: Navigator.of(context).pop, child: Text('OK'))
+                ],
+              );
+            });
+          }).then((value) => selectedStamp = null);
+    });
   }
 }

@@ -30,9 +30,10 @@ class _MailCertificationState extends State<MailCertification> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SizedBox.expand(
-          child: Column(
+          child: ListView(
         children: <Widget>[
-          Container(
+          Center(
+              child: Container(
             padding: const EdgeInsets.fromLTRB(0, 100, 0, 0),
             child: Text(
               "최초 가입 시 유효한 이메일 인증을 위해",
@@ -41,8 +42,9 @@ class _MailCertificationState extends State<MailCertification> {
                 fontSize: 15,
               ),
             ),
-          ),
-          Container(
+          )),
+          Center(
+              child: Container(
             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               "가입 시 입력한 이메일로 인증 번호를 발송합니다.",
@@ -51,8 +53,9 @@ class _MailCertificationState extends State<MailCertification> {
                 fontSize: 15,
               ),
             ),
-          ),
-          Container(
+          )),
+          Center(
+              child: Container(
             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               "유효 기간 3분 내로 인증 번호 10자리를 입력해 주세요!",
@@ -61,7 +64,7 @@ class _MailCertificationState extends State<MailCertification> {
                 fontSize: 15,
               ),
             ),
-          ),
+          )),
           Container(
             padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
             child: Row(
@@ -108,6 +111,13 @@ class _MailCertificationState extends State<MailCertification> {
                           });
                         });
                       }
+
+                      Fluttertoast.showToast(
+                          msg: "인증 번호를 메일로 발송하였습니다.",
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: const Color(0xff6E6E6E),
+                          fontSize: 11,
+                          toastLength: Toast.LENGTH_SHORT);
                     },
                     style: ButtonStyle(
                         foregroundColor:
@@ -184,7 +194,6 @@ class _MailCertificationState extends State<MailCertification> {
                                       'http://k7a108.p.ssafy.io:8080/auth/success/${user.userinfo["userId"]}/${numberController.text}');
                                   response = await http.post(url);
 
-                                  print(json.decode(response.body));
                                   if (json.decode(response.body) == true) {
                                     Fluttertoast.showToast(
                                         msg: "인증이 완료되었습니다.",

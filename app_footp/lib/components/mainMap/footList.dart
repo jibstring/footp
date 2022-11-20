@@ -46,6 +46,7 @@ class ListMaker extends GetxController {
         footData[i] = jsonData["message"][i];
       }
     }
+    // print(footData);
   }
 
   void refresh() {
@@ -98,11 +99,18 @@ class _FootListState extends State<FootList> {
                               children: <Widget>[
                                 // 필터
                                 DropdownButton(
+                                  icon: Image.asset("./imgs/화살표_o.png",
+                                    width: 40,
+                                    height:40,
+                                  ),
                                   value: _selectedValue,
                                   items: _filterList.map(
                                     (value) {
                                       return DropdownMenuItem(
-                                          value: value, child: Text(value));
+                                          value: value, child: Text(value,style:TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black)));
                                     },
                                   ).toList(),
                                   onChanged: (value) {
@@ -117,9 +125,9 @@ class _FootListState extends State<FootList> {
                                 ),
                                 // 새로고침
                                 IconButton(
-                                  icon: Icon(
-                                    Icons.refresh,
-                                    size: 40,
+                                 icon: Image.asset("./imgs/새로고침_r.png",width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
                                   ),
                                   onPressed: listmaker.refresh,
                                 ),
@@ -131,7 +139,10 @@ class _FootListState extends State<FootList> {
                                       maindata.setListClean = true;
                                     });
                                   },
-                                  icon: Icon(Icons.search, size: 40),
+                                  icon: Image.asset("./imgs/검색_b.png",width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ],
                             ),
@@ -159,7 +170,10 @@ class _FootListState extends State<FootList> {
                                           searchController.text;
                                     });
                                   },
-                                  icon: Icon(Icons.search, size: 35),
+                                  icon: Image.asset("./imgs/검색_b.png",width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                                 IconButton(
                                   // 취소

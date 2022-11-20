@@ -214,6 +214,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
 
+                // 비밀번호 일치 확인
                 Container(
                   padding: EdgeInsets.fromLTRB(30, 5, 30, 15),
                   child: passwordConfirmed

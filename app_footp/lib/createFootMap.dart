@@ -12,7 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as DIO;
 
-import 'notice.dart';
+import 'notice.dart' as notice;
 
 class CreateFootMap extends StatefulWidget {
   CreateMarker image = Get.put(CreateMarker());
@@ -25,7 +25,7 @@ class _CreateFootMapState extends State<CreateFootMap> {
   ModeController modeController2 = Get.put(ModeController());
   MyPosition myPosition_map = Get.put(MyPosition());
   CreateMarker createMarker = Get.put(CreateMarker());
-  List png = ['asset/normalfoot.png', 'asset/megaphone.png'];
+  List png = ['asset/foot_2.png', 'asset/megaphone_2.png'];
   Marker marker = Marker(markerId: '0', position: LatLng(0, 0));
   UserData user = Get.put(UserData());
 
@@ -176,10 +176,10 @@ class _CreateFootMapState extends State<CreateFootMap> {
     print(data.fields);
     print(createMarker.filePath);
     print('########################################');
+    notice.notice.send(createMarker.newmegaphone);
     if (response.toString() == "success") {
       Fluttertoast.showToast(msg: "확성기를 설치했습니다");
       user.megaCost();
-      Get.put(Notice()).send(createMarker.newmegaphone);
     } else if (response.toString() == "No Cash") {
       Fluttertoast.showToast(msg: "풋포인트를 충전하세요");
     }
@@ -259,15 +259,20 @@ class _CreateFootMapState extends State<CreateFootMap> {
                 children: [
                   CircleAvatar(
                     backgroundImage: AssetImage(png[modeController2.mode]),
+                    backgroundColor: Colors.white10,
                   ),
                   Text("지도를 탭하여 \n발자국을 찍으세요!",
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      )),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'footp')),
                   ElevatedButton(
                     onPressed: onpress,
-                    child: Text("쿵!"),
+                    child: Text(
+                      "쿵!",
+                      style:
+                          TextStyle(fontFamily: 'footp', color: Colors.black),
+                    ),
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.deepPurple[100])),
