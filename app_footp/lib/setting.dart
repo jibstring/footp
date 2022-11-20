@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_footp/myPage.dart';
 import 'package:app_footp/changePassword.dart';
+import 'package:app_footp/passwordCertification.dart';
 import 'package:app_footp/unsigned.dart';
 import 'package:app_footp/components/userSetting/agreement.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
@@ -116,7 +117,8 @@ class SettingPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChangePassword()),
+                  MaterialPageRoute(
+                      builder: (context) => const PasswordCertification()),
                 );
               },
               title: Text('비밀번호 변경'),
