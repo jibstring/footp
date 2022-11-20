@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_footp/myPage.dart';
+import 'package:app_footp/changePassword.dart';
 import 'package:app_footp/unsigned.dart';
 import 'package:app_footp/components/userSetting/agreement.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
@@ -113,7 +114,10 @@ class SettingPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.lock, color: Colors.grey[850]),
               onTap: () {
-                print('');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChangePassword()),
+                );
               },
               title: Text('비밀번호 변경'),
             ),
