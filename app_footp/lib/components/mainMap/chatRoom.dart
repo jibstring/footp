@@ -261,18 +261,15 @@ class _ChatRoomState extends State<ChatRoom> {
                   ],
                 );
               } else {
-                return Flexible(
-                  fit: FlexFit.loose,
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(3, 3, 3, 3),
-                    margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: mkTile(
-                        widget.chatList[widget.chatList.length - index + 1]),
+                return Container(
+                  padding: const EdgeInsets.fromLTRB(3, 3, 3, 3),
+                  margin: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 3),
+                    borderRadius: BorderRadius.circular(20),
                   ),
+                  child: mkTile(
+                      widget.chatList[widget.chatList.length - index + 1]),
                 );
               }
             },
