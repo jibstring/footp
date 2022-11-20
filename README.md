@@ -1,4 +1,3 @@
-
 ![로고](./doc_media/로고_기본.png)
 
 
@@ -26,8 +25,8 @@
 ## 서비스 영상
 ![영상 미리보기](./doc_media/영상미리보기.gif)
 
-[🔗 서비스 소개 영상 보기](https://drive.google.com/file/d/1lq2X2g6CfHrbaAUIg0aTjlhrAjeLky5S/view?usp=sharing)
-
+[🔗 서비스 소개 영상 보기]
+![자율PJT_서울_1반_A103_UCC경진대회](/exec/자율PJT_서울_1반_A108_UCC경진대회.mp4)
 ---
 
 ## 프로젝트 개발환경 및 기술 스택
