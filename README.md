@@ -45,10 +45,10 @@
 ▶ Visual Studio Code  
 ▶ Android Studio  
 
-서버
-▶ AWS
-▶ Docker
-▶ Nginx 
+서버  
+▶ AWS  
+▶ Docker  
+▶ Nginx   
 
 ## 빌드 & 실행
 
