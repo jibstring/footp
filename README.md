@@ -1,4 +1,5 @@
 ![로고](./doc_media/로고_기본.png)
+<img src="./doc_media/로고_기본.png" width="400" height="400"/>
 
 
 # 푸프 Foop
