@@ -228,40 +228,84 @@ class _StampListState extends State<StampList> {
                                     //     ),
                                     //   ),
                                     // ),
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Image.network(_stampList[index]
-                                            ['stampboard_designurl']),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Image.asset(
-                                              'imgs/white_print.png',
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                            ),
-                                            Image.asset(
-                                              'imgs/white_print.png',
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                            ),
-                                            Image.asset(
-                                              'imgs/white_print.png',
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                    child: _stampList[index]["isMyclear"] ==
+                                            false
+                                        ? Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Image.network(_stampList[index]
+                                                  ['stampboard_designurl']),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Image.asset(
+                                                    'imgs/white_print.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/white_print.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/white_print.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.2,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          )
+                                        : Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Image.network(_stampList[index]
+                                                  ['stampboard_designurl']),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Image.asset(
+                                                    'imgs/새발자국_o.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/새발자국_b.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                  ),
+                                                  Image.asset(
+                                                    'imgs/새발자국_o.png',
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                     onTap: () {
                                       if (user.isLogin()) {
                                         loadStampDetail(index);
