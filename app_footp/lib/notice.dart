@@ -34,9 +34,8 @@ class Notice extends GetxController {
               destination: '/notice',
               callback: (frame) {
                 Map<String, dynamic> msgMap = jsonDecode(frame.body.toString());
-                where(msgMap["gatherLatitude"], msgMap["gatherLongitude"]).then(
-                  (value) => showToast(msgMap),
-                );
+                where(msgMap["gatherLatitude"], msgMap["gatherLongitude"]);
+                showToast(msgMap);
               });
         },
       ),
@@ -80,17 +79,17 @@ class Notice extends GetxController {
     Vibration.vibrate(duration: 1000);
     List<String> _category = ['공연', '행사', '맛집', '관광', '친목'];
     Color color = Colors.yellow;
-    switch (map["gatherDesignCode"]) {
-      case "1":
+    switch (map["gatherDesigncode"]) {
+      case 1:
         color = Colors.purple;
         break;
-      case "2":
+      case 2:
         color = Colors.blue;
         break;
-      case "3":
+      case 3:
         color = Colors.green;
         break;
-      case "4":
+      case 4:
         color = Colors.red;
         break;
     }
