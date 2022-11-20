@@ -204,11 +204,24 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
 
       ),
       bottomSheet: Container(
+        height: 70,
+        color: Color.fromARGB(255, 255, 253, 241),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 10),
+            // SizedBox(height: 10),
             ElevatedButton(
+              style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromARGB(255, 164, 185, 237)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        side: BorderSide(width: 3,color: Colors.black) // border line color
+                      )),
+                    ),
               onPressed: isNearMessage(selectedStamp) &&
                       stampDetail[
                               'userjoinedStampboard_cleardate${selectedStamp! + 1}'] ==
@@ -220,14 +233,12 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                       });
                     }
                   : null,
-              child: Text(clearButtonMessage(selectedStamp)),
+              child: Text(clearButtonMessage(selectedStamp),style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),),
             ),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  loadJoinStamp();
-                },
-                child: Text('OK'))
           ],
         ),
       ),
