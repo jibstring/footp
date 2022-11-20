@@ -7,7 +7,18 @@ import 'package:get/get.dart';
 
 import 'custom_class/store_class/store.dart';
 
-const List<Widget> types = <Widget>[Text('발자국'), Text('확성기')];
+const List<Widget> types = <Widget>[
+  Text(
+    '발자국',
+    style: TextStyle(
+        fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'footp'),
+  ),
+  Text(
+    '확성기',
+    style: TextStyle(
+        fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'footp'),
+  )
+];
 
 class CreateFoot extends StatelessWidget {
   const CreateFoot({super.key});
@@ -51,27 +62,29 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
     ModeController modeController1 = Get.put(ModeController());
 
     return Scaffold(
-        appBar: AppBar(
-          title: Image.asset('imgs/logo.png', height: 45),
-          elevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.account_circle,
-                color: Color.fromARGB(255, 153, 181, 229),
-                size: 40,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60.0),
+          child: AppBar(
+            title: Image.asset('imgs/로고_기본.png', height: 45),
+            elevation: 0,
+            backgroundColor: Colors.white,
+            shape: Border(bottom: BorderSide(color: Colors.black, width: 5)),
+            centerTitle: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Image.asset(
+                  'imgs/프로필_b.png',
+                ),
+                padding: const EdgeInsets.only(top: 5, right: 20.0),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyPage()),
+                  );
+                },
               ),
-              padding: const EdgeInsets.only(top: 5, right: 20.0),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyPage()),
-                );
-              },
-            ),
-          ],
+            ],
+          ),
         ),
         body: Padding(
             padding: const EdgeInsets.all(40.0),
@@ -91,13 +104,15 @@ class _ToggleButtonsSampleState extends State<ToggleButtonsSample> {
                         modeController1.press(index);
                       });
                     },
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    selectedBorderColor: Colors.indigo[100],
+                    borderRadius: const BorderRadius.all(Radius.circular(50)),
+                    borderWidth: 5,
+                    borderColor: Colors.black,
+                    selectedBorderColor: Colors.black,
                     selectedColor: Colors.black,
-                    fillColor: Colors.indigo[100],
-                    color: Colors.black45,
+                    fillColor: Colors.amber,
+                    color: Colors.black,
                     constraints: const BoxConstraints(
-                      minHeight: 30.0,
+                      minHeight: 40.0,
                       minWidth: 80.0,
                     ),
                     isSelected: _selectedTypes,
