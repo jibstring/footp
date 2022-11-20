@@ -43,166 +43,137 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
-        
       ),
       body: SingleChildScrollView(
           child: FutureBuilder(
-            future:loadJoinStamp(),
-            builder:(BuildContext context, AsyncSnapshot snapshot){
-            return Column(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  // width: MediaQuery.of(context).size.width * 0.8,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.fitWidth,
-                      image: NetworkImage('${stampDetail['stampboard_designurl']}'),
+              future: loadJoinStamp(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return Column(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      // width: MediaQuery.of(context).size.width * 0.8,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.fitWidth,
+                          image: NetworkImage(
+                              '${stampDetail['stampboard_designurl']}'),
+                        ),
+                      ),
+                      child: Container(
+                          height: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedStamp = 0;
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      selectedStamp == 0 ||
+                                              stampDetail[
+                                                      'userjoinedStampboard_cleardate1'] !=
+                                                  null
+                                          ? Image.asset('imgs/blue_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2)
+                                          : Image.asset('imgs/white_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2),
+                                      stampDetail['userjoinedStampboard_cleardate1'] !=
+                                              null
+                                          ? Image.asset('imgs/heart_color.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2)
+                                          : Text('')
+                                    ],
+                                  )),
+                              GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedStamp = 1;
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      selectedStamp == 1 ||
+                                              stampDetail[
+                                                      'userjoinedStampboard_cleardate2'] !=
+                                                  null
+                                          ? Image.asset('imgs/gray_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2)
+                                          : Image.asset('imgs/white_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2),
+                                      stampDetail['userjoinedStampboard_cleardate2'] !=
+                                              null
+                                          ? Image.asset('imgs/heart_color.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2)
+                                          : Text('')
+                                    ],
+                                  )),
+                              GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedStamp = 2;
+                                    });
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      selectedStamp == 2 ||
+                                              stampDetail[
+                                                      'userjoinedStampboard_cleardate3'] !=
+                                                  null
+                                          ? Image.asset('imgs/orange_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2)
+                                          : Image.asset('imgs/white_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2),
+                                      stampDetail['userjoinedStampboard_cleardate3'] !=
+                                              null
+                                          ? Image.asset('imgs/heart_color.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2)
+                                          : Text('')
+                                    ],
+                                  )),
+                            ],
+                          )),
                     ),
-                  ),
-                child: Container(
-                  height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedStamp = 0;
-                            });
-                          },
-                          child: Stack(
-                            children: [
-                              selectedStamp == 0 ||
-                                      stampDetail[
-                                              'userjoinedStampboard_cleardate1'] !=
-                                          null
-                                  ? Image.asset('imgs/blue_print.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2)
-                                  : Image.asset('imgs/white_print.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2),
-                              stampDetail['userjoinedStampboard_cleardate1'] !=
-                                      null
-                                  ? Image.asset('imgs/heart_color.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2)
-                                  : Text('')
-                            ],
-                          )),
-                      GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedStamp = 1;
-                            });
-                          },
-                          child: Stack(
-                            children: [
-                              selectedStamp == 1 ||
-                                      stampDetail[
-                                              'userjoinedStampboard_cleardate2'] !=
-                                          null
-                                  ? Image.asset('imgs/gray_print.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2)
-                                  : Image.asset('imgs/white_print.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2),
-                              stampDetail['userjoinedStampboard_cleardate2'] !=
-                                      null
-                                  ? Image.asset('imgs/heart_color.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2)
-                                  : Text('')
-                            ],
-                          )),
-                      GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedStamp = 2;
-                            });
-                          },
-                          child: Stack(
-                            children: [
-                              selectedStamp == 2 ||
-                                      stampDetail[
-                                              'userjoinedStampboard_cleardate3'] !=
-                                          null
-                                  ? Image.asset('imgs/orange_print.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2)
-                                  : Image.asset('imgs/white_print.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2),
-                              stampDetail['userjoinedStampboard_cleardate3'] !=
-                                      null
-                                  ? Image.asset('imgs/heart_color.png',
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2)
-                                  : Text('')
-                            ],
-                          )),
-                    ],
-                  )
-                ),
-            ),
-            SizedBox(height: 10),
-            NormalFoot(stampDetailMessages[0]),
-            SizedBox(height: 10),
-            NormalFoot(stampDetailMessages[1]),
-            SizedBox(height: 10),
-            NormalFoot(stampDetailMessages[2]),
-            SizedBox(height: 70),
-            
-          ],
-        );}
-        )
-
-          // Container(
-          //   // width: MediaQuery.of(context).size.width,
-          //   height: 100,
-          //   child: ListView.builder(
-          //       scrollDirection: Axis.horizontal,
-          //       // itemCount: joinedStamp.joinedMessages.length,
-          //       itemCount: stampDetailMessages.length,
-          //       itemBuilder: (BuildContext context, int index) {
-          //         return Row(
-          //           mainAxisAlignment:
-          //               MainAxisAlignment.spaceEvenly,
-          //           children: [
-          //             GestureDetector(
-          //               onTap: () {
-          //                 setState(() {
-          //                   selectedStamp = index;
-          //                 });
-          //               },
-          //               child: Container(
-          //                   width: 50,
-          //                   height: 50,
-          //                   margin: EdgeInsets.all(6),
-          //                   decoration: BoxDecoration(
-          //                     color: selectedStamp == index
-          //                         ? Colors.lightBlue
-          //                         : Colors.orange,
-          //                     borderRadius:
-          //                         BorderRadius.circular(3),
-          //                     border: Border.all(
-          //                         color: Colors.grey.shade400,
-          //                         width: 1),
-          //                   ),
-          //                   child: Text('$index번 상자')),
-          //             )
-          //           ],
-          //         );
-          //       }),
-          // ),
-          // Container(
-          //     child: selectedStamp != null
-          //         ? Text(getDistance(selectedStamp!).toString())
-          //         : Text('hi')),
-
-      ),
+                    SizedBox(height: 10),
+                    NormalFoot(stampDetailMessages[0]),
+                    SizedBox(height: 10),
+                    NormalFoot(stampDetailMessages[1]),
+                    SizedBox(height: 10),
+                    NormalFoot(stampDetailMessages[2]),
+                    SizedBox(height: 70),
+                  ],
+                );
+              })),
       bottomSheet: Container(
         height: 70,
         color: Color.fromARGB(255, 255, 253, 241),
@@ -212,16 +183,16 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
             // SizedBox(height: 10),
             ElevatedButton(
               style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 164, 185, 237)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromARGB(255, 164, 185, 237)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
-                        side: BorderSide(width: 3,color: Colors.black) // border line color
-                      )),
-                    ),
+                        side: BorderSide(
+                            width: 3, color: Colors.black) // border line color
+                        )),
+              ),
               onPressed: isNearMessage(selectedStamp) &&
                       stampDetail[
                               'userjoinedStampboard_cleardate${selectedStamp! + 1}'] ==
@@ -233,11 +204,14 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                       });
                     }
                   : null,
-              child: Text(clearButtonMessage(selectedStamp),style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),),
+              child: Text(
+                clearButtonMessage(selectedStamp),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ],
         ),
@@ -357,7 +331,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
     if (stampDetail['userjoinedStampboard_cleardate1'] != null &&
         stampDetail['userjoinedStampboard_cleardate2'] != null &&
         stampDetail['userjoinedStampboard_cleardate3'] != null) {
-      return 's';
+      return '스탬푸 완성!';
     } else if (index == null) {
       return '선택된 메세지가 없음';
     } else if (stampDetail['userjoinedStampboard_cleardate${index + 1}'] !=
@@ -365,9 +339,9 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
       return '이미 클리어';
     } else if (isNearMessage(index) &&
         stampDetail['userjoinedStampboard_cleardate${index + 1}'] == null) {
-      return '$index번 클리어하기';
+      return '${index + 1}번 클리어하기';
     } else {
-      return '거리가 멀어용';
+      return '근처에 방문해주세요';
     }
   }
 
