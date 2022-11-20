@@ -4,8 +4,10 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:stomp_dart_client/stomp.dart';
@@ -22,6 +24,9 @@ import 'package:app_footp/components/mainMap/gatherList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
 import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:app_footp/createStamp.dart';
+import 'package:app_footp/components/joinStampDetail.dart';
+import 'package:app_footp/components/stampDetailView.dart';
 
 MainData maindata = Get.put(MainData());
 MyPosition location = Get.put(MyPosition());
@@ -41,7 +46,7 @@ class MainData extends GetxController {
   dynamic _mainDataUrl;
   dynamic _mycontroller;
   dynamic _mapEdge;
-  ChatRoom _chatRoom = ChatRoom(0, 0, "");
+  ChatRoom _chatRoom = ChatRoom(0, 0, "", "");
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
   Map<int, double> _distances = {};
@@ -461,6 +466,7 @@ class MainMap extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'footp'
       ),
       home: const MyHomePage(title: 'Footp Main Page'),
     );
@@ -481,6 +487,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = maindata.selectedIndex;
   List<Marker> markers = [];
   DateTime? currentBackPressTime;
+  static final storage = new FlutterSecureStorage();
+  dynamic loginInfo = '';
 
   // 목록
   static List<Widget> widgetOptions = <Widget>[
@@ -501,18 +509,15 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Image.asset('imgs/logo.png', height: 45),
-            backgroundColor: Colors.white,
+            title: Image.asset('imgs/로고_기본.png', height: 50),
+            backgroundColor: Colors.white,//Color.fromARGB(255, 255, 253, 241),
             centerTitle: true,
-            elevation: 0,
+            elevation: 2,
             actions: <Widget>[
               IconButton(
-                icon: Icon(
-                  Icons.account_circle,
-                  color: Color.fromARGB(255, 153, 181, 229),
-                  size: 40,
-                ),
-                padding: const EdgeInsets.only(top: 5.0, right: 20.0),
+                iconSize: 50,
+                icon:Image.asset('imgs/프로필_b.png', ),
+                // padding: const EdgeInsets.only(top: 5.0, right: 20.0),
                 onPressed: () {
                   if (!user.isLogin()) {
                     Navigator.push(
@@ -553,50 +558,76 @@ class _MyHomePageState extends State<MyHomePage> {
                           outlineWidth: 5)
                     ])),
             Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  color: Color.fromARGB(255, 153, 181, 229),
-                  size: 55,
-                ),
-                padding: EdgeInsets.only(
-                    right: 50.0,
-                    bottom: (MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.35),
-                onPressed: () {
-                  if (!user.isLogin()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignIn()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateFoot()),
-                    );
-                  }
-                },
+              alignment: Alignment(0.9, 0.3),
+              
+              child: Container(
+                height:75,
+                width:75,
+                child: 
+                selectedIndex!=2?
+                IconButton(
+                  icon: Image.asset(
+                    'imgs/글쓰기_o.png',
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    width: double.infinity,
+                  ),
+                  onPressed: () {
+                    if (!user.isLogin()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignIn()),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CreateFoot()),
+                      );
+                    }
+                  },
+                ):
+                IconButton(
+                          icon: Image.asset('imgs/글쓰기_o.png', height: 50),
+                          onPressed: () {
+                            if (!user.isLogin()) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignIn()),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const CreateStamp()),
+                              ).then((value) {
+                              });
+                            }
+                          },
+                        ),
               ),
             ),
             widgetOptions.elementAt(selectedIndex),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
+                  items: <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.list),
-                      label: 'List',
+                      icon: Image.asset("./imgs/하단바-메세지_b_off.png", width: 45, height: 45,),
+                      activeIcon:Image.asset("./imgs/하단바-메세지_b.png", width: 45, height: 45,),
+                      label:''
+                      
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.location_pin),
-                      label: 'Alarm',
+                      icon: Image.asset("./imgs/하단바-확성기_o_off.png", width: 45, height: 45,),
+                      activeIcon:Image.asset("./imgs/하단바-확성기_o.png", width: 45, height: 45,),
+                      label:''
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.linear_scale),
-                      label: 'Stamp',
+                      icon: Image.asset("./imgs/하단바-스탬푸_p_off.png", width: 45, height: 45,),
+                      activeIcon:Image.asset("./imgs/하단바-스탬푸_p.png", width: 45, height: 45,),
+                      label:''
                     )
                   ],
                   currentIndex: selectedIndex,
@@ -713,9 +744,36 @@ class _MyHomePageState extends State<MyHomePage> {
     return true;
   }
 
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    loginInfo = await storage.read(key: 'login');
+
+    // user의 정보가 있다면 로그인 후 들어가는 첫 페이지로 넘어가게 합니다.
+    // if (userInfo != null) {
+    //   Navigator.pushNamed(context, '/main');
+    // } else {
+    //   print('로그인이 필요합니다');
+    // }
+    if (loginInfo != null) {
+      LogPrint("$loginInfo");
+      var url =
+          Uri.parse('http://k7a108.p.ssafy.io:8080/auth/info/${loginInfo}');
+      print(url);
+      var response = await http.post(url);
+      var qqqqq = json.decode(response.body);
+      user.login("자동로그인");
+      user.userinfoSet(qqqqq["userInfo"]);
+    }
+  }
+
   void initState() {
     _getImage();
     super.initState();
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
     Timer.periodic(Duration(seconds: 2), (v) {
       if (mounted) {
         setState(() {

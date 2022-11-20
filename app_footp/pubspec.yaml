@@ -58,6 +58,7 @@ dependencies:
   # webview_flutter: ^0.3.24
   # flutter_webview_plugin: ^0.4.0
   log_print: ^0.0.2
+  flutter_secure_storage : ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -94,6 +95,14 @@ flutter:
     - asset/catagories_food.png
     - asset/catagories_friend.png
     - asset/catagories_travel.png
+    - asset/foot_1.png
+    - asset/foot_2.png
+    - asset/megaphon_1.png
+    - asset/megaphone_2.png
+    - asset/media.png
+    - asset/open.png
+    - asset/myself.png
+    - asset/question.png
 
   #   - images/a_dot_ham.jpeg
 
@@ -108,6 +117,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: footp
+      fonts :
+        - asset: asset/font/BMJUA_otf.otf
   # fonts:
   #     - family : edu
   #       fonts :

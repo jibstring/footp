@@ -52,8 +52,6 @@ public class ChatController {
 	@MessageMapping("/notice")
 	public void send(Map map) {
 		logger.info("{} 님의 확성기 방송", map.get("userNickname"));
-		LocalTime now = LocalTime.now(ZoneId.of(("Asia/Seoul")));
-		map.put("now", ""+now.getHour() + ':' + now.getMinute());
 		sendingOperations.convertAndSend("/notice", map);
 	}
     

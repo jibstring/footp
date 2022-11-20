@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart' as DIO;
@@ -96,10 +97,10 @@ class CreateMarker extends GetxController {
   Future<void> createImage(BuildContext context, int i) async {
     if (i == 0) {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/normalfoot.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/foot_2.png");
     } else {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/megaphone.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/megaphone_2.png");
     }
     update();
   }
@@ -137,6 +138,12 @@ class UserData extends GetxController {
   //로그인 토큰저장
   void login(String a) {
     _Token = a;
+    LogPrint("$_Token");
+    update();
+  }
+
+  void logout() {
+    _Token = "";
     update();
   }
 
@@ -148,21 +155,21 @@ class UserData extends GetxController {
       return true;
   }
 
-  void payRequest(){
+  void payRequest() {
     _isPayRequest = true;
   }
 
-  void paySuccess(){
-    _userinfo["userCash"]+=50000;
+  void paySuccess() {
+    _userinfo["userCash"] += 50000;
     update();
   }
 
-  void megaCost(){
-    _userinfo["userCash"]-=50000;
+  void megaCost() {
+    _userinfo["userCash"] -= 50000;
     update();
   }
 
-  void payRequestDone(){
+  void payRequestDone() {
     _isPayRequest = false;
   }
 
@@ -186,8 +193,8 @@ class UserData extends GetxController {
   void userinfoSet(Map a) {
     _userinfo = a;
   }
-  
-  void payurlSet(String url){
+
+  void payurlSet(String url) {
     _Mypayurl = url;
   }
 }
@@ -197,4 +204,41 @@ class Category {
   final String name;
 
   Category({required this.image, required this.name});
+}
+
+class JoinStampInfo extends GetxController {
+  Map _joinedStamp = {};
+  Map<String, dynamic> _message1 = {};
+  Map<String, dynamic> _message2 = {};
+  Map<String, dynamic> _message3 = {};
+  List _joinedMessages = [];
+
+  Map<String, dynamic> get message1 => _message1;
+  Map<String, dynamic> get message2 => _message2;
+  Map<String, dynamic> get message3 => _message3;
+  Map get joinedStamp => _joinedStamp;
+  List get joinedMessages => _joinedMessages;
+
+  set message1(value) => _message1 = value;
+  set message2(value) => _message2 = value;
+  set message3(value) => _message3 = value;
+  set joinedStamp(value) => _joinedStamp = value;
+  set joinedMessages(value) => _joinedMessages = value;
+}
+
+class StampMessage extends GetxController {
+  Map<String, dynamic> _stampMessage1 = {};
+  Map<String, dynamic> _stampMessage2 = {};
+  Map<String, dynamic> _stampMessage3 = {};
+  Map _viewStamp = {};
+
+  Map<String, dynamic> get stampMessage1 => _stampMessage1;
+  Map<String, dynamic> get stampMessage2 => _stampMessage2;
+  Map<String, dynamic> get stampMessage3 => _stampMessage3;
+  Map get viewStamp => _viewStamp;
+
+  set stampMessage1(value) => _stampMessage1 = value;
+  set stampMessage2(value) => _stampMessage2 = value;
+  set stampMessage3(value) => _stampMessage3 = value;
+  set viewStamp(value) => _viewStamp = value;
 }

@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 
 import com.ssafy.back_footp.request.KakaoLoginReq;
 import com.ssafy.back_footp.response.KakaoLoginResponse;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,18 @@ import org.springframework.web.util.WebUtils;
 import com.ssafy.back_footp.entity.Mail;
 import com.ssafy.back_footp.entity.User;
 import com.ssafy.back_footp.jwt.JwtService;
+import com.ssafy.back_footp.repository.ChatBlockRepository;
+import com.ssafy.back_footp.repository.GatherLikeRepository;
+import com.ssafy.back_footp.repository.GatherRepository;
+import com.ssafy.back_footp.repository.GatherSpamRepository;
+import com.ssafy.back_footp.repository.MessageLikeRepository;
+import com.ssafy.back_footp.repository.MessageRepository;
+import com.ssafy.back_footp.repository.MessageSpamRepository;
+import com.ssafy.back_footp.repository.StampboardLikeRepository;
+import com.ssafy.back_footp.repository.StampboardRepository;
+import com.ssafy.back_footp.repository.StampboardSpamRepository;
+import com.ssafy.back_footp.repository.UserJoinedGatherRepository;
+import com.ssafy.back_footp.repository.UserJoinedStampboardRepository;
 import com.ssafy.back_footp.repository.UserRepository;
 import com.ssafy.back_footp.request.UserSignInReq;
 import com.ssafy.back_footp.request.UserSignUpReq;
@@ -61,6 +75,33 @@ public class AuthController {
 	UserRepository userRepository;
 	@Autowired
 	AuthService authService;
+	
+	@Autowired
+	MessageLikeRepository messageLikeRepository;
+	@Autowired
+	MessageSpamRepository messageSpamRepository;
+	@Autowired
+	StampboardLikeRepository stampboardLikeRepository;
+	@Autowired
+	StampboardSpamRepository stampboardSpamRepository;
+	@Autowired
+	GatherLikeRepository gatherLikeRepository;
+	@Autowired
+	GatherSpamRepository gatherSpamRepository;
+	@Autowired
+	ChatBlockRepository chatBlockRepository;
+	@Autowired
+	UserJoinedGatherRepository userJoinedGatherRepository;
+	@Autowired
+	UserJoinedStampboardRepository userJoinedStampboardRepository;
+	@Autowired
+	StampboardRepository stampboardRepository;
+	@Autowired
+	MessageRepository messageRepository;
+	@Autowired
+	GatherRepository gatherRepository;
+	
+	
 
 	@PostMapping("/signup")
 	@ApiOperation(value = "회원 등록")
@@ -70,9 +111,8 @@ public class AuthController {
 
 		User userEntity = User.builder().userEmail(user.getUserEmail()).userNickname(user.getUserNickname())
 				.userPassword(EncryptionUtils.encryptSHA256(user.getUserPassword())).userCash(0).userEmailKey("N")
-				.userIsplaying((long)-1).userStampclearnum(0).userStampcreatenum(0).userNickname(user.getUserNickname())
-				.userAutologin(false).userSessionkey("none")
-				.build();
+				.userIsplaying((long) -1).userStampclearnum(0).userStampcreatenum(0)
+				.userNickname(user.getUserNickname()).userAutologin(false).userSessionkey("none").build();
 
 		try {
 			// 이미 등록된 이메일이 아니라면
@@ -93,31 +133,12 @@ public class AuthController {
 
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
-	
-	
-//	@PostMapping("/autoCheck")
-//	@ApiOperation(value = "오토로그인 박스체크")
-//	public ResponseEntity<Integer> autoCheck(@RequestBody UserSignInReq user){
-//		
-//		if(userRepository.existsByUserEmail(user.getUserEmail())) {
-//		
-//		User userInfo = userRepository.findByUserEmailAndUserPassword(user.getUserEmail(), user.getUserPassword());
-//		
-//		userInfo.setUserAutologin(true);
-//		
-//		userRepository.save(userInfo);
-//		}
-//		
-//		return
-//		
-//		
-//		
-//	}
 
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인")
 	public ResponseEntity<Map<String, Object>> signIn(
-			@RequestBody @ApiParam(value = "이메일, 비밀번호로 로그인", required = true) UserSignInReq user, HttpSession session, HttpServletResponse response) throws Exception {
+			@RequestBody @ApiParam(value = "이메일, 비밀번호로 로그인", required = true) UserSignInReq user, HttpSession session,
+			HttpServletResponse response) throws Exception {
 		Map<String, Object> result = new HashMap<>();
 
 		HttpStatus status = null;
@@ -132,24 +153,24 @@ public class AuthController {
 				result.put("Authorization", token);
 				result.put("message", SUCCESS);
 				status = HttpStatus.ACCEPTED;
-				
-				if(user.getUserAutologin()) {
-					
-					Cookie cookie = new Cookie( "loginCookie", session.getId());
+
+				if (user.getUserAutologin()) {
+
+					Cookie cookie = new Cookie("loginCookie", session.getId());
 					cookie.setPath("/");
-					cookie.setMaxAge(60*60*24*30);
-					
+					cookie.setMaxAge(60 * 60 * 24 * 30);
+
 					response.addCookie(cookie);
-					
-					LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
-					System.out.println(loginUser.getUserId()+" "+ session.getId()+ " " + sessionLimit);
+
+					LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60 * 60 * 24 * 30);
+					System.out.println(loginUser.getUserId() + " " + session.getId() + " " + sessionLimit);
 					authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
-					
+
 					loginUser.setUserAutologin(true);
-					
+
 					userRepository.save(loginUser);
 				}
-				
+
 			} else {
 				result.put("message", FAIL);
 				status = HttpStatus.ACCEPTED;
@@ -163,7 +184,7 @@ public class AuthController {
 
 		return new ResponseEntity<Map<String, Object>>(result, status);
 	}
-	
+
 	@GetMapping("/valid")
 	@ApiOperation(value = "토큰 유효성 검사")
 	public ResponseEntity<Map<String, Object>> tokenValidation(HttpServletRequest request) {
@@ -178,32 +199,32 @@ public class AuthController {
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
-	
 	@GetMapping("/logout")
 	@ApiOperation(value = "회원 로그아웃")
-	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
+	public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpSession session,
+			HttpServletResponse response) throws Exception {
 
 		logger.debug("logout - 호출");
 		Map<String, Object> result = new HashMap<>();
 
 		if (jwtService.isUsable(request.getHeader("Authorization"))) {
-			
+
 			Object obj = session.getAttribute("login");
-			User user = (User)obj;
+			User user = (User) obj;
 			result.put("Authorization", null);
 			result.put("message", SUCCESS);
-			session.removeAttribute("login");
-			session.invalidate();
-			
-			Cookie loginCookie = WebUtils.getCookie(request, "loginCookie");
-			if( loginCookie !=null) {
-				loginCookie.setPath("/");
-				loginCookie.setMaxAge(0);
-				response.addCookie(loginCookie);
-				
-				LocalDateTime date = LocalDateTime.now();
-				authService.KeepLogin(user.getUserId(), session.getId(), date);
-			}
+//			session.removeAttribute("login");
+//			session.invalidate();
+
+//			Cookie loginCookie = WebUtils.getCookie(request, "loginCookie");
+//			if( loginCookie !=null) {
+//				loginCookie.setPath("/");
+//				loginCookie.setMaxAge(0);
+//				response.addCookie(loginCookie);
+//				
+//				LocalDateTime date = LocalDateTime.now();
+//				authService.KeepLogin(user.getUserId(), session.getId(), date);
+//			}
 		} else {
 			result.put("message", FAIL);
 		}
@@ -357,7 +378,8 @@ public class AuthController {
 	// kakao 소셜 로그인
 	@ApiOperation(value = "Kakao 로그인")
 	@PostMapping(value = "/kakao")
-	public ResponseEntity<Map<String, Object>> kakaoAuthRequest(@RequestBody KakaoLoginReq kakaoLoginReq, HttpSession session, HttpServletResponse response){
+	public ResponseEntity<Map<String, Object>> kakaoAuthRequest(@RequestBody KakaoLoginReq kakaoLoginReq,
+			HttpSession session, HttpServletResponse response) {
 		Map<String, Object> result = new HashMap<>();
 		HttpStatus status = null;
 
@@ -370,19 +392,18 @@ public class AuthController {
 
 			User loginUser = kakaoLoginResponse.getUser();
 
-			if(loginUser.getUserAutologin()) {
+			if (loginUser.getUserAutologin()) {
 
-				Cookie cookie = new Cookie( "loginCookie", session.getId());
+				Cookie cookie = new Cookie("loginCookie", session.getId());
 				cookie.setPath("/");
-				cookie.setMaxAge(60*60*24*30);
+				cookie.setMaxAge(60 * 60 * 24 * 30);
 
 				response.addCookie(cookie);
 
-				LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60*60*24*30);
+				LocalDateTime sessionLimit = LocalDateTime.now().plusSeconds(60 * 60 * 24 * 30);
 				authService.KeepLogin(loginUser.getUserId(), session.getId(), sessionLimit);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 			logger.error("로그인 에러 : {}", e);
 			result.put("message", e.getMessage());
@@ -390,5 +411,22 @@ public class AuthController {
 		}
 
 		return new ResponseEntity<Map<String, Object>>(result, status);
+	}
+
+	@PostMapping("/reset/{Password}/{userId}")
+	@ApiOperation(value = "비밀번호 재설정 시 입력받은 비밀번호가 로그인된 유저 정보와 일치하는지 확인")
+	public ResponseEntity<Boolean> checkMyPassword(@PathVariable String Password, @PathVariable long userId) {
+
+		
+		boolean result = false;
+		if (userRepository.findById(userId).isPresent()) {
+			User user = userRepository.findByUserId(userId);
+			
+			if (user.getUserPassword().equals(EncryptionUtils.encryptSHA256(Password))) {
+				result = true;
+			}
+		}
+
+		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 	}
 }

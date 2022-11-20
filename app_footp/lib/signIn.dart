@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:app_footp/createFoot.dart';
 import 'package:app_footp/mainMap.dart';
@@ -11,8 +10,10 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:log_print/log_print.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -26,7 +27,9 @@ class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   UserData user = Get.put(UserData());
-  bool? _isAutoLogin = false;
+  bool _isAutoLogin = false;
+  static final storage = new FlutterSecureStorage();
+  dynamic loginInfo = '';
 
   Future signIn() async {
     var dio = Dio();
@@ -75,6 +78,10 @@ class _SignInState extends State<SignIn> {
       user.userinfoSet(qqqqq["userInfo"]);
       print("@@@@@@@@@@#################@@@@@@@@@@@${user.userinfo}");
 
+      if (_isAutoLogin) {
+        await storage.write(key: "login", value: "$aa");
+      }
+
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => mainMap()));
 
@@ -90,7 +97,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white, //fromARGB(245,239, 240, 253),
+        backgroundColor: Color.fromARGB(255, 255, 253, 241), //fromARGB(245,239, 240, 253),
         body: Padding(
             padding: const EdgeInsets.fromLTRB(20, 70, 20, 20),
             child: Center(
@@ -99,9 +106,10 @@ class _SignInState extends State<SignIn> {
                 //앱로고
                 Container(
                   height: 130,
-                  child: Image.asset("./imgs/logo.png"),
+                  child: Image.asset("./imgs/로고_기본.png"),
                 ),
                 // 앱 이름
+                SizedBox(height: 10,),
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
@@ -111,27 +119,71 @@ class _SignInState extends State<SignIn> {
                         SizedBox(
                           width: 10,
                         ),
-                        const Text(
-                          '푸',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 171, 112),
-                            // fontWeight: FontWeight.bold,
-                            fontSize: 40,
-                            // fontFamily: "edu"
-                          ),
+                        // Stack(
+                        //   children: <Widget>[
+                        //     // Stroked text as border.
+                        //     Text(
+                        //       '푸',
+                        //       style: TextStyle(
+                        //         fontSize: 50,
+                        //         foreground: Paint()
+                        //           ..style = PaintingStyle.stroke
+                        //           ..strokeWidth = 8
+                        //           ..color = Colors.black,
+                        //       ),
+                        //     ),
+                        //     // Solid text as fill.
+                        //     Text(
+                        //       '푸',
+                        //       style: TextStyle(
+                        //         fontSize: 50,
+                        //         color: Colors.orange,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // SizedBox(
+                        //   width: 5,
+                        // ),
+                        // Stack(
+                        //   children: <Widget>[
+                        //     // Stroked text as border.
+                        //     Text(
+                        //       '프',
+                        //       style: TextStyle(
+                        //         fontSize: 50,
+                        //         foreground: Paint()
+                        //           ..style = PaintingStyle.stroke
+                        //           ..strokeWidth = 8
+                        //           ..color = Colors.black,
+                        //       ),
+                        //     ),
+                        //     // Solid text as fill.
+                        //     Text(
+                        //       '프',
+                        //       style: TextStyle(
+                        //         fontSize: 50,
+                        //         color: Colors.orange,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        Text(
+                              '푸',
+                              style: TextStyle(
+                                fontSize: 50,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),
                         ),
-                        SizedBox(
-                          width: 2,
-                        ),
-                        const Text(
-                          '프',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 164, 185, 237),
-                            // fontWeight: FontWeight.bold,
-                            fontSize: 40,
-                            // fontFamily: "edu"
-                          ),
-                        ),
+                        Text(
+                              '프',
+                              style: TextStyle(
+                                fontSize: 50,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w800,
+                              ),),
+                              
                       ],
                     )),
 
@@ -144,20 +196,33 @@ class _SignInState extends State<SignIn> {
                 Container(
                   padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: TextField(
+                    style: TextStyle(fontSize: 20.0,  color: Colors.black),
                       controller: emailController,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.black), //<-- SEE HERE
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                         labelText: '이메일',
                       )),
                 ),
+                SizedBox(
+                  height: 15,
+                ),
                 //비밀번호 입력창
                 Container(
-                  padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: TextField(
+                    style: TextStyle(fontSize: 20.0,  color: Colors.black),
                     obscureText: obscurePassword,
                     controller: passwordController,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 3, color: Colors.black), //<-- SEE HERE
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                         labelText: '비밀번호',
                         suffixIcon: obscurePassword == true
                             ? IconButton(
@@ -185,7 +250,7 @@ class _SignInState extends State<SignIn> {
                 Row(
                   children: [
                     SizedBox(
-                      width: 20,
+                      width: 30,
                     ),
                     Checkbox(
                         value: _isAutoLogin,
@@ -193,23 +258,24 @@ class _SignInState extends State<SignIn> {
                             borderRadius: BorderRadius.circular(15)),
                         onChanged: (Value) {
                           setState(() {
-                            _isAutoLogin = Value;
+                            _isAutoLogin = Value!;
                           });
                         }),
-                    Text("로그인 상태 유지"),
+                    Text("로그인 상태 유지",style:TextStyle(fontSize: 18)),
                   ],
                 ),
-
+                SizedBox(height: 10,),
                 // 로그인 버튼
                 Container(
-                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                  height: 80, //버튼의 세로 길이
+                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                  height: 60, //버튼의 세로 길이
                   child: ElevatedButton(
                     child: const Text(
                       '로그인',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 17,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     onPressed: () {
@@ -223,20 +289,22 @@ class _SignInState extends State<SignIn> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
-                        //side: BorderSide(color: Colors.red) // border line color
+                        side: BorderSide(width: 3,color: Colors.black) // border line color
                       )),
                     ),
                   ),
                 ),
+                SizedBox(height: 15,),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                  height: 70, //버튼의 세로 길이
+                  padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                  height: 60, //버튼의 세로 길이
                   child: ElevatedButton(
                     child: const Text(
                       '회원가입',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 17,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     onPressed: () {
@@ -251,7 +319,7 @@ class _SignInState extends State<SignIn> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
-                        //side: BorderSide(color: Colors.red) // border line color
+                        side: BorderSide(width: 3,color: Colors.black) // border line color
                       )),
                     ),
                   ),

@@ -135,6 +135,7 @@ public class UserService {
         return "success";
     }
 
+    @Transactional
     public String deleteUser(long uid){
         User usr = userRepository.findById(uid).get();
 
@@ -154,16 +155,31 @@ public class UserService {
         // 확성기 삭제
         gatherLikeRepository.deleteAllByUserId(usr);
         gatherSpamRepository.deleteAllByUserId(usr);
+        
+        List<Gather> glist = gatherRepository.findAllByUserId(usr);
+        for(Gather g : glist) {
+        	gatherLikeRepository.deleteAllByGatherId(g);
+        	gatherSpamRepository.deleteAllByGatherId(g);
+            userJoinedGatherRepository.deleteAllByGatherId(g);
+        }
+        
         gatherRepository.deleteAllByUserId(usr);
         userJoinedGatherRepository.deleteAllByUserId(usr);
 
         // 메세지 삭제
         messageLikeRepository.deleteAllByUserId(usr);
         messageSpamRepository.deleteAllByUserId(usr);
+        
+        List<Message> mslist = messageRepository.findAllByUserId(usr);
+        
+        for(Message ms : mslist) {
+        	messageLikeRepository.deleteAllByMessageId(ms);
+        	messageSpamRepository.deleteAllByMessageId(ms);
+        }
         messageRepository.deleteAllByUserId(usr);
 
         // 유저 삭제
-        userRepository.deleteByUserId(usr);
+        userRepository.deleteByUserId(usr.getUserId());
 
         return "success";
     }
