@@ -114,7 +114,6 @@ class MainData extends GetxController {
       case 0:
         _mainDataUrl = Uri.parse('$baseURL/foot/list/$filter/$apiKey');
         _dataList = await getMainData();
-        print(dataList);
 
         try {
           _listsize = await _dataList["message"].length;
@@ -175,11 +174,6 @@ class MainData extends GetxController {
               .catchError((e) {
                 print(e);
               });
-
-          print(dataList[0][0]);
-          print(dataList[0][1]);
-          print(dataList[0][2]);
-          print(listsize);
 
           for (int i = 0; i < _listsize; i++) {
             getAddress(i);
