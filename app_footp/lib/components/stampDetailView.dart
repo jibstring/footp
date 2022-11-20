@@ -69,11 +69,9 @@ class _StampDetailViewState extends State<StampDetailView> {
           child: Column(
             children: [
               Container(
-                color:Colors.red,
-                height: 300,
-                child: Center(
-                  child: Text('지도들어가요'),
-                ),
+                height: 400,
+                child: Image.network(
+                    'https://image.zdnet.co.kr/2021/01/15/e3b89e63a5a4a7d0bd44e4e9bb06e54c.png'),
               ),
               // Container(child: Text('제목')),
               SizedBox(height: 20),
