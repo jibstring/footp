@@ -56,6 +56,7 @@ class _StampListState extends State<StampList> {
 
   @override
   Widget build(BuildContext context) {
+    // loadJoinStamp();
     return DraggableScrollableSheet(
       initialChildSize: 0.3,
       minChildSize: 0.3,
@@ -109,28 +110,7 @@ class _StampListState extends State<StampList> {
                             loadJoinStamp();
                           },
                         ),
-                        // 새로운 스탬푸 작성
-                        IconButton(
-                          icon: Image.asset('imgs/스탬푸작성_p.png', height: 50),
-                          onPressed: () {
-                            if (!user.isLogin()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignIn()),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const CreateStamp()),
-                              ).then((value) {
-                                loadStampList();
-                                loadJoinStamp();
-                              });
-                            }
-                          },
-                        ),
+                        
                         IconButton(
                             onPressed: () {
                               stampDetail["stampboard_id"] == null
