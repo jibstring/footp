@@ -1,5 +1,4 @@
-![로고](./doc_media/로고_기본.png)
-<img src="./doc_media/로고_기본.png" width="400" height="400"/>
+<img src="https://lab.ssafy.com/s07-final/S07P31A108/-/raw/master/doc_media/%EB%A1%9C%EA%B3%A0_%EA%B8%B0%EB%B3%B8.png" width="30%" height="30%"/>
 
 
 # 푸프 Foop
