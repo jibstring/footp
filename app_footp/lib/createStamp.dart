@@ -237,6 +237,7 @@ class _CreateStampFormState extends State<CreateStampForm> {
                                       borderRadius: BorderRadius.circular(20),
                                       ),
                   child: Column(children: <Widget>[
+                    SizedBox(height: 10,),
                     Text('나의 글 목록',
                       style:
                         TextStyle(fontSize: 28),
