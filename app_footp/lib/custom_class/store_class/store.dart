@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:app_footp/mainMap.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:dio/dio.dart' as DIO;
 
@@ -97,10 +99,10 @@ class CreateMarker extends GetxController {
   Future<void> createImage(BuildContext context, int i) async {
     if (i == 0) {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/normalfoot.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/foot_2.png");
     } else {
       _marker.icon =
-          await OverlayImage.fromAssetImage(assetName: "asset/megaphone.png");
+          await OverlayImage.fromAssetImage(assetName: "asset/megaphone_2.png");
     }
     update();
   }
@@ -141,7 +143,8 @@ class UserData extends GetxController {
     LogPrint("$_Token");
     update();
   }
-  void logout(){
+
+  void logout() {
     _Token = "";
     update();
   }
@@ -210,16 +213,19 @@ class JoinStampInfo extends GetxController {
   Map<String, dynamic> _message1 = {};
   Map<String, dynamic> _message2 = {};
   Map<String, dynamic> _message3 = {};
+  List _joinedMessages = [];
 
   Map<String, dynamic> get message1 => _message1;
   Map<String, dynamic> get message2 => _message2;
   Map<String, dynamic> get message3 => _message3;
   Map get joinedStamp => _joinedStamp;
+  List get joinedMessages => _joinedMessages;
 
   set message1(value) => _message1 = value;
   set message2(value) => _message2 = value;
   set message3(value) => _message3 = value;
   set joinedStamp(value) => _joinedStamp = value;
+  set joinedMessages(value) => _joinedMessages = value;
 }
 
 class StampMessage extends GetxController {
@@ -227,14 +233,93 @@ class StampMessage extends GetxController {
   Map<String, dynamic> _stampMessage2 = {};
   Map<String, dynamic> _stampMessage3 = {};
   Map _viewStamp = {};
+  String _markerString = '';
 
   Map<String, dynamic> get stampMessage1 => _stampMessage1;
   Map<String, dynamic> get stampMessage2 => _stampMessage2;
   Map<String, dynamic> get stampMessage3 => _stampMessage3;
   Map get viewStamp => _viewStamp;
+  String get markerString => _markerString;
 
   set stampMessage1(value) => _stampMessage1 = value;
   set stampMessage2(value) => _stampMessage2 = value;
   set stampMessage3(value) => _stampMessage3 = value;
   set viewStamp(value) => _viewStamp = value;
+  set markerString(value) => _markerString = value;
+
+  void getStampAddress(Map<String, dynamic> message) async {
+    String lat = message["messageLatitude"].toString();
+    String lng = message["messageLongitude"].toString();
+
+    Map<String, String> clientkey = {
+      "X-NCP-APIGW-API-KEY-ID": "9foipum14s",
+      "X-NCP-APIGW-API-KEY": "scvqRxQKoZo5vULsFL1vrE56tqKcOl7u1z16iWz2"
+    };
+
+    if (maindata.address.containsKey(message["messageId"])) {
+      // print("continue");
+    } else {
+      http.Response response = await http.get(
+          Uri.parse(
+              "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+          headers: clientkey);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsondata["status"]["code"] == 0) {
+          if (jsondata["results"].length > 1) {
+            maindata.address[message["messageId"]] =
+                "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+          } else {
+            maindata.address[message["messageId"]] =
+                "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+          }
+        } else {
+          maindata.address[message["messageId"]] = "";
+        }
+        update();
+      } else {
+        print(response.statusCode);
+        throw 'getAddress() error';
+      }
+    }
+  }
+
+  void createStampMarker(Map<String, dynamic> message) {
+    int like = (message["messageLikenum"] / 5).toInt();
+    int color = 0;
+    _markerString =
+        "${message["userNickname"]}      \u{2764} ${message["messageLikenum"].toString()}\n${message["messageText"]}\n\n${maindata.address[message["messageId"]] ??= ""}\n${changeDate(message["messageWritedate"])}";
+
+    if (like >= 45) {
+      like = 44;
+    }
+
+    if (message["isBlurred"] == true) {
+      color = 7;
+    } else {
+      color = message["messageId"] % 7;
+    }
+
+    Marker marker = Marker(
+        markerId: message["messageId"].toString(),
+        position:
+            LatLng(message["messageLatitude"], message["messageLongitude"]),
+        icon: maindata.footImage[color],
+        width: 5 * (6 + like),
+        height: 5 * (6 + like),
+        onMarkerTab: (marker, iconSize) {
+          // print("Hi ${dataList["message"][idx]["messageId"]}");
+        },
+        infoWindow: markerString);
+
+    maindata.markers.add(marker);
+    update();
+  }
+
+  String changeDate(String date) {
+    String newDate = "";
+    newDate = date.replaceAll('T', "  ");
+
+    return newDate;
+  }
 }

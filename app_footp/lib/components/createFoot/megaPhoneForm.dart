@@ -180,8 +180,13 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("충전하시겠습니까?",style: TextStyle(fontSize: 20,)),
-                  SizedBox(height: 10,),
+                  Text("충전하시겠습니까?",
+                      style: TextStyle(
+                        fontSize: 20,
+                      )),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     "나의 풋포인트 : ${user.userinfo['userCash']}",
                     style: TextStyle(fontSize: 15, color: Colors.blue),
@@ -258,8 +263,8 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
           activeColor: Colors.blue[200],
           disableColor: Colors.white,
           animation: true,
-          borderRadius: 10,
-          width: 250,
+          borderRadius: 20,
+          width: 270,
           indicatorBottom: false,
           onPageChanged: (value) {
             setState(() {
@@ -271,112 +276,139 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
         SizedBox(height: 20),
         Text(
           "$_categoryresult",
-          style: TextStyle(fontSize: 20, color: Colors.blue),
+          style: TextStyle(
+              fontSize: 20, color: Colors.amber[900], fontFamily: 'footp'),
         ),
         SizedBox(height: 20),
-        TextField(
-          maxLines: 6,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            alignLabelWithHint: true,
-            hintText: '메세지를 입력하세요',
-          ),
-          controller: myMegaText,
-        ),
         Container(
-          height: 120,
-          width: 400,
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 1,
-              color: Colors.grey,
+            height: 250,
+            width: 400,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 8,
+                color: Colors.black,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: allowedFileTypes,
-                  );
-                  if (result != null) {
-                    print('########## ${result.files.first}');
-                    PlatformFile file = result.files.single;
-                    String fileName = result.files.first.name;
-                    // Uint8List fileBytes = result.files.first.bytes!;
-                    debugPrint(fileName);
-                    filePath = result.files.first.path;
-                    // var multipartFile = await MultipartFile.fromFile(
-                    //   file.path,
-                    // );
-                    print('-----------------------------------');
-                    print(filePath);
-                    createMarker.filePath = filePath!;
-                    print('--------------------------------------');
-                    setState(() {
-                      showFileName = "Now File Name: $fileName";
-                    });
-                  }
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Find and Upload",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        fontSize: 20,
+            child: Column(
+              children: [
+                TextField(
+                  autofocus: false,
+                  maxLines: 7,
+                  style: TextStyle(fontFamily: 'footp'),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    // border: const OutlineInputBorder(
+                    //   borderSide: BorderSide(color: Colors.black,width: 10),
+                    //   borderRadius: const BorderRadius.all(Radius.circular(0)),
+                    // ),
+                    alignLabelWithHint: true,
+                    hintText: '  메세지를 입력하세요',
+                  ),
+                  controller: myMegaText,
+                ),
+                Divider(
+                  height: 5,
+                  color: Colors.black,
+                  thickness: 5,
+                  indent: 5,
+                  endIndent: 5,
+                ),
+                SizedBox(height: 20),
+                Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 20,
                       ),
-                    ),
-                    Icon(
-                      Icons.upload_rounded,
-                      color: Colors.grey,
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                "$allowedFileTypes",
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                showFileName,
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
-              Container(
-                  child: TextButton(
-                      child: Text(
-                        '파일 삭제',
-                        style: TextStyle(color: Colors.red),
+                      InkWell(
+                        onTap: () async {
+                          FilePickerResult? result =
+                              await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: allowedFileTypes,
+                          );
+                          if (result != null) {
+                            print('########## ${result.files.first}');
+                            PlatformFile file = result.files.single;
+                            String fileName = result.files.first.name;
+                            // Uint8List fileBytes = result.files.first.bytes!;
+                            debugPrint(fileName);
+                            filePath = result.files.first.path;
+                            // var multipartFile = await MultipartFile.fromFile(
+                            //   file.path,
+                            // );
+                            print('-----------------------------------');
+                            print(filePath);
+                            createMarker.filePath = filePath!;
+                            print('--------------------------------------');
+                            setState(() {
+                              showFileName = "Now File Name: $fileName";
+                            });
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          // crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset("asset/media.png")
+                            // Text(
+                            //   "Find and Upload",
+                            //   style: TextStyle(
+                            //     fontWeight: FontWeight.bold,
+                            //     color: Colors.grey,
+                            //     fontSize: 20,
+                            //   ),
+                            // ),
+                            // Icon(
+                            //   Icons.upload_rounded,
+                            //   // color: Colors.grey,
+                            // ),
+                          ],
+                        ),
                       ),
-                      onPressed: (() {
-                        setState(() {
-                          this.filePath = '';
-                          this.showFileName = '';
-                        });
-                      })))
-            ],
-          ),
-        ),
+                      // Text(
+                      //   "$allowedFileTypes",
+                      //   style: TextStyle(
+                      //     color: Colors.grey,
+                      //   ),
+                      // ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Flexible(
+                        child: Text(
+                          showFileName,
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      if (filePath != '')
+                        Container(
+                            child: TextButton(
+                                child: Text(
+                                  'X',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: (() {
+                                  setState(() {
+                                    this.filePath = '';
+                                    this.showFileName = '';
+                                  });
+                                })))
+                    ]),
+              ],
+            )),
         SizedBox(height: 20),
         CupertinoButton(
-          child: Text("$_timeresult"),
+          child: Text(
+            "$_timeresult",
+            style: TextStyle(fontFamily: 'footp', color: Colors.amber[900]),
+          ),
           onPressed: () {
             _neverSatisfied(context);
           },
@@ -455,7 +487,7 @@ class _megaPhoneFormState extends State<megaPhoneForm> {
                   MaterialPageRoute(builder: (context) => CreateFootMap()));
             }
           },
-          icon: Image.asset('asset/megaphone.png'),
+          icon: Image.asset('asset/megaphone_2.png'),
           iconSize: 75,
         )),
       ],

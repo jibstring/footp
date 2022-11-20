@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as DIO;
 import 'package:flutter/material.dart';
 import 'package:log_print/log_print.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -24,6 +25,9 @@ import 'package:app_footp/components/mainMap/gatherList.dart';
 import 'package:app_footp/components/mainMap/stampList.dart';
 import 'package:app_footp/components/mainMap/chatRoom.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
+import 'package:app_footp/createStamp.dart';
+import 'package:app_footp/components/joinStampDetail.dart';
+import 'package:app_footp/components/stampDetailView.dart';
 
 MainData maindata = Get.put(MainData());
 MyPosition location = Get.put(MyPosition());
@@ -41,9 +45,10 @@ class MainData extends GetxController {
   String _markerString = '';
   String _searchKeyword = '';
   dynamic _mainDataUrl;
+  dynamic _mainDataUrl2;
   dynamic _mycontroller;
   dynamic _mapEdge;
-  ChatRoom _chatRoom = ChatRoom(0, 0, "");
+  ChatRoom _chatRoom = ChatRoom(0, 0, "", "");
   List<Marker> _markers = [];
   List<OverlayImage> _footImage = [];
   Map<int, double> _distances = {};
@@ -62,6 +67,7 @@ class MainData extends GetxController {
   String get searchKeyword => _searchKeyword;
   String get markerString => _markerString;
   dynamic get mainDataUrl => _mainDataUrl;
+  dynamic get mainDataUrl2 => _mainDataUrl2;
   dynamic get mycontroller => _mycontroller;
   dynamic get mapEdge => _mapEdge;
   ChatRoom get chatRoom => _chatRoom;
@@ -143,6 +149,38 @@ class MainData extends GetxController {
         break;
 
       case 2:
+        var dio = DIO.Dio();
+
+        _mainDataUrl = Uri.parse('$baseURL/stamp/joinList/$userid');
+        _dataList = await getMainData();
+
+        String stampId1 = dataList['stampboard_message1'].toString();
+        String stampId2 = dataList['stampboard_message2'].toString();
+        String stampId3 = dataList['stampboard_message3'].toString();
+
+        if (stampId1 == "0") {
+        } else {
+          await dio
+              .post('$baseURL/stamp/info/$stampId1/$stampId2/$stampId3/$userid')
+              .then((res) {
+                _dataList = [res.data];
+                try {
+                  _listsize = _dataList[0].length;
+                } catch (e) {
+                  _listsize = 0;
+                }
+              })
+              .then((value) {})
+              .catchError((e) {
+                print(e);
+              });
+
+          for (int i = 0; i < _listsize; i++) {
+            getAddress(i);
+            createMarker(i);
+          }
+        }
+
         break;
 
       default:
@@ -186,7 +224,7 @@ class MainData extends GetxController {
   }
 
   void getAddress(int idx) async {
-    String messageType = "";
+    dynamic messageType;
     String id = "";
     String latitude = "";
     String longitude = "";
@@ -207,13 +245,13 @@ class MainData extends GetxController {
         break;
 
       case 2:
-        break;
-
-      default:
-        messageType = "message";
+        messageType = 0;
         id = "messageId";
         latitude = "messageLatitude";
         longitude = "messageLongitude";
+        break;
+
+      default:
     }
 
     String lat = dataList[messageType][idx][latitude].toString();
@@ -224,27 +262,55 @@ class MainData extends GetxController {
       "X-NCP-APIGW-API-KEY": "scvqRxQKoZo5vULsFL1vrE56tqKcOl7u1z16iWz2"
     };
 
-    http.Response response = await http.get(
-        Uri.parse(
-            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
-        headers: clientkey);
-    if (response.statusCode == 200) {
-      var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsondata["status"]["code"] == 0) {
-        if (jsondata["results"].length > 1) {
-          _address[dataList[messageType][idx][id]] =
-              "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+    if (address.containsKey(dataList[messageType][idx][id])) {
+      // print("continue");
+      if (address[dataList[messageType][idx][id]] == "") {
+        http.Response response = await http.get(
+            Uri.parse(
+                "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+            headers: clientkey);
+        if (response.statusCode == 200) {
+          var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+          if (jsondata["status"]["code"] == 0) {
+            if (jsondata["results"].length > 1) {
+              _address[dataList[messageType][idx][id]] =
+                  "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+            } else {
+              _address[dataList[messageType][idx][id]] =
+                  "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+            }
+          } else {
+            _address[dataList[messageType][idx][id]] = "-";
+          }
+          update();
         } else {
-          _address[dataList[messageType][idx][id]] =
-              "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+          print(response.statusCode);
+          throw 'getAddress() error';
         }
-      } else {
-        _address[dataList[messageType][idx][id]] = "";
       }
-      update();
     } else {
-      print(response.statusCode);
-      throw 'getAddress() error';
+      http.Response response = await http.get(
+          Uri.parse(
+              "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+          headers: clientkey);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsondata["status"]["code"] == 0) {
+          if (jsondata["results"].length > 1) {
+            _address[dataList[messageType][idx][id]] =
+                "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+          } else {
+            _address[dataList[messageType][idx][id]] =
+                "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+          }
+        } else {
+          _address[dataList[messageType][idx][id]] = "-";
+        }
+        update();
+      } else {
+        print(response.statusCode);
+        throw 'getAddress() error';
+      }
     }
   }
 
@@ -256,7 +322,7 @@ class MainData extends GetxController {
   }
 
   void createMarker(int idx) {
-    String messageType = "";
+    dynamic messageType;
     String id = "";
     String nickname = "";
     String text = "";
@@ -289,10 +355,7 @@ class MainData extends GetxController {
         break;
 
       case 2:
-        break;
-
-      default:
-        messageType = "message";
+        messageType = 0;
         id = "messageId";
         nickname = "userNickname";
         text = "messageText";
@@ -300,6 +363,9 @@ class MainData extends GetxController {
         longitude = "messageLongitude";
         likenum = "messageLikenum";
         writedate = "messageWritedate";
+        break;
+
+      default:
     }
 
     int like = (dataList[messageType][idx][likenum] / 5).toInt();
@@ -313,9 +379,8 @@ class MainData extends GetxController {
 
     switch (selectedIndex) {
       case 0:
-        if (dataList["message"][idx]["isBlurred"] == true) {
-          if ((distances[dataList["message"][idx]["messageId"]] ??= 1) <
-              0.025) {
+        if (dataList[messageType][idx]["isBlurred"] == true) {
+          if ((distances[dataList[messageType][idx][id]] ??= 1) < 0.025) {
             color = 8;
           } else {
             color = 7;
@@ -330,7 +395,15 @@ class MainData extends GetxController {
         break;
 
       case 2:
-        color = dataList[messageType][idx][id] % 7;
+        if (dataList[messageType][idx]["isBlurred"] == true) {
+          if ((distances[dataList[messageType][idx][id]] ??= 1) < 0.025) {
+            color = 8;
+          } else {
+            color = 7;
+          }
+        } else {
+          color = dataList[messageType][idx][id] % 7;
+        }
         break;
 
       default:
@@ -421,8 +494,8 @@ class MainData extends GetxController {
 
         break;
 
-      case 2:
-        break;
+      // case 2:
+      //   break;
 
       default:
     }
@@ -461,9 +534,7 @@ class MainMap extends StatelessWidget {
     return MaterialApp(
       title: 'FootP',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'footp'),
       home: const MyHomePage(title: 'Footp Main Page'),
     );
   }
@@ -505,18 +576,17 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Image.asset('imgs/logo.png', height: 45),
-            backgroundColor: Colors.white,
+            title: Image.asset('imgs/로고_기본.png', height: 50),
+            backgroundColor: Colors.white, //Color.fromARGB(255, 255, 253, 241),
             centerTitle: true,
-            elevation: 0,
+            elevation: 2,
             actions: <Widget>[
               IconButton(
-                icon: Icon(
-                  Icons.account_circle,
-                  color: Color.fromARGB(255, 153, 181, 229),
-                  size: 40,
+                iconSize: 50,
+                icon: Image.asset(
+                  'imgs/프로필_b.png',
                 ),
-                padding: const EdgeInsets.only(top: 5.0, right: 20.0),
+                // padding: const EdgeInsets.only(top: 5.0, right: 20.0),
                 onPressed: () {
                   if (!user.isLogin()) {
                     Navigator.push(
@@ -557,51 +627,95 @@ class _MyHomePageState extends State<MyHomePage> {
                           outlineWidth: 5)
                     ])),
             Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  color: Color.fromARGB(255, 153, 181, 229),
-                  size: 55,
-                ),
-                padding: EdgeInsets.only(
-                    right: 50.0,
-                    bottom: (MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.35),
-                onPressed: () {
-                  if (!user.isLogin()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignIn()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateFoot()),
-                    );
-                  }
-                },
+              alignment: Alignment(0.9, 0.3),
+              child: Container(
+                height: 75,
+                width: 75,
+                child: selectedIndex != 2
+                    ? IconButton(
+                        icon: Image.asset(
+                          'imgs/글쓰기_o.png',
+                          fit: BoxFit.cover,
+                          height: double.infinity,
+                          width: double.infinity,
+                        ),
+                        onPressed: () {
+                          if (!user.isLogin()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignIn()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateFoot()),
+                            );
+                          }
+                        },
+                      )
+                    : IconButton(
+                        icon: Image.asset('imgs/글쓰기_o.png', height: 50),
+                        onPressed: () {
+                          if (!user.isLogin()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignIn()),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateStamp()),
+                            ).then((value) {});
+                          }
+                        },
+                      ),
               ),
             ),
             widgetOptions.elementAt(selectedIndex),
             Align(
                 alignment: Alignment.bottomCenter,
                 child: BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
+                  items: <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.list),
-                      label: 'List',
-                    ),
+                        icon: Image.asset(
+                          "./imgs/하단바-메세지_b_off.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        activeIcon: Image.asset(
+                          "./imgs/하단바-메세지_b.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        label: ''),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.location_pin),
-                      label: 'Alarm',
-                    ),
+                        icon: Image.asset(
+                          "./imgs/하단바-확성기_o_off.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        activeIcon: Image.asset(
+                          "./imgs/하단바-확성기_o.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        label: ''),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.linear_scale),
-                      label: 'Stamp',
-                    )
+                        icon: Image.asset(
+                          "./imgs/하단바-스탬푸_p_off.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        activeIcon: Image.asset(
+                          "./imgs/하단바-스탬푸_p.png",
+                          width: 45,
+                          height: 45,
+                        ),
+                        label: '')
                   ],
                   currentIndex: selectedIndex,
                   onTap: _onItemTapped,
@@ -618,7 +732,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         markers.clear();
         maindata.setListClean = true;
-        maindata._address.clear();
+        // maindata._address.clear();
         maindata.setSearchFlag = false;
         maindata.setSearchKeyword = "";
       });
