@@ -194,7 +194,6 @@ class _MailCertificationState extends State<MailCertification> {
                                       'http://k7a108.p.ssafy.io:8080/auth/success/${user.userinfo["userId"]}/${numberController.text}');
                                   response = await http.post(url);
 
-                                  print(json.decode(response.body));
                                   if (json.decode(response.body) == true) {
                                     Fluttertoast.showToast(
                                         msg: "인증이 완료되었습니다.",
