@@ -40,9 +40,9 @@
 ▶ IntelliJ
 
 프론트엔드
-▶ Flutter 3.3.8
-▶ Visual Studio Code
-▶ Android Studio
+▶ Flutter 3.3.8  
+▶ Visual Studio Code  
+▶ Android Studio  
 
 서버
 ▶ AWS
