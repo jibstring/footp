@@ -218,15 +218,49 @@ class _StampListState extends State<StampList> {
 
                                   // 스탬푸 시트
                                   GestureDetector(
-                                    child: Container(
-                                      height: 200,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(_stampList[index]
-                                              ['stampboard_designurl']),
-                                        ),
-                                      ),
+                                    // child: Container(
+                                    //   height: 200,
+                                    //   decoration: BoxDecoration(
+                                    //     image: DecorationImage(
+                                    //       fit: BoxFit.cover,
+                                    //       image: NetworkImage(_stampList[index]
+                                    //           ['stampboard_designurl']),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Image.network(_stampList[index]
+                                            ['stampboard_designurl']),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Image.asset(
+                                              'imgs/white_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                            ),
+                                            Image.asset(
+                                              'imgs/white_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                            ),
+                                            Image.asset(
+                                              'imgs/white_print.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                     onTap: () {
                                       if (user.isLogin()) {
