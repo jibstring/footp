@@ -7,10 +7,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:app_footp/setting.dart';
+import 'package:app_footp/passwordCertification.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 class ChangePassword extends StatefulWidget {
-  const ChangePassword({super.key});
+  String _currentPassword = '';
+  ChangePassword(this._currentPassword, {Key? key}) : super(key: key);
 
   @override
   State<ChangePassword> createState() => _ChangePasswordState();
@@ -192,6 +194,13 @@ class _ChangePasswordState extends State<ChangePassword> {
                       backgroundColor: const Color(0xff6E6E6E),
                       fontSize: 11,
                       toastLength: Toast.LENGTH_SHORT);
+                } else if (passwordController.text == widget._currentPassword) {
+                  Fluttertoast.showToast(
+                      msg: "현재 비밀번호와 동일하게 바꿀 수 없습니다.",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: const Color(0xff6E6E6E),
+                      fontSize: 11,
+                      toastLength: Toast.LENGTH_SHORT);
                 } else {
                   url =
                       Uri.parse('http://k7a108.p.ssafy.io:8080/user/password');
@@ -211,7 +220,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                       backgroundColor: const Color(0xff6E6E6E),
                       fontSize: 11,
                       toastLength: Toast.LENGTH_SHORT);
-                  Navigator.of(context).pop();
+                  // Navigator.of(context).pop();
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 }
               },
               style: ButtonStyle(
