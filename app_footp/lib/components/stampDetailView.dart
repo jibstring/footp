@@ -61,29 +61,13 @@ class _StampDetailViewState extends State<StampDetailView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Image.asset('imgs/logo.png', height: 45),
+          title: Image.asset('imgs/로고_기본.png', height: 45),
           elevation: 0,
           leading: BackButton(
             color: Colors.black,
           ),
           backgroundColor: Colors.white,
           centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.account_circle,
-                color: Color.fromARGB(255, 153, 181, 229),
-                size: 40,
-              ),
-              padding: const EdgeInsets.only(top: 5, right: 20.0),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyPage()),
-                );
-              },
-            ),
-          ],
         ),
         body: SingleChildScrollView(
           child: Column(
