@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:vibration/vibration.dart';
 import 'package:http/http.dart' as http;
 
 Notice notice = Notice();
@@ -65,12 +66,14 @@ class Notice extends GetxController {
               "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
         }
       }
+      return result;
+    } else {
+      return "서울시 강남구";
     }
-    return result;
   }
 
-  void showToast(Map<String, dynamic> map) {
-    HapticFeedback.heavyImpact();
+  Future<void> showToast(Map<String, dynamic> map) async {
+    Vibration.vibrate(duration: 1000);
     List<String> _category = ['공연', '행사', '맛집', '관광', '친목'];
     Color color = Colors.yellow;
     switch (map["gatherDesignCode"]) {
