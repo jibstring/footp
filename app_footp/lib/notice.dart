@@ -15,6 +15,7 @@ class Notice extends GetxController {
   late StompClient stompClient;
   late MainData maindata;
   var jsondata;
+  bool ready = false;
   String result = "서울시 강남구";
   Map<String, String> clientkey = {
     "X-NCP-APIGW-API-KEY-ID": "9foipum14s",
@@ -53,16 +54,13 @@ class Notice extends GetxController {
   }
 
   where(double lng, double lat) async {
-    http.Response response = await http
-        .get(
-            Uri.parse(
-                "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
-            headers: clientkey)
-        .then(
-          (value) => jsondata = jsonDecode(utf8.decode(value.bodyBytes)),
-        );
+    http.Response response = await http.get(
+        Uri.parse(
+            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+        headers: clientkey);
     if (response.statusCode == 200) {
-      var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+      ready = true;
+      jsondata = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsondata["status"]["code"] == 0) {
         if (jsondata["results"].length > 1) {
           result =
@@ -77,7 +75,7 @@ class Notice extends GetxController {
 
   Future<void> showToast(Map<String, dynamic> map) async {
     Vibration.vibrate(duration: 1000);
-    List<String> _category = ['공연', '행사', '맛집', '관광', '친목'];
+    List<String> category = ['공연', '행사', '맛집', '관광', '친목'];
     Color color = Colors.yellow;
     switch (map["gatherDesigncode"]) {
       case 1:
@@ -93,12 +91,12 @@ class Notice extends GetxController {
         color = Colors.red;
         break;
     }
-    if (jsondata != null) {
+    if (ready) {
       result =
           "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
     }
     String str =
-        "$result 에서 ${_category[map["gatherDesigncode"]]} 이벤트가 시작되었습니다!";
+        "$result 에서 ${category[map["gatherDesigncode"]]} 이벤트가 시작되었습니다!";
     Fluttertoast.showToast(
       msg: str,
       gravity: ToastGravity.TOP,
