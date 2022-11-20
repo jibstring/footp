@@ -10,8 +10,7 @@ import 'package:app_footp/setting.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
 class ChangePassword extends StatefulWidget {
-  int _case = 0;
-  ChangePassword(this._case, {Key? key}) : super(key: key);
+  const ChangePassword({super.key});
 
   @override
   State<ChangePassword> createState() => _ChangePasswordState();
@@ -20,15 +19,12 @@ class ChangePassword extends StatefulWidget {
 class _ChangePasswordState extends State<ChangePassword> {
   var url;
   var response;
-  bool obscurePasswordCurrent = true;
   bool obscurePasswordOne = true;
   bool obscurePasswordTwo = true;
-  bool currentConfirmed = true;
-  bool passwordConfirmed = true;
   String passwordValidation = '알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자 이상';
+  bool passwordConfirmed = true;
 
   UserData user = Get.put(UserData());
-  TextEditingController currentController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
 
@@ -42,7 +38,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             child: Container(
           padding: const EdgeInsets.fromLTRB(0, 100, 0, 0),
           child: Text(
-            "비밀번호 변경을 위해 현재 비밀번호를 입력해주세요.",
+            "비밀번호 변경을 위해 새로운 비밀번호를 입력해주세요.",
             style: TextStyle(
               color: Colors.black,
               fontSize: 15,
@@ -71,47 +67,6 @@ class _ChangePasswordState extends State<ChangePassword> {
             ),
           ),
         )),
-
-        // 현재 비밀번호 입력창
-        (widget._case == 1)
-            ? Container(
-                padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-                child: TextField(
-                  obscureText: obscurePasswordCurrent,
-                  controller: currentController,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '현재 비밀번호',
-                      suffixIcon: obscurePasswordCurrent == true
-                          ? IconButton(
-                              icon: Icon(Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  obscurePasswordCurrent =
-                                      !obscurePasswordCurrent;
-                                });
-                              },
-                            )
-                          : IconButton(
-                              icon: Icon(Icons.visibility),
-                              onPressed: () {
-                                setState(() {
-                                  obscurePasswordCurrent =
-                                      !obscurePasswordCurrent;
-                                });
-                              },
-                            )),
-                  onChanged: (value) {
-                    setState(() {
-                      currentConfirmed = ((currentController.text ==
-                              passwordController.text) ||
-                          (currentController.text ==
-                              passwordConfirmController.text));
-                    });
-                  },
-                ),
-              )
-            : Container(),
 
         // 새로운 비밀번호 입력창
         Container(
@@ -208,6 +163,67 @@ class _ChangePasswordState extends State<ChangePassword> {
                   style: TextStyle(color: Colors.red),
                 ),
         ),
+
+        Container(
+            padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+            height: 50,
+            child: ElevatedButton(
+              child: const Text(
+                '비밀번호 변경',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              ),
+              onPressed: () async {
+                if (passwordController == '' ||
+                    passwordConfirmController == '') {
+                  Fluttertoast.showToast(
+                      msg: "입력하지 않은 값이 있습니다.",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: const Color(0xff6E6E6E),
+                      fontSize: 11,
+                      toastLength: Toast.LENGTH_SHORT);
+                } else if (passwordConfirmed == false ||
+                    passwordValidation != '올바른 비밀번호입니다.') {
+                  Fluttertoast.showToast(
+                      msg: "비밀번호를 확인해주세요.",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: const Color(0xff6E6E6E),
+                      fontSize: 11,
+                      toastLength: Toast.LENGTH_SHORT);
+                } else {
+                  url =
+                      Uri.parse('http://k7a108.p.ssafy.io:8080/user/password');
+                  response = await http.put(url,
+                      body: json.encode({
+                        "userId": user.userinfo["userId"],
+                        "userPassword": passwordController.text
+                      }),
+                      headers: {
+                        "Accept": "application/json",
+                        "content-type": "application/json"
+                      });
+
+                  Fluttertoast.showToast(
+                      msg: "비밀번호가 변경되었습니다.",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: const Color(0xff6E6E6E),
+                      fontSize: 11,
+                      toastLength: Toast.LENGTH_SHORT);
+                  Navigator.of(context).pop();
+                }
+              },
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromARGB(255, 255, 171, 112)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                )),
+              ),
+            )),
       ],
     )));
   }
