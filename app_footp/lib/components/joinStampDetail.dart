@@ -24,12 +24,12 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
   MyPosition myPosition = Get.put(MyPosition());
   UserData user = Get.put(UserData());
   JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
-
+  // late Future _post;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadJoinStamp();
+    // loadJoinStamp();
   }
 
   @override
@@ -43,39 +43,24 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            // icon: Icon(
-            //   Icons.account_circle,
-            //   color: Color.fromARGB(255, 153, 181, 229),
-            //   size: 40,
-            // ),
-            icon: Image.asset('imgs/프로필_b.png'),
-            padding: const EdgeInsets.only(top: 5, right: 20.0),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyPage()),
-              );
-            },
-          ),
-        ],
+        
       ),
       body: SingleChildScrollView(
-          child: Column(children: [
-        Container(
-            child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              // width: MediaQuery.of(context).size.width * 0.8,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.fitWidth,
-                  image: NetworkImage('${stampDetail['stampboard_designurl']}'),
-                ),
-              ),
-              child: Container(
+          child: FutureBuilder(
+            future:loadJoinStamp(),
+            builder:(BuildContext context, AsyncSnapshot snapshot){
+            return Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  // width: MediaQuery.of(context).size.width * 0.8,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.fitWidth,
+                      image: NetworkImage('${stampDetail['stampboard_designurl']}'),
+                    ),
+                  ),
+                child: Container(
                   height: 100,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -159,42 +144,20 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                             ],
                           )),
                     ],
-                  )),
+                  )
+                ),
             ),
-            // Row(
-            //   children: [
-            //     ElevatedButton(
-            //       onPressed: isNearMessage(selectedStamp) &&
-            //               stampDetail[
-            //                       'userjoinedStampboard_cleardate${selectedStamp! + 1}'] ==
-            //                   null
-            //           ? () {
-            //               clearMessage(selectedStamp!);
-            //               setState(() {
-            //                 loadJoinStamp();
-            //               });
-            //             }
-            //           : null,
-            //       child: Text(clearButtonMessage(selectedStamp)),
-            //     ),
-            //     TextButton(
-            //         onPressed: () {
-            //           Navigator.of(context).pop();
-            //           loadJoinStamp();
-            //         },
-            //         child: Text('OK'))
-            //   ],
-            // ),
             SizedBox(height: 10),
             NormalFoot(stampDetailMessages[0]),
             SizedBox(height: 10),
             NormalFoot(stampDetailMessages[1]),
             SizedBox(height: 10),
             NormalFoot(stampDetailMessages[2]),
-            SizedBox(height: 10),
+            SizedBox(height: 70),
+            
           ],
-        ))
-      ])
+        );}
+        )
 
           // Container(
           //   // width: MediaQuery.of(context).size.width,
@@ -239,7 +202,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
           //         ? Text(getDistance(selectedStamp!).toString())
           //         : Text('hi')),
 
-          ),
+      ),
       bottomSheet: Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -286,7 +249,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
     return distance;
   }
 
-  void loadJoinStamp() async {
+  Future<void> loadJoinStamp() async {
     var dio = DIO.Dio();
 
     if (user.isLogin()) {
@@ -321,6 +284,7 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
           setState(() {
             stampDetailMessages = [res.data[0], res.data[1], res.data[2]];
           });
+          // return stampDetailMessages;
         });
       } else {
         setState(() {
