@@ -23,13 +23,12 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
   int? selectedStamp;
   MyPosition myPosition = Get.put(MyPosition());
   UserData user = Get.put(UserData());
-  JoinStampInfo joinedStamp = Get.put(JoinStampInfo());
   // late Future _post;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // loadJoinStamp();
+    loadJoinStamp();
   }
 
   @override
@@ -164,13 +163,19 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
                             ],
                           )),
                     ),
-                    SizedBox(height: 10),
-                    NormalFoot(stampDetailMessages[0]),
-                    SizedBox(height: 10),
-                    NormalFoot(stampDetailMessages[1]),
-                    SizedBox(height: 10),
-                    NormalFoot(stampDetailMessages[2]),
-                    SizedBox(height: 70),
+                    stampDetailMessages.length > 0
+                        ? Column(
+                            children: [
+                              SizedBox(height: 10),
+                              NormalFoot(stampDetailMessages[0]),
+                              SizedBox(height: 10),
+                              NormalFoot(stampDetailMessages[1]),
+                              SizedBox(height: 10),
+                              NormalFoot(stampDetailMessages[2]),
+                              SizedBox(height: 70),
+                            ],
+                          )
+                        : Container()
                   ],
                 );
               })),
@@ -255,33 +260,17 @@ class _JoinStampDetailState extends State<JoinStampDetail> {
         var firstMessage = response.data['stampboard_message1'];
         var secondMessage = response.data['stampboard_message2'];
         var thirdMessage = response.data['stampboard_message3'];
-        var joinStamp = response.data;
-        joinedStamp.joinedStamp = joinStamp;
-
-        print('#########################');
-        print(response.data);
-        print(response.data['stampboard_id']);
-        print(response.data['stampboard_id'].runtimeType);
-        print('##############################');
 
         await dio
             .post(
                 'http://k7a108.p.ssafy.io:8080/stamp/info/$firstMessage/$secondMessage/$thirdMessage/${user.userinfo["userId"]}')
             .then((res) {
-          joinedStamp.message1 = res.data[0];
-          joinedStamp.message2 = res.data[1];
-          joinedStamp.message3 = res.data[2];
-          joinedStamp.joinedMessages = [res.data[0], res.data[1], res.data[2]];
           setState(() {
             stampDetailMessages = [res.data[0], res.data[1], res.data[2]];
           });
           // return stampDetailMessages;
         });
-      } else {
-        setState(() {
-          stampDetailMessages = [];
-        });
-      }
+      } else {}
     }
   }
 
