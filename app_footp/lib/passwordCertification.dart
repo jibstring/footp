@@ -6,17 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:app_footp/signIn.dart';
+import 'package:app_footp/setting.dart';
 import 'package:app_footp/custom_class/store_class/store.dart';
 
-class MailCertification extends StatefulWidget {
-  const MailCertification({super.key});
+class ChangePassword extends StatefulWidget {
+  const ChangePassword({super.key});
 
   @override
-  State<MailCertification> createState() => _MailCertificationState();
+  State<ChangePassword> createState() => _ChangePasswordState();
 }
 
-class _MailCertificationState extends State<MailCertification> {
+class _ChangePasswordState extends State<ChangePassword> {
   var url;
   var response;
   int time = 180;
@@ -30,10 +30,9 @@ class _MailCertificationState extends State<MailCertification> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SizedBox.expand(
-          child: ListView(
+          child: Column(
         children: <Widget>[
-          Center(
-              child: Container(
+          Container(
             padding: const EdgeInsets.fromLTRB(0, 100, 0, 0),
             child: Text(
               "최초 가입 시 유효한 이메일 인증을 위해",
@@ -42,9 +41,8 @@ class _MailCertificationState extends State<MailCertification> {
                 fontSize: 15,
               ),
             ),
-          )),
-          Center(
-              child: Container(
+          ),
+          Container(
             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               "가입 시 입력한 이메일로 인증 번호를 발송합니다.",
@@ -53,9 +51,8 @@ class _MailCertificationState extends State<MailCertification> {
                 fontSize: 15,
               ),
             ),
-          )),
-          Center(
-              child: Container(
+          ),
+          Container(
             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               "유효 기간 3분 내로 인증 번호 10자리를 입력해 주세요!",
@@ -64,7 +61,7 @@ class _MailCertificationState extends State<MailCertification> {
                 fontSize: 15,
               ),
             ),
-          )),
+          ),
           Container(
             padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
             child: Row(
@@ -111,13 +108,6 @@ class _MailCertificationState extends State<MailCertification> {
                           });
                         });
                       }
-
-                      Fluttertoast.showToast(
-                          msg: "인증 번호를 메일로 발송하였습니다.",
-                          gravity: ToastGravity.BOTTOM,
-                          backgroundColor: const Color(0xff6E6E6E),
-                          fontSize: 11,
-                          toastLength: Toast.LENGTH_SHORT);
                     },
                     style: ButtonStyle(
                         foregroundColor:
