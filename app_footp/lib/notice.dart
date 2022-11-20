@@ -14,6 +14,7 @@ Notice notice = Notice();
 class Notice extends GetxController {
   late StompClient stompClient;
   late MainData maindata;
+  var jsondata;
   String result = "서울시 강남구";
   Map<String, String> clientkey = {
     "X-NCP-APIGW-API-KEY-ID": "9foipum14s",
@@ -33,7 +34,9 @@ class Notice extends GetxController {
               destination: '/notice',
               callback: (frame) {
                 Map<String, dynamic> msgMap = jsonDecode(frame.body.toString());
-                showToast(msgMap);
+                where(msgMap["gatherLatitude"], msgMap["gatherLongitude"]).then(
+                  (value) => showToast(msgMap),
+                );
               });
         },
       ),
@@ -51,25 +54,26 @@ class Notice extends GetxController {
   }
 
   where(double lng, double lat) async {
-    http.Response response = await http.get(
-        Uri.parse(
-            "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
-        headers: clientkey);
-    var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
-    if (jsondata["status"]["code"] == 0) {
-      if (jsondata["results"].length > 1) {
-        result =
-            "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
-      } else {
-        result =
-            "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+    http.Response response = await http
+        .get(
+            Uri.parse(
+                "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${lng},${lat}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json"),
+            headers: clientkey)
+        .then(
+          (value) => jsondata = jsonDecode(utf8.decode(value.bodyBytes)),
+        );
+    if (response.statusCode == 200) {
+      var jsondata = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsondata["status"]["code"] == 0) {
+        if (jsondata["results"].length > 1) {
+          result =
+              "${jsondata["results"][1]["region"]["area1"]["name"]} ${jsondata["results"][1]["region"]["area2"]["name"]} ${jsondata["results"][1]["land"]["name"]} ${jsondata["results"][1]["land"]["number1"]} ${jsondata["results"][1]["land"]["addition0"]["value"]}";
+        } else {
+          result =
+              "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+        }
       }
     }
-
-    // if (response.statusCode == 200) {
-    // } else {
-    //   return "서울시 강남구";
-    // }
   }
 
   Future<void> showToast(Map<String, dynamic> map) async {
@@ -90,17 +94,19 @@ class Notice extends GetxController {
         color = Colors.red;
         break;
     }
-    where(map["gatherLatitude"], map["gatherLongitude"]).then((here) async {
-      String str =
-          "$result 에서 ${_category[map["gatherDesigncode"]]} 이벤트가 시작되었습니다!";
-      Fluttertoast.showToast(
-        msg: str,
-        gravity: ToastGravity.TOP,
-        backgroundColor: color,
-        fontSize: 20.0,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_LONG,
-      );
-    });
+    if (jsondata != null) {
+      result =
+          "${jsondata["results"][0]["region"]["area1"]["name"]} ${jsondata["results"][0]["region"]["area2"]["name"]} ${jsondata["results"][0]["region"]["area3"]["name"]} ${jsondata["results"][0]["region"]["area4"]["name"]} ${jsondata["results"][0]["land"]["type"] == "1" ? "" : "산"} ${jsondata["results"][0]["land"]["number1"]}-${jsondata["results"][0]["land"]["number2"]}";
+    }
+    String str =
+        "$result 에서 ${_category[map["gatherDesigncode"]]} 이벤트가 시작되었습니다!";
+    Fluttertoast.showToast(
+      msg: str,
+      gravity: ToastGravity.TOP,
+      backgroundColor: color,
+      fontSize: 20.0,
+      textColor: Colors.white,
+      toastLength: Toast.LENGTH_LONG,
+    );
   }
 }
